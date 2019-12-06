@@ -72,3 +72,31 @@ fn ns(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	Ok(results)
 }
+
+#[cfg(test)]
+mod tests {
+
+	use super::*;
+
+	#[test]
+	fn test_ns() {
+		let app =  &commands()[0].app;
+
+		let matches = app.clone().get_matches_from(vec!["ns", "256"]);
+		assert_eq!(ns(&matches) , Ok(vec!["256".to_string(), "0b100000000".to_string(), "0o400".to_string(), "0x100".to_string()]));
+
+		let matches = app.clone().get_matches_from(vec!["ns", "-d", "256"]);
+		assert_eq!(ns(&matches) , Ok(vec!["256".to_string()]));
+
+		let matches = app.clone().get_matches_from(vec!["ns", "-b", "256"]);
+		assert_eq!(ns(&matches) , Ok(vec!["0b100000000".to_string()]));
+
+		let matches = app.clone().get_matches_from(vec!["ns", "-o", "256"]);
+		assert_eq!(ns(&matches) , Ok(vec!["0o400".to_string()]));
+
+		let matches = app.clone().get_matches_from(vec!["ns", "-x", "256"]);
+		assert_eq!(ns(&matches) , Ok(vec!["0x100".to_string()]));
+
+	}
+
+}
