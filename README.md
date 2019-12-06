@@ -1,6 +1,9 @@
 # dtool
 
-dtool is a collection of development tools:
+[![Build Status](https://travis-ci.org/guoxbin/dtool.svg?branch=master)](https://travis-ci.org/guoxbin/dtool)
+
+
+`dtool` is a collection of development tools:
 
 | Sub command   | Description   | Examples | 
 | ------------- | :------------- | ------------ |
