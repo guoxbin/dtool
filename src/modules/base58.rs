@@ -97,3 +97,49 @@ fn b58c2h(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	Ok(vec![result])
 }
+
+#[cfg(test)]
+mod tests {
+
+	use super::*;
+
+	#[test]
+	fn test_h2b58() {
+		let app =  &commands()[0].app;
+
+		let matches = app.clone().get_matches_from(vec!["h2b58", "0x0075774f5d9963c021009a58d7d2d8e83771dd6c7a"]);
+		assert_eq!(h2b58(&matches) , Ok(vec!["12dvBhvPEPniQmBmgvj4qpJEodT7P".to_string()]));
+
+		let matches = app.clone().get_matches_from(vec!["h2b58", "0x41e1df5ec0fec39b5cf51d959118819ce5e64643df"]);
+		assert_eq!(h2b58(&matches) , Ok(vec!["53yFvKp7qazhe1YV6rE5ESr1iofv6".to_string()]));
+	}
+
+	#[test]
+	fn test_h2b58c() {
+		let app =  &commands()[1].app;
+
+		let matches = app.clone().get_matches_from(vec!["h2b58", "0x0075774f5d9963c021009a58d7d2d8e83771dd6c7a"]);
+		assert_eq!(h2b58c(&matches) , Ok(vec!["1Bi6zFVNtntP5MtDraNrAD7e469ifsQMwF".to_string()]));
+
+		let matches = app.clone().get_matches_from(vec!["h2b58", "0x41e1df5ec0fec39b5cf51d959118819ce5e64643df"]);
+		assert_eq!(h2b58c(&matches) , Ok(vec!["TWZWdFSL6Kcn7hfAg6SHiGixUP5efEaBtW".to_string()]));
+
+	}
+
+	#[test]
+	fn test_b582h() {
+		let app =  &commands()[3].app;
+
+		let matches = app.clone().get_matches_from(vec!["b582h", "3VNr6P"]);
+		assert_eq!(b582h(&matches) , Ok(vec!["0x61626364".to_string()]));
+	}
+
+	#[test]
+	fn test_b58c2h() {
+		let app =  &commands()[3].app;
+
+		let matches = app.clone().get_matches_from(vec!["b58c2h", "TGnEPsGyq5Hnb3CUJ56FSH6fQRtxgi3jYF"]);
+		assert_eq!(b58c2h(&matches) , Ok(vec!["0x414ab577ca9adc8a3252dda006ea7221bded1cac17".to_string()]));
+	}
+
+}
