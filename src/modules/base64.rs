@@ -53,3 +53,27 @@ fn b642h(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	Ok(vec![result])
 }
+
+#[cfg(test)]
+mod tests {
+
+	use super::*;
+
+	#[test]
+	fn test_h2b64() {
+		let app =  &commands()[0].app;
+
+		let matches = app.clone().get_matches_from(vec!["h2b64", "0x616263"]);
+		assert_eq!(h2b64(&matches) , Ok(vec!["YWJj".to_string()]));
+	}
+
+	#[test]
+	fn test_b642h() {
+		let app =  &commands()[1].app;
+
+		let matches = app.clone().get_matches_from(vec!["b642h", "YWJj"]);
+		assert_eq!(b642h(&matches) , Ok(vec!["0x616263".to_string()]));
+
+	}
+
+}

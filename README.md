@@ -13,6 +13,8 @@ dtool is a collection of development tools:
 | h2b58c | Convert hex to base58 check | $ dtool h2b58c 0x0075774f5d9963c021009a58d7d2d8e83771dd6c7a <br> 1Bi6zFVNtntP5MtDraNrAD7e469ifsQMwF |
 | b582h  | Convert base58 to hex       | $ dtool b582h 12dvBhvPEPniQmBmgvj4qpJEodT7P <br> 0x0075774f5d9963c021009a58d7d2d8e83771dd6c7a |
 | b58c2h | Convert base58 check to hex | $ dtool b58c2h 1Bi6zFVNtntP5MtDraNrAD7e469ifsQMwF <br> 0x0075774f5d9963c021009a58d7d2d8e83771dd6c7a |
+| h2b64  | Convert hex to base64       | $ dtool h2b64 0x616263 <br> YWJj |
+| b642h  | Convert base64 to hex       | $ dtool b642h YWJj <br> 0x616263 |
 
 ## Installation
 ### Via cargo
