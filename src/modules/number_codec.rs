@@ -124,3 +124,63 @@ fn nd(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	Ok(vec![result])
 }
+
+#[cfg(test)]
+mod tests {
+
+	use super::*;
+
+	#[test]
+	fn test_ne() {
+		let app =  &commands()[0].app;
+
+		let matches = app.clone().get_matches_from(vec!["ne", "-tu8", "1"]);
+		assert_eq!(ne(&matches) , Ok(vec!["0x01".to_string()]));
+
+		let matches = app.clone().get_matches_from(vec!["ne", "-tu16", "1"]);
+		assert_eq!(ne(&matches) , Ok(vec!["0x0100".to_string()]));
+
+		let matches = app.clone().get_matches_from(vec!["ne", "-tu32", "1"]);
+		assert_eq!(ne(&matches) , Ok(vec!["0x01000000".to_string()]));
+
+		let matches = app.clone().get_matches_from(vec!["ne", "-tu64", "1"]);
+		assert_eq!(ne(&matches) , Ok(vec!["0x0100000000000000".to_string()]));
+
+		let matches = app.clone().get_matches_from(vec!["ne", "-tu128", "1"]);
+		assert_eq!(ne(&matches) , Ok(vec!["0x01000000000000000000000000000000".to_string()]));
+
+		let matches = app.clone().get_matches_from(vec!["ne", "-tc", "6"]);
+		assert_eq!(ne(&matches) , Ok(vec!["0x18".to_string()]));
+
+		let matches = app.clone().get_matches_from(vec!["ne", "-tc", "251"]);
+		assert_eq!(ne(&matches) , Ok(vec!["0xed03".to_string()]));
+	}
+
+	#[test]
+	fn test_nd() {
+		let app =  &commands()[1].app;
+
+		let matches = app.clone().get_matches_from(vec!["nd", "-tu8", "0x01"]);
+		assert_eq!(nd(&matches) , Ok(vec!["1".to_string()]));
+
+		let matches = app.clone().get_matches_from(vec!["nd", "-tu16", "0x0100"]);
+		assert_eq!(nd(&matches) , Ok(vec!["1".to_string()]));
+
+		let matches = app.clone().get_matches_from(vec!["nd", "-tu32", "0x01000000"]);
+		assert_eq!(nd(&matches) , Ok(vec!["1".to_string()]));
+
+		let matches = app.clone().get_matches_from(vec!["nd", "-tu64", "0x0100000000000000"]);
+		assert_eq!(nd(&matches) , Ok(vec!["1".to_string()]));
+
+		let matches = app.clone().get_matches_from(vec!["nd", "-tu128", "0x01000000000000000000000000000000"]);
+		assert_eq!(nd(&matches) , Ok(vec!["1".to_string()]));
+
+		let matches = app.clone().get_matches_from(vec!["nd", "-tc", "0x18"]);
+		assert_eq!(nd(&matches) , Ok(vec!["6".to_string()]));
+
+		let matches = app.clone().get_matches_from(vec!["nd", "-tc", "0xed03"]);
+		assert_eq!(nd(&matches) , Ok(vec!["251".to_string()]));
+
+	}
+
+}

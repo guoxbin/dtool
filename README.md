@@ -17,6 +17,8 @@ dtool is a collection of development tools:
 | b642h  | Convert base64 to hex       | $ dtool b642h YWJj <br> 0x616263 |
 | ue     | URL encode                  | $ dtool ue a+b <br> a%2Bb |
 | ud     | URL decode                  | $ dtool ue a%2Bb <br> a+b |
+| ne     | Number encode               | $ dtool ne -tu8 1 <br> 0x01 <br> $ dtool ne -tu16 1 <br> 0x0100 <br> $ dtool ne -tu32 1 <br> 0x01000000 <br> $ dtool ne -tu64 1 <br> 0x0100000000000000 <br> $ dtool ne -tu128 1 <br> 0x01000000000000000000000000000000 <br> $ dtool ne -tc 6 <br> 0x18 <br> dtool ne -tc 251 <br> 0xed03 |
+| nd     | Number decode               | $ $ dtool nd -tu8 0x01 <br> 1 <br> $ dtool nd -tu16 0x0100 <br> 1 <br> $ dtool nd -tu32 0x01000000 <br> 1 <br> $ dtool nd -tu64 0x0100000000000000 <br> 1 <br> $ dtool nd -tu128 0x01000000000000000000000000000000 <br> 1 <br> $ dtool nd -tc 0x18 <br> 6 <br> $ dtool nd -tc 0xed03 <br> 251 |
 
 ## Installation
 ### Via cargo
