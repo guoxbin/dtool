@@ -46,3 +46,27 @@ fn ud(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	Ok(vec![result])
 }
+
+#[cfg(test)]
+mod tests {
+
+	use super::*;
+
+	#[test]
+	fn test_ue() {
+		let app =  &commands()[0].app;
+
+		let matches = app.clone().get_matches_from(vec!["ue", "a+b"]);
+		assert_eq!(ue(&matches) , Ok(vec!["a%2Bb".to_string()]));
+	}
+
+	#[test]
+	fn test_ud() {
+		let app =  &commands()[1].app;
+
+		let matches = app.clone().get_matches_from(vec!["ud", "a%2Bb"]);
+		assert_eq!(ud(&matches) , Ok(vec!["a+b".to_string()]));
+
+	}
+
+}
