@@ -20,6 +20,21 @@ dtool is a collection of development tools:
 | ne     | Number encode               | $ dtool ne -tu8 1 <br> 0x01 <br> $ dtool ne -tu16 1 <br> 0x0100 <br> $ dtool ne -tu32 1 <br> 0x01000000 <br> $ dtool ne -tu64 1 <br> 0x0100000000000000 <br> $ dtool ne -tu128 1 <br> 0x01000000000000000000000000000000 <br> $ dtool ne -tc 6 <br> 0x18 <br> dtool ne -tc 251 <br> 0xed03 |
 | nd     | Number decode               | $ $ dtool nd -tu8 0x01 <br> 1 <br> $ dtool nd -tu16 0x0100 <br> 1 <br> $ dtool nd -tu32 0x01000000 <br> 1 <br> $ dtool nd -tu64 0x0100000000000000 <br> 1 <br> $ dtool nd -tu128 0x01000000000000000000000000000000 <br> 1 <br> $ dtool nd -tc 0x18 <br> 6 <br> $ dtool nd -tc 0xed03 <br> 251 |
 
+## Tips
+
+### pipe 
+you can convert a string to base64 by a pipe
+```
+$ echo -n abc | dtool s2h | dtool h2b64
+YWJj
+```
+
+you can convert a encoded timestamp to date
+```
+$ echo -n 2c28e75d | dtool nd -tu32 | dtool ts2d
+2019-12-04 11:29:48
+```
+
 ## Installation
 ### Via cargo
 ```
