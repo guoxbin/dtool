@@ -52,3 +52,34 @@ fn d2ts(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	Ok(vec![result])
 }
+
+#[cfg(test)]
+mod tests {
+
+	use super::*;
+
+	#[test]
+	fn test_ts2d() {
+		let app =  &commands()[0].app;
+
+		let matches = app.clone().get_matches_from(vec!["ts2d", "0"]);
+		assert_eq!(ts2d(&matches) , Ok(vec!["1970-01-01 08:00:00".to_string()]));
+
+		let matches = app.clone().get_matches_from(vec!["ts2d", "10000"]);
+		assert_eq!(ts2d(&matches) , Ok(vec!["1970-01-01 10:46:40".to_string()]));
+
+	}
+
+	#[test]
+	fn test_d2ts() {
+		let app =  &commands()[1].app;
+
+		let matches = app.clone().get_matches_from(vec!["d2ts", "1970-01-01 08:00:00"]);
+		assert_eq!(d2ts(&matches) , Ok(vec!["0".to_string()]));
+
+		let matches = app.clone().get_matches_from(vec!["d2ts", "1970-01-01 10:46:40"]);
+		assert_eq!(d2ts(&matches) , Ok(vec!["10000".to_string()]));
+
+	}
+
+}
