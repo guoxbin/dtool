@@ -1,7 +1,7 @@
 # dtool
 
 [![Build Status](https://travis-ci.org/guoxbin/dtool.svg?branch=master)](https://travis-ci.org/guoxbin/dtool)
-
+![Crates.io](https://img.shields.io/crates/v/dtool)
 
 `dtool` is a collection of development tools:
 
