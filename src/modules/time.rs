@@ -45,7 +45,7 @@ fn d2ts(matches: &ArgMatches) -> Result<Vec<String>, String> {
 		None => io::stdin().lock().lines().map(|l|l.unwrap()).collect::<Vec<String>>().join(""),
 	};
 
-	let time = NaiveDateTime::parse_from_str(&input, "%Y-%m-%d %H:%M:%S").unwrap();
+	let time = NaiveDateTime::parse_from_str(&input, "%Y-%m-%d %H:%M:%S").map_err(|_| "Invalid input")?;
 	let time = Local.from_local_datetime(&time).unwrap();
 	let result = time.timestamp();
 	let result = format!("{}", result);
