@@ -4,6 +4,8 @@ mod hex;
 mod time;
 mod number;
 mod base58;
+mod base64;
+mod url;
 
 pub struct Command<'a, 'b> {
 	pub app: App<'a, 'b>,
@@ -24,6 +26,8 @@ impl<'a, 'b> ModuleManager<'a, 'b> {
 		mm.register(time::commands());
 		mm.register(number::commands());
 		mm.register(base58::commands());
+		mm.register(base64::commands());
+		mm.register(url::commands());
 		mm
 	}
 
