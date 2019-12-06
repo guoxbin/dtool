@@ -45,7 +45,7 @@ fn ns(matches: &ArgMatches) -> Result<Vec<String>, String> {
 		_ => (10, &input[..]),
 	};
 
-	let number = isize::from_str_radix(number, radix).map_err(|_| "Invalid input")?;
+	let number = u64::from_str_radix(number, radix).map_err(|_| "Invalid input")?;
 
 	let mut results = Vec::new();
 
