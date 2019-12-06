@@ -4,7 +4,10 @@ mod modules;
 
 fn main() {
 
-    let mut app = App::new("Dtool");
+    let mut app = App::new(env!("CARGO_PKG_NAME"))
+        .version(env!("CARGO_PKG_VERSION"))
+        .author(env!("CARGO_PKG_AUTHORS"))
+        .about(env!("CARGO_PKG_DESCRIPTION"));
 
     let module_manager = modules::ModuleManager::new();
     let subcommands = module_manager.apps();

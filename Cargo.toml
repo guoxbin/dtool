@@ -1,7 +1,8 @@
 [package]
 name = "dtool"
 version = "0.1.0"
-authors = ["guoxbin <guoxbin@gmail.com>"]
+authors = ["GB <guoxbin@gmail.com>"]
+description = "A collection of tools for developers"
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -9,3 +10,4 @@ edition = "2018"
 [dependencies]
 clap = "2.33.0"
 hex = "0.4.0"
+chrono = "0.4.10"

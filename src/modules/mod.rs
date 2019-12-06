@@ -1,10 +1,12 @@
 use clap::{App, ArgMatches};
 use std::collections::HashMap;
 mod hex;
+mod time;
+mod number;
 
 pub struct Command<'a, 'b> {
 	pub app: App<'a, 'b>,
-	pub f: fn(&ArgMatches<'a>) -> (),
+	pub f: fn(&ArgMatches<'a>) -> Result<Vec<String>, String>,
 }
 
 pub struct ModuleManager<'a, 'b>{
@@ -18,6 +20,8 @@ impl<'a, 'b> ModuleManager<'a, 'b> {
 			commands: HashMap::new(),
 		};
 		mm.register(hex::commands());
+		mm.register(time::commands());
+		mm.register(number::commands());
 		mm
 	}
 
@@ -30,7 +34,10 @@ impl<'a, 'b> ModuleManager<'a, 'b> {
 	pub fn run(&self, name: &str, matches: &ArgMatches<'a>) {
 
 		if let Some(command) = self.commands.get(name){
-			(command.f)(matches);
+			match (command.f)(matches){
+				Ok(result) => result.iter().for_each(|x|println!("{}", x)),
+				Err(e) => eprintln!("{}", e),
+			}
 		}
 
 	}

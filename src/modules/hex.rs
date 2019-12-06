@@ -23,7 +23,7 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 	]
 }
 
-fn h2s(matches: &ArgMatches) {
+fn h2s(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	let input = match matches.value_of("INPUT") {
 		Some(input) => input.to_string(),
@@ -31,27 +31,21 @@ fn h2s(matches: &ArgMatches) {
 	};
 	let input = input.trim_start_matches("0x");
 
-	let result = hex::decode(input).map_err(|_| "Convert failed")
-		.and_then(|x| String::from_utf8(x).map_err(|_| "Convert failed"));
+	let result = hex::decode(input).map_err(|_| "Convert failed")?;
+	let result = String::from_utf8(result).map_err(|_| "Convert failed")?;
 
-	match result {
-		Ok(result) => println!("{}", result),
-		Err(e) => eprintln!("{}", e),
-	}
+	Ok(vec![result])
 }
 
-fn s2h(matches: &ArgMatches) {
+fn s2h(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	let input = match matches.value_of("INPUT") {
 		Some(input) => input.to_string(),
 		None => io::stdin().lock().lines().map(|l|l.unwrap()).collect::<Vec<String>>().join(""),
 	};
 
-	let result : Result<String, &str> = Ok(hex::encode(input)).map(|x| "0x".to_string() + &x);
+	let result = hex::encode(input);
+	let result = "0x".to_string() + &result;
 
-	match result{
-		Ok(result) => println!("{}", result),
-		Err(e) => eprintln!("{}", e),
-	}
-
+	Ok(vec![result])
 }
