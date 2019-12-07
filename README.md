@@ -43,8 +43,3 @@ $ echo -n 2c28e75d | dtool nd -tu32 | dtool ts2d
 ```
 $ cargo install dtool
 ```
-
-### Via homebrew
-```
-$ brew install dtool
-```
