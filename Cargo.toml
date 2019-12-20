@@ -1,6 +1,6 @@
 [package]
 name = "dtool"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["GB <guoxbin@gmail.com>"]
 description = "A collection of development tools"
 categories = ["command-line-utilities"]
