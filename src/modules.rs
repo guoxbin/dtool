@@ -1,6 +1,7 @@
 use clap::{App, ArgMatches};
 use std::collections::HashMap;
 mod hex;
+mod base;
 mod time;
 mod number_system;
 mod base58;

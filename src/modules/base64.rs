@@ -1,7 +1,5 @@
 use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::Command;
-use std::io;
-use std::io::BufRead;
+use crate::modules::{Command, base};
 use hex;
 use base64;
 
@@ -26,10 +24,7 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 
 fn h2b64(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
-	let input = match matches.value_of("INPUT") {
-		Some(input) => input.to_string(),
-		None => io::stdin().lock().lines().map(|l|l.unwrap()).collect::<Vec<String>>().join(""),
-	};
+	let input = base::input_string(matches)?;
 
 	let input = input.trim_start_matches("0x");
 
@@ -42,10 +37,7 @@ fn h2b64(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 fn b642h(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
-	let input = match matches.value_of("INPUT") {
-		Some(input) => input.to_string(),
-		None => io::stdin().lock().lines().map(|l|l.unwrap()).collect::<Vec<String>>().join(""),
-	};
+	let input = base::input_string(matches)?;
 
 	let result = base64::decode(&input).map_err(|_| "Convert failed")?;
 	let result = hex::encode(result);

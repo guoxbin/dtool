@@ -1,7 +1,5 @@
 use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::Command;
-use std::io;
-use std::io::BufRead;
+use crate::modules::{Command, base};
 use chrono::{NaiveDateTime, Local, FixedOffset};
 use chrono::offset::TimeZone;
 
@@ -38,10 +36,7 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 
 fn ts2d(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
-	let input = match matches.value_of("INPUT") {
-		Some(input) => input.to_string(),
-		None => io::stdin().lock().lines().map(|l|l.unwrap()).collect::<Vec<String>>().join(""),
-	};
+	let input = base::input_string(matches)?;
 
 	let timestamp : i64 = input.parse().map_err(|_| "Invalid input")?;
 
@@ -65,10 +60,7 @@ fn ts2d(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 fn d2ts(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
-	let input = match matches.value_of("INPUT") {
-		Some(input) => input.to_string(),
-		None => io::stdin().lock().lines().map(|l|l.unwrap()).collect::<Vec<String>>().join(""),
-	};
+	let input = base::input_string(matches)?;
 
 	let timezone = matches.value_of("z");
 
