@@ -1,7 +1,5 @@
 use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::Command;
-use std::io;
-use std::io::BufRead;
+use crate::modules::{Command, base};
 use urlencoding;
 
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
@@ -25,10 +23,7 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 
 fn ue(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
-	let input = match matches.value_of("INPUT") {
-		Some(input) => input.to_string(),
-		None => io::stdin().lock().lines().map(|l|l.unwrap()).collect::<Vec<String>>().join(""),
-	};
+	let input = base::input_string(matches)?;
 
 	let result = urlencoding::encode(&input);
 
@@ -37,10 +32,7 @@ fn ue(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 fn ud(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
-	let input = match matches.value_of("INPUT") {
-		Some(input) => input.to_string(),
-		None => io::stdin().lock().lines().map(|l|l.unwrap()).collect::<Vec<String>>().join(""),
-	};
+	let input = base::input_string(matches)?;
 
 	let result = urlencoding::decode(&input).map_err(|_| "Decode failed")?;
 

@@ -1,6 +1,6 @@
 [package]
 name = "dtool"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["GB <guoxbin@gmail.com>"]
 description = "A collection of development tools"
 categories = ["command-line-utilities"]
@@ -21,3 +21,9 @@ bs58 = { version = "0.3.0", features = ["check"] }
 base64 = "0.11.0"
 urlencoding = "1.0.0"
 parity-codec = "3.2"
+md5 = "0.7.0"
+lazy_static = "1.4.0"
+ring = "0.16.9"
+sha2 = "0.8.0"
+sha3 = "0.8.2"
+ripemd160 = "0.8.0"

@@ -1,7 +1,5 @@
 use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::Command;
-use std::io;
-use std::io::BufRead;
+use crate::modules::{Command, base};
 use hex;
 use parity_codec::{Compact, Encode, Decode};
 
@@ -38,10 +36,7 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 
 fn ne(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
-	let input = match matches.value_of("INPUT") {
-		Some(input) => input.to_string(),
-		None => io::stdin().lock().lines().map(|l|l.unwrap()).collect::<Vec<String>>().join(""),
-	};
+	let input = base::input_string(matches)?;
 
 	let t = matches.value_of("t").ok_or("Invalid number type")?;
 
@@ -81,10 +76,7 @@ fn ne(matches: &ArgMatches) -> Result<Vec<String>, String> {
 }
 
 fn nd(matches: &ArgMatches) -> Result<Vec<String>, String> {
-	let input = match matches.value_of("INPUT") {
-		Some(input) => input.to_string(),
-		None => io::stdin().lock().lines().map(|l| l.unwrap()).collect::<Vec<String>>().join(""),
-	};
+	let input = base::input_string(matches)?;
 
 	let t = matches.value_of("t").ok_or("Invalid number type")?;
 

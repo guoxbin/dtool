@@ -1,7 +1,5 @@
 use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::Command;
-use std::io;
-use std::io::BufRead;
+use crate::modules::{Command, base};
 
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 	vec![
@@ -33,10 +31,7 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 }
 
 fn ns(matches: &ArgMatches) -> Result<Vec<String>, String> {
-	let input = match matches.value_of("INPUT") {
-		Some(input) => input.to_string(),
-		None => io::stdin().lock().lines().map(|l| l.unwrap()).collect::<Vec<String>>().join(""),
-	};
+	let input = base::input_string(matches)?;
 
 	let (radix, number) = match input {
 		_ if input.starts_with("0b") => (2, &input[2..]),

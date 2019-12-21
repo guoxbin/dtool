@@ -1,12 +1,14 @@
 use clap::{App, ArgMatches};
 use std::collections::HashMap;
 mod hex;
+mod base;
 mod time;
 mod number_system;
 mod base58;
 mod base64;
 mod url;
 mod number_codec;
+mod hash;
 
 pub struct Command<'a, 'b> {
 	pub app: App<'a, 'b>,
@@ -30,6 +32,7 @@ impl<'a, 'b> ModuleManager<'a, 'b> {
 		mm.register(base64::commands());
 		mm.register(url::commands());
 		mm.register(number_codec::commands());
+		mm.register(hash::commands());
 		mm
 	}
 

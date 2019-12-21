@@ -1,7 +1,5 @@
 use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::Command;
-use std::io;
-use std::io::BufRead;
+use crate::modules::{Command, base};
 use hex;
 
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
@@ -19,16 +17,13 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: s2h,
-		}
+		},
 	]
 }
 
 fn h2s(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
-	let input = match matches.value_of("INPUT") {
-		Some(input) => input.to_string(),
-		None => io::stdin().lock().lines().map(|l|l.unwrap()).collect::<Vec<String>>().join(""),
-	};
+	let input = base::input_string(matches)?;
 	let input = input.trim_start_matches("0x");
 
 	let result = hex::decode(input).map_err(|_| "Convert failed")?;
@@ -39,10 +34,7 @@ fn h2s(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 fn s2h(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
-	let input = match matches.value_of("INPUT") {
-		Some(input) => input.to_string(),
-		None => io::stdin().lock().lines().map(|l|l.unwrap()).collect::<Vec<String>>().join(""),
-	};
+	let input = base::input_bytes(matches)?;
 
 	let result = hex::encode(input);
 	let result = "0x".to_string() + &result;

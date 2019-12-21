@@ -1,7 +1,5 @@
 use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::Command;
-use std::io;
-use std::io::BufRead;
+use crate::modules::{Command, base};
 use hex;
 use bs58;
 
@@ -40,10 +38,7 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 
 fn h2b58(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
-	let input = match matches.value_of("INPUT") {
-		Some(input) => input.to_string(),
-		None => io::stdin().lock().lines().map(|l|l.unwrap()).collect::<Vec<String>>().join(""),
-	};
+	let input = base::input_string(matches)?;
 
 	let input = input.trim_start_matches("0x");
 
@@ -56,10 +51,7 @@ fn h2b58(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 fn h2b58c(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
-	let input = match matches.value_of("INPUT") {
-		Some(input) => input.to_string(),
-		None => io::stdin().lock().lines().map(|l|l.unwrap()).collect::<Vec<String>>().join(""),
-	};
+	let input = base::input_string(matches)?;
 
 	let input = input.trim_start_matches("0x");
 
@@ -72,10 +64,7 @@ fn h2b58c(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 fn b582h(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
-	let input = match matches.value_of("INPUT") {
-		Some(input) => input.to_string(),
-		None => io::stdin().lock().lines().map(|l|l.unwrap()).collect::<Vec<String>>().join(""),
-	};
+	let input = base::input_string(matches)?;
 
 	let input = bs58::decode(&input).into_vec().map_err(|_| "Convert failed")?;
 	let result = hex::encode(input);
@@ -86,10 +75,7 @@ fn b582h(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 fn b58c2h(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
-	let input = match matches.value_of("INPUT") {
-		Some(input) => input.to_string(),
-		None => io::stdin().lock().lines().map(|l|l.unwrap()).collect::<Vec<String>>().join(""),
-	};
+	let input = base::input_string(matches)?;
 
 	let input = bs58::decode(&input).with_check(None).into_vec().map_err(|_| "Convert failed")?;
 	let result = hex::encode(input);
