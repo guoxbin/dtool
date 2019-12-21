@@ -5,14 +5,14 @@ use hex;
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 	vec![
 		Command {
-			app: SubCommand::with_name("h2s").about("Convert hex to string").arg(
+			app: SubCommand::with_name("h2s").about("Convert hex to UTF-8 string").arg(
 				Arg::with_name("INPUT")
 					.required(false)
 					.index(1)),
 			f: h2s,
 		},
 		Command {
-			app: SubCommand::with_name("s2h").about("Convert string to hex").arg(
+			app: SubCommand::with_name("s2h").about("Convert UTF-8 string to hex").arg(
 				Arg::with_name("INPUT")
 					.required(false)
 					.index(1)),

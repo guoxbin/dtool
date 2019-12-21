@@ -14,8 +14,8 @@
 ## Usage
 | Sub command   | Description   | Examples |  Since | 
 | ------------- | :------------- | ------------ | --- |
-| h2s    | Convert hex to string       | $ dtool h2s 0x61626364 <br> abcd  | v0.1.0 |
-| s2h    | Convert string to hex       | $ dtool h2s abcd <br> 0x61626364 <br> $ cat pic.jpg &#124; dtool s2h <br> 0x61626364 | v0.1.0 |
+| h2s    | Convert hex to UTF-8 string | $ dtool h2s 0x61626364 <br> abcd  | v0.1.0 |
+| s2h    | Convert UTF-8 string to hex | $ dtool h2s abcd <br> 0x61626364 <br> $ cat pic.jpg &#x7C; dtool s2h <br> 0x61626364 | v0.1.0 |
 | ts2d   | Convert timestamp to date   | $ dtool ts2d 10000 <br> 1970-01-01 10:46:40 <br> $ dtool ts2d -z0 10000 <br> 1970-01-01 02:46:40 | v0.1.0 |
 | d2ts   | Convert date to timestamp   | $ dtool d2ts '1970-01-01 10:46:40' <br> 10000 <br> $ dtool d2ts -z0 '1970-01-01 02:46:40' <br> 10000 | v0.1.0 |
 | d2ts   | Number system               | $ dtool ns 256 <br> 256 <br> 0b100000000 <br> 0o400 <br> 0x100 <br> | v0.1.0 |
@@ -46,6 +46,8 @@
 | hash   | Convert hex to SHA-3 <br> keccak 384 | $ dtool hash -a sha3_k_384 0x616263 <br> 0xf7df1165f033337be098e7d288ad6a2f74409d7a\ <br> 60b49c36642218de161b1f99f8c681e4afaf31a3\ <br> 4db29fb763e3c28e | v0.2.0 |
 | hash   | Convert hex to SHA-3 <br> keccak 512 | $ dtool hash -a sha3_k_512 0x616263 <br> 0x18587dc2ea106b9a1563e32b3312421ca164c7f1\ <br> f07bc922a9c83d77cea3a1e5d0c6991073902537\ <br> 2dc14ac9642629379540c17e2a65b19d77aa511a\ <br> 9d00bb96 | v0.2.0 |
 | hash   | Convert hex to RIPEMD-160   | $ dtool hash -a ripemd_160 0x616263 <br> 0x8eb208f7e05d987a9b044a8e98c6b087f15a0bfc | v0.2.0 |
+| h2u    | Convert unicode to hex      | $ dtool s2h 💯 &#x7C; dtool h2u <br> \u1f4af <br> $ dtool s2h 💯 &#x7C; dtool h2u -f html <br> \&#x1f4af; <br> $ dtool s2h 💯 &#x7C; dtool h2u -f html_d <br> \&#128175; <br> $ dtool s2h 💯 &#x7C; dtool h2u -f rust <br> \u{1f4af} | v0.3.0 |
+| u2h    | Convert unicode to hex      | $ dtool u2h '\u1f4af' &#x7C; dtool s2h <br> 💯 <br> $ dtool u2h '\&#x1f4af;' &#x7C; dtool s2h <br> 💯 <br> $ dtool u2h '\&#128175;' &#x7C; dtool s2h <br> 💯 <br> $ dtool u2h '\u{1f4af}' &#x7C; dtool s2h <br> 💯 | v0.3.0 |
 
 ## Tips
 
