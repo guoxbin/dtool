@@ -18,13 +18,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.index(1)),
 			f: s2h,
 		},
-		Command {
-			app: SubCommand::with_name("b2h").about("Convert binary to hex").arg(
-				Arg::with_name("INPUT")
-					.required(false)
-					.index(1)),
-			f: b2h,
-		}
 	]
 }
 
@@ -40,16 +33,6 @@ fn h2s(matches: &ArgMatches) -> Result<Vec<String>, String> {
 }
 
 fn s2h(matches: &ArgMatches) -> Result<Vec<String>, String> {
-
-	let input = base::input_string(matches)?;
-
-	let result = hex::encode(input);
-	let result = "0x".to_string() + &result;
-
-	Ok(vec![result])
-}
-
-fn b2h(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	let input = base::input_bytes(matches)?;
 

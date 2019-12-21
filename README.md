@@ -8,8 +8,7 @@
 | Sub command   | Description   | Examples |  Since | 
 | ------------- | :------------- | ------------ | --- |
 | h2s    | Convert hex to string       | $ dtool h2s 0x61626364 <br> abcd  | v0.1.0 |
-| s2h    | Convert string to hex       | $ dtool h2s abcd <br> 0x61626364 | v0.1.0 |
-| b2h    | Convert binary to hex       | $ cat pic.jpg &#124; dtool b2h <br> 0x61626364 | v0.2.0 |
+| s2h    | Convert string to hex       | $ dtool h2s abcd <br> 0x61626364 <br> $ cat pic.jpg &#124; dtool s2h <br> 0x61626364 | v0.1.0 |
 | ts2d   | Convert timestamp to date   | $ dtool ts2d 10000 <br> 1970-01-01 10:46:40 <br> $ dtool ts2d -z0 10000 <br> 1970-01-01 02:46:40 | v0.1.0 |
 | d2ts   | Convert date to timestamp   | $ dtool d2ts '1970-01-01 10:46:40' <br> 10000 <br> $ dtool d2ts -z0 '1970-01-01 02:46:40' <br> 10000 | v0.1.0 |
 | d2ts   | Number system               | $ dtool ns 256 <br> 256 <br> 0b100000000 <br> 0o400 <br> 0x100 <br> | v0.1.0 |
@@ -44,21 +43,27 @@
 ## Tips
 
 ### pipe 
-you can convert a string to base64
+convert a string to base64
 ```
 $ echo -n abc | dtool s2h | dtool h2b64
 YWJj
 ```
 
-you can convert a encoded timestamp to date
+convert a encoded timestamp to date
 ```
 $ echo -n 2c28e75d | dtool nd -tu32 | dtool ts2d
 2019-12-04 11:29:48
 ```
 
-you can convert a jpeg to base64
+convert a jpeg to base64
 ```
-$ cat pic.jpg | dtool b2h | dtool h2b64
+$ cat pic.jpg | dtool s2h | dtool h2b64
+/9j/4AAQSkZJR...
+```
+
+calculate file md5
+```
+$ cat pic.jpg | dtool hash -a md5
 /9j/4AAQSkZJR...
 ```
 
