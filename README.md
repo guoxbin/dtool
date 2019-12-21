@@ -46,8 +46,8 @@
 | hash   | Convert hex to SHA-3 <br> keccak 384 | $ dtool hash -a sha3_k_384 0x616263 <br> 0xf7df1165f033337be098e7d288ad6a2f74409d7a\ <br> 60b49c36642218de161b1f99f8c681e4afaf31a3\ <br> 4db29fb763e3c28e | v0.2.0 |
 | hash   | Convert hex to SHA-3 <br> keccak 512 | $ dtool hash -a sha3_k_512 0x616263 <br> 0x18587dc2ea106b9a1563e32b3312421ca164c7f1\ <br> f07bc922a9c83d77cea3a1e5d0c6991073902537\ <br> 2dc14ac9642629379540c17e2a65b19d77aa511a\ <br> 9d00bb96 | v0.2.0 |
 | hash   | Convert hex to RIPEMD-160   | $ dtool hash -a ripemd_160 0x616263 <br> 0x8eb208f7e05d987a9b044a8e98c6b087f15a0bfc | v0.2.0 |
-| h2u    | Convert unicode to hex      | $ dtool s2h 💯 &#x7C; dtool h2u <br> \u1f4af <br> $ dtool s2h 💯 &#x7C; dtool h2u -f html <br> \&#x1f4af; <br> $ dtool s2h 💯 &#x7C; dtool h2u -f html_d <br> \&#128175; <br> $ dtool s2h 💯 &#x7C; dtool h2u -f rust <br> \u{1f4af} | v0.3.0 |
-| u2h    | Convert unicode to hex      | $ dtool u2h '\u1f4af' &#x7C; dtool s2h <br> 💯 <br> $ dtool u2h '\&#x1f4af;' &#x7C; dtool s2h <br> 💯 <br> $ dtool u2h '\&#128175;' &#x7C; dtool s2h <br> 💯 <br> $ dtool u2h '\u{1f4af}' &#x7C; dtool s2h <br> 💯 | v0.3.0 |
+| s2u    | Convert UTF-8 String to <br> unicode | $ dtool s2u 💯 <br> \u1f4af <br> $ dtool s2u 💯 -f html <br> \&#x1f4af; <br> $ dtool s2u 💯 -f html_d <br> \&#128175; <br> $ dtool s2u 💯 -f rust <br> \u{1f4af} | v0.3.0 |
+| u2s    | Convert unicode to <br> UTF-8 string | $ dtool u2s '\u1f4af'  <br> 💯 <br> $ dtool u2s '\&#x1f4af;'  <br> 💯 <br> $ dtool u2s '\&#128175;'  <br> 💯 <br> $ dtool u2s '\u{1f4af}'  <br> 💯 | v0.3.0 |
 
 ## Tips
 

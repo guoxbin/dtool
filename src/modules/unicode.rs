@@ -11,7 +11,7 @@ rust: \\u{7c}";
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 	vec![
 		Command {
-			app: SubCommand::with_name("h2u").about("Hex to unicode")
+			app: SubCommand::with_name("s2u").about("UTF-8 string to unicode")
 				.arg(
 					Arg::with_name("f")
 						.short("f").help(FORMAT_HELP)
@@ -21,27 +21,21 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					Arg::with_name("INPUT")
 						.required(false)
 						.index(1)),
-			f: h2u,
+			f: s2u,
 		},
 		Command {
-			app: SubCommand::with_name("u2h").about("Unicode to hex")
+			app: SubCommand::with_name("u2s").about("Unicode to UTF-8 string")
 				.arg(
 					Arg::with_name("INPUT")
 						.required(false)
 						.index(1)),
-			f: u2h,
+			f: u2s,
 		},
 	]
 }
 
-fn h2u(matches: &ArgMatches) -> Result<Vec<String>, String> {
+fn s2u(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	let input = base::input_string(matches)?;
-
-	let input = input.trim_start_matches("0x");
-
-	let input = hex::decode(input).map_err(|_| "Convert failed")?;
-
-	let input = String::from_utf8(input).map_err(|_| "Convert failed")?;
 
 	let format = match matches.value_of("f") {
 		Some("html") => format_html,
@@ -57,7 +51,7 @@ fn h2u(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	Ok(vec![result])
 }
 
-fn u2h(matches: &ArgMatches) -> Result<Vec<String>, String> {
+fn u2s(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	let input = base::input_string(matches)?;
 
 	let format = match input {
@@ -85,9 +79,6 @@ fn u2h(matches: &ArgMatches) -> Result<Vec<String>, String> {
 				.filter_map(from_default).collect::<Result<String, String>>()
 		}
 	}?;
-
-	let result = hex::encode(result);
-	let result = "0x".to_string() + &result;
 
 	Ok(vec![result])
 }
@@ -174,17 +165,17 @@ mod tests {
 	fn test_h2u() {
 		let app = &commands()[0].app;
 
-		let matches = app.clone().get_matches_from(vec!["h2u", "0x616263"]);
-		assert_eq!(h2u(&matches), Ok(vec!["\\u61\\u62\\u63".to_string()]));
+		let matches = app.clone().get_matches_from(vec!["h2u", "abc"]);
+		assert_eq!(s2u(&matches), Ok(vec!["\\u61\\u62\\u63".to_string()]));
 
-		let matches = app.clone().get_matches_from(vec!["h2u", "-f", "html", "0x616263"]);
-		assert_eq!(h2u(&matches), Ok(vec!["&#x61;&#x62;&#x63;".to_string()]));
+		let matches = app.clone().get_matches_from(vec!["h2u", "-f", "html", "abc"]);
+		assert_eq!(s2u(&matches), Ok(vec!["&#x61;&#x62;&#x63;".to_string()]));
 
-		let matches = app.clone().get_matches_from(vec!["h2u", "-f", "html_d", "0x616263"]);
-		assert_eq!(h2u(&matches), Ok(vec!["&#97;&#98;&#99;".to_string()]));
+		let matches = app.clone().get_matches_from(vec!["h2u", "-f", "html_d", "abc"]);
+		assert_eq!(s2u(&matches), Ok(vec!["&#97;&#98;&#99;".to_string()]));
 
-		let matches = app.clone().get_matches_from(vec!["h2u", "-f", "rust", "0x616263"]);
-		assert_eq!(h2u(&matches), Ok(vec!["\\u{61}\\u{62}\\u{63}".to_string()]));
+		let matches = app.clone().get_matches_from(vec!["h2u", "-f", "rust", "abc"]);
+		assert_eq!(s2u(&matches), Ok(vec!["\\u{61}\\u{62}\\u{63}".to_string()]));
 	}
 
 	#[test]
@@ -192,15 +183,15 @@ mod tests {
 		let app = &commands()[0].app;
 
 		let matches = app.clone().get_matches_from(vec!["h2u", "\\u61\\u62\\u63"]);
-		assert_eq!(u2h(&matches), Ok(vec!["0x616263".to_string()]));
+		assert_eq!(u2s(&matches), Ok(vec!["abc".to_string()]));
 
 		let matches = app.clone().get_matches_from(vec!["h2u", "&#x61;&#x62;&#x63;"]);
-		assert_eq!(u2h(&matches), Ok(vec!["0x616263".to_string()]));
+		assert_eq!(u2s(&matches), Ok(vec!["abc".to_string()]));
 
 		let matches = app.clone().get_matches_from(vec!["h2u", "&#97;&#98;&#99;"]);
-		assert_eq!(u2h(&matches), Ok(vec!["0x616263".to_string()]));
+		assert_eq!(u2s(&matches), Ok(vec!["abc".to_string()]));
 
 		let matches = app.clone().get_matches_from(vec!["h2u", "\\u{61}\\u{62}\\u{63}"]);
-		assert_eq!(u2h(&matches), Ok(vec!["0x616263".to_string()]));
+		assert_eq!(u2s(&matches), Ok(vec!["abc".to_string()]));
 	}
 }
