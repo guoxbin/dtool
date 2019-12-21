@@ -5,6 +5,13 @@
 
 `dtool` is a collection of development tools:
 
+## Table of Contents
+
+- [Usage](#usage)
+- [Tips](#tips)
+- [Installation](#installation)
+
+## Usage
 | Sub command   | Description   | Examples |  Since | 
 | ------------- | :------------- | ------------ | --- |
 | h2s    | Convert hex to string       | $ dtool h2s 0x61626364 <br> abcd  | v0.1.0 |
