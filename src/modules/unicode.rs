@@ -11,7 +11,7 @@ rust: \\u{7c}";
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 	vec![
 		Command {
-			app: SubCommand::with_name("h2u").about("")
+			app: SubCommand::with_name("h2u").about("Hex to unicode")
 				.arg(
 					Arg::with_name("f")
 						.short("f").help(FORMAT_HELP)
@@ -24,7 +24,7 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 			f: h2u,
 		},
 		Command {
-			app: SubCommand::with_name("u2h").about("")
+			app: SubCommand::with_name("u2h").about("Unicode to hex")
 				.arg(
 					Arg::with_name("INPUT")
 						.required(false)
