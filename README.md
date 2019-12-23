@@ -68,13 +68,13 @@ $ echo -n 2c28e75d | dtool nd -tu32 | dtool ts2d
 
 convert a jpeg to base64
 ```
-$ cat pic.jpg | dtool s2h | dtool h2b64
+$ cat pic.jpg | dtool b2h | dtool h2b64
 /9j/4AAQSkZJR...
 ```
 
 calculate file md5
 ```
-$ cat pic.jpg | dtool s2h | dtool hash -a md5
+$ cat pic.jpg | dtool b2h | dtool hash -a md5
 0x1884b72e23b0c93320bac6b050478ff4
 ```
 
