@@ -19,8 +19,8 @@
 | h2b    | Convert hex to binary       | $ dtool h2b 0x61626364 > pic.jpg | v0.3.0 |
 | b2h    | Convert binary to hex       | $ cat pic.jpg &#x7C; dtool b2h <br> 0x61626364 | v0.3.0 |
 | ts2d   | Convert timestamp to date   | $ dtool ts2d 10000 <br> 1970-01-01 10:46:40 <br> $ dtool ts2d -z0 10000 <br> 1970-01-01 02:46:40 | v0.1.0 |
-| d2ts   | Convert date to timestamp   | $ dtool d2ts '1970-01-01 10:46:40' <br> 10000 <br> $ dtool d2ts -z0 '1970-01-01 02:46:40' <br> 10000 | v0.1.0 |
-| d2ts   | Number system               | $ dtool ns 256 <br> 256 <br> 0b100000000 <br> 0o400 <br> 0x100 <br> | v0.1.0 |
+| d2ts   | Convert date to timestamp   | $ dtool d2ts '1970-01-01 10:46:40' <br> 10000 <br> $ dtool d2ts -z0 '1970-01-01 02:46:40' <br> 10000 <br> $ date -R &#x7C; dtool d2ts <br> 1577094086 <br> $ date --rfc-3339=seconds &#x7C; sed 's/ /T/' &#x7C; dtool d2ts <br> 1577094086 | v0.1.0 |
+| ns     | Number system               | $ dtool ns 256 <br> 256 <br> 0b100000000 <br> 0o400 <br> 0x100 <br> | v0.1.0 |
 | h2b58  | Convert hex to base58       | $ dtool h2b58 0x0075774f5d9963c021009a58d7d2d8e83771dd6c7a <br> 12dvBhvPEPniQmBmgvj4qpJEodT7P | v0.1.0 |
 | h2b58c | Convert hex to base58 check | $ dtool h2b58c 0x0075774f5d9963c021009a58d7d2d8e83771dd6c7a <br> 1Bi6zFVNtntP5MtDraNrAD7e469ifsQMwF | v0.1.0 |
 | b582h  | Convert base58 to hex       | $ dtool b582h 12dvBhvPEPniQmBmgvj4qpJEodT7P <br> 0x0075774f5d9963c021009a58d7d2d8e83771dd6c7a | v0.1.0 |
