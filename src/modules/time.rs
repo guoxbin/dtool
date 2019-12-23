@@ -1,7 +1,12 @@
 use clap::{SubCommand, Arg, ArgMatches};
 use crate::modules::{Command, base};
-use chrono::{NaiveDateTime, Local, FixedOffset};
+use chrono::{NaiveDateTime, Local, FixedOffset, DateTime};
 use chrono::offset::TimeZone;
+
+enum Time{
+	FixedOffset(DateTime<FixedOffset>),
+	Local(DateTime<Local>),
+}
 
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 	vec![
@@ -64,6 +69,22 @@ fn d2ts(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	let timezone = matches.value_of("z");
 
+	let result = parse_standard(&input, timezone)
+		.or_else(|_| parse_rfc2822(&input))
+		.or_else(|_| parse_rfc3339(&input))?;
+
+	let result = match result{
+		Time::FixedOffset(time) => time.timestamp(),
+		Time::Local(time) => time.timestamp(),
+	};
+
+	let result = format!("{}", result);
+
+	Ok(vec![result])
+}
+
+fn parse_standard(input: &str, timezone: Option<&str>) -> Result<Time, String> {
+
 	let time = NaiveDateTime::parse_from_str(&input, "%Y-%m-%d %H:%M:%S").map_err(|_| "Invalid input")?;
 
 	let result = match timezone {
@@ -72,18 +93,24 @@ fn d2ts(matches: &ArgMatches) -> Result<Vec<String>, String> {
 			if timezone > 12 || timezone < -12 {
 				return Err("Invalid timezone".to_string())
 			}
-			let time = FixedOffset::east(timezone * 3600).from_local_datetime(&time).unwrap();
-			time.timestamp()
+			Time::FixedOffset(FixedOffset::east(timezone * 3600).from_local_datetime(&time).unwrap())
 		},
 		None => {
-			let time = Local.from_local_datetime(&time).unwrap();
-			time.timestamp()
+			Time::Local(Local.from_local_datetime(&time).unwrap())
 		}
 	};
 
-	let result = format!("{}", result);
+	Ok(result)
+}
 
-	Ok(vec![result])
+fn parse_rfc2822(input: &str) -> Result<Time, String> {
+
+	DateTime::parse_from_rfc2822(input).map(Time::FixedOffset).map_err(|_| "Invalid input".to_string())
+}
+
+fn parse_rfc3339(input: &str) -> Result<Time, String> {
+
+	DateTime::parse_from_rfc3339(input).map(Time::FixedOffset).map_err(|_| "Invalid input".to_string())
 }
 
 #[cfg(test)]
@@ -112,6 +139,12 @@ mod tests {
 
 		let matches = app.clone().get_matches_from(vec!["d2ts", "-z8", "1970-01-01 10:46:40"]);
 		assert_eq!(d2ts(&matches) , Ok(vec!["10000".to_string()]));
+
+		let matches = app.clone().get_matches_from(vec!["d2ts", "Mon, 23 Dec 2019 17:41:26 +0800"]);
+		assert_eq!(d2ts(&matches) , Ok(vec!["1577094086".to_string()]));
+
+		let matches = app.clone().get_matches_from(vec!["d2ts", "2019-12-23T17:48:54+08:00"]);
+		assert_eq!(d2ts(&matches) , Ok(vec!["1577094534".to_string()]));
 
 	}
 
