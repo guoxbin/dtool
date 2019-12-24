@@ -50,6 +50,8 @@
 | hash   | Convert hex to RIPEMD-160   | $ dtool hash -a ripemd_160 0x616263 <br> 0x8eb208f7e05d987a9b044a8e98c6b087f15a0bfc | v0.2.0 |
 | s2u    | Convert UTF-8 String to <br> unicode | $ dtool s2u 💯 <br> \u1f4af <br> $ dtool s2u 💯 -f html <br> \&#x1f4af; <br> $ dtool s2u 💯 -f html_d <br> \&#128175; <br> $ dtool s2u 💯 -f rust <br> \u{1f4af} | v0.3.0 |
 | u2s    | Convert unicode to <br> UTF-8 string | $ dtool u2s '\u1f4af'  <br> 💯 <br> $ dtool u2s '\&#x1f4af;'  <br> 💯 <br> $ dtool u2s '\&#128175;'  <br> 💯 <br> $ dtool u2s '\u{1f4af}'  <br> 💯 | v0.3.0 |
+| he     | HTML entity encode          | $ dtool he &lt;b&gt; <br> &amp;lt;b&amp;gt; | v0.4.0 |
+| hd     | HTML entity decode          | $ dtool hd &amp;lt;b&amp;gt; <br> &lt;b&gt; | v0.4.0 |
 
 ## Tips
 

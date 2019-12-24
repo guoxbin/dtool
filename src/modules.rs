@@ -10,6 +10,7 @@ mod url;
 mod number_codec;
 mod hash;
 mod unicode;
+mod html;
 
 pub struct Command<'a, 'b> {
 	pub app: App<'a, 'b>,
@@ -35,6 +36,7 @@ impl<'a, 'b> ModuleManager<'a, 'b> {
 		mm.register(number_codec::commands());
 		mm.register(hash::commands());
 		mm.register(unicode::commands());
+		mm.register(html::commands());
 		mm
 	}
 
