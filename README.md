@@ -52,6 +52,7 @@
 | u2s    | Convert unicode to <br> UTF-8 string | $ dtool u2s '\u1f4af'  <br> 💯 <br> $ dtool u2s '\&#x1f4af;'  <br> 💯 <br> $ dtool u2s '\&#128175;'  <br> 💯 <br> $ dtool u2s '\u{1f4af}'  <br> 💯 | v0.3.0 |
 | he     | HTML entity encode          | $ dtool he &lt;b&gt; <br> &amp;lt;b&amp;gt; | v0.4.0 |
 | hd     | HTML entity decode          | $ dtool hd &amp;lt;b&amp;gt; <br> &lt;b&gt; | v0.4.0 |
+| re     | Regex match                 | $ echo -e 'abcadc' &#x7C; cargo run -- re -p 'a(.)c' <br> abc <br> &nbsp;&nbsp;&nbsp;&nbsp; group#1: b <br> adc <br> &nbsp;&nbsp;&nbsp;&nbsp; group#1: d | v0.4.0 |
 
 ## Tips
 
