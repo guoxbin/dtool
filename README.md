@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/guoxbin/dtool.svg?branch=master)](https://travis-ci.org/guoxbin/dtool)
 [![Crates.io](https://img.shields.io/crates/v/dtool)](https://crates.io/crates/dtool)
 
-`dtool` is a collection of development tools:
+`dtool` is a command line tool collection to assist development
 
 ## Table of Contents
 
