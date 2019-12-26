@@ -5,7 +5,7 @@ use std::io::{BufRead, Read};
 pub fn input_string(matches: &ArgMatches) -> Result<String, String> {
 	match matches.value_of("INPUT") {
 		Some(input) => Ok(input.to_string()),
-		None => io::stdin().lock().lines().collect::<Result<Vec<String>, io::Error>>().map(|x|x.join("")).map_err(|_| "Invalid input".to_string()),
+		None => io::stdin().lock().lines().collect::<Result<Vec<String>, io::Error>>().map(|x|x.join("\n")).map_err(|_| "Invalid input".to_string()),
 	}
 }
 
