@@ -1,5 +1,5 @@
 use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::{Command, base};
+use crate::modules::{Command, base, Case};
 use hex;
 use std::io;
 use std::io::Write;
@@ -12,6 +12,14 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: h2s,
+			cases: vec![
+				Case {
+					input: vec!["0x61626364"].into_iter().map(Into::into).collect(),
+					output: vec!["abcd"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+				},
+			],
 		},
 		Command {
 			app: SubCommand::with_name("s2h").about("Convert UTF-8 string to hex").arg(
@@ -19,6 +27,14 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: s2h,
+			cases: vec![
+				Case {
+					input: vec!["abcd"].into_iter().map(Into::into).collect(),
+					output: vec!["0x61626364"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+				},
+			],
 		},
 		Command {
 			app: SubCommand::with_name("h2b").about("Convert hex to binary").arg(
@@ -26,6 +42,14 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: h2b,
+			cases: vec![
+				Case {
+					input: vec!["0x61626364"].into_iter().map(Into::into).collect(),
+					output: vec!["abcd"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: false,
+				},
+			],
 		},
 		Command {
 			app: SubCommand::with_name("b2h").about("Convert binary to hex").arg(
@@ -33,6 +57,14 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: b2h,
+			cases: vec![
+				Case {
+					input: vec!["abcd"].into_iter().map(Into::into).collect(),
+					output: vec!["0x61626364"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+				},
+			],
 		},
 	]
 }
@@ -91,35 +123,11 @@ fn b2h(matches: &ArgMatches) -> Result<Vec<String>, String> {
 mod tests {
 
 	use super::*;
+	use crate::modules::base::test::test_commands;
 
 	#[test]
-	fn test_h2s() {
-		let app =  &commands()[0].app;
-
-		let matches = app.clone().get_matches_from(vec!["h2s", "0x61626364"]);
-		assert_eq!(h2s(&matches) , Ok(vec!["abcd".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["h2s", "0x21"]);
-		assert_eq!(h2s(&matches) , Ok(vec!["!".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["h2s", "0x6162636465666768696a6b6c6d6e6f707172737475767778797a6162636465666768696a6b6c6d6e6f707172737475767778797a"]);
-		assert_eq!(h2s(&matches) , Ok(vec!["abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz".to_string()]));
-
-	}
-
-	#[test]
-	fn test_s2h() {
-		let app =  &commands()[1].app;
-
-		let matches = app.clone().get_matches_from(vec!["s2h", "abcd"]);
-		assert_eq!(s2h(&matches) , Ok(vec!["0x61626364".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["s2h", "!"]);
-		assert_eq!(s2h(&matches) , Ok(vec!["0x21".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["s2h", "abcdefg"]);
-		assert_eq!(s2h(&matches) , Ok(vec!["0x61626364656667".to_string()]));
-
+	fn test_cases() {
+		test_commands(&commands());
 	}
 
 	#[test]
@@ -128,15 +136,6 @@ mod tests {
 
 		let matches = app.clone().get_matches_from(vec!["h2b", "0x61626364"]);
 		assert_eq!(h2b_inner(&matches) , Ok(vec![0x61, 0x62, 0x63, 0x64]));
-
-	}
-
-	#[test]
-	fn test_b2h() {
-		let app =  &commands()[1].app;
-
-		let matches = app.clone().get_matches_from(vec!["b2h", "abcd"]);
-		assert_eq!(s2h(&matches) , Ok(vec!["0x61626364".to_string()]));
 
 	}
 

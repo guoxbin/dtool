@@ -16,6 +16,14 @@ mod re;
 pub struct Command<'a, 'b> {
 	pub app: App<'a, 'b>,
 	pub f: fn(&ArgMatches<'a>) -> Result<Vec<String>, String>,
+	pub cases: Vec<Case>,
+}
+
+pub struct Case {
+	pub input: Vec<String>,
+	pub output: Vec<String>,
+	pub is_example: bool,
+	pub is_test: bool,
 }
 
 pub struct ModuleManager<'a, 'b>{
