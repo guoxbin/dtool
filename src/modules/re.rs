@@ -7,8 +7,9 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 		Command {
 			app: SubCommand::with_name("re").about("Regex match")
 				.arg(
-					Arg::with_name("p")
-						.short("p").help("Pattern")
+					Arg::with_name("PATTERN")
+						.long("pattern")
+						.short("p").help("Regex pattern")
 						.takes_value(true)
 						.required(true))
 				.arg(

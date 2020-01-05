@@ -2,7 +2,7 @@ use clap::{SubCommand, Arg, ArgMatches};
 use crate::modules::{Command, base};
 use std::char::EscapeUnicode;
 
-static FORMAT_HELP: &str = "Format:
+static FORMAT_HELP: &str = "Format
 <default>: \\u7c
 html: &#x7c;
 html_d: &#124;
@@ -13,7 +13,8 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 		Command {
 			app: SubCommand::with_name("s2u").about("UTF-8 string to unicode")
 				.arg(
-					Arg::with_name("f")
+					Arg::with_name("FORMAT")
+						.long("format")
 						.short("f").help(FORMAT_HELP)
 						.takes_value(true)
 						.required(false))

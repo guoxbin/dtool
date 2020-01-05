@@ -6,19 +6,23 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 		Command {
 			app: SubCommand::with_name("ns").about("Number system")
 				.arg(
-					Arg::with_name("d")
+					Arg::with_name("DECIMAL")
+						.long("decimal")
 						.short("d").help("Output decimal result")
 						.required(false))
 				.arg(
-					Arg::with_name("b")
+					Arg::with_name("BINARY")
+						.long("binary")
 						.short("b").help("Output binary result")
 						.required(false))
 				.arg(
-					Arg::with_name("o")
+					Arg::with_name("OCTAL")
+						.long("octal")
 						.short("o").help("Output octal result")
 						.required(false))
 				.arg(
-					Arg::with_name("x")
+					Arg::with_name("HEXADECIMAL")
+						.long("hexadecimal")
 						.short("x").help("Output hexadecimal result")
 						.required(false))
 				.arg(

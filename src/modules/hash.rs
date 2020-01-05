@@ -114,7 +114,8 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 		Command {
 			app: SubCommand::with_name("hash").about("Hex to hash")
 				.arg(
-					Arg::with_name("a")
+					Arg::with_name("ALGORITHM")
+						.long("algo")
 						.short("a").help(&ALGORITHM_HELP)
 						.takes_value(true)
 						.required(true))

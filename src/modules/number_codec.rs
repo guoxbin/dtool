@@ -8,8 +8,10 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 		Command {
 			app: SubCommand::with_name("ne").about("Number encode")
 				.arg(
-				Arg::with_name("t")
-					.short("t").help("Number type: u8, u16, u32, u64, u128, c(Compact)")
+				Arg::with_name("TYPE")
+					.long("type")
+					.short("t")
+					.help("Number type: u8, u16, u32, u64, u128, c(Compact)")
 					.takes_value(true)
 					.required(true))
 				.arg(
@@ -21,7 +23,8 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 		Command {
 			app: SubCommand::with_name("nd").about("Number decode")
 				.arg(
-					Arg::with_name("t")
+					Arg::with_name("TYPE")
+						.long("type")
 						.short("t").help("Number type: u8, u16, u32, u64, u128, c(Compact)")
 						.takes_value(true)
 						.required(true))

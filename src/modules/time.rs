@@ -13,8 +13,9 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 		Command {
 			app: SubCommand::with_name("ts2d").about("Convert timestamp to date")
 				.arg(
-					Arg::with_name("z")
-						.short("z").help("Time zone: 8(CN), 0(UK), etc")
+					Arg::with_name("TIMEZONE")
+						.long("timezone")
+						.short("z").help("Time zone\n8: CN\n0: UK\netc")
 						.takes_value(true)
 						.required(false))
 				.arg(
@@ -26,8 +27,9 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 		Command {
 			app: SubCommand::with_name("d2ts").about("Convert date to timestamp")
 				.arg(
-					Arg::with_name("z")
-						.short("z").help("Time zone: 8(CN), 0(UK), etc")
+					Arg::with_name("TIMEZONE")
+						.long("timezone")
+						.short("z").help("Time zone\n8: CN\n0: UK\netc")
 						.takes_value(true)
 						.required(false))
 				.arg(
