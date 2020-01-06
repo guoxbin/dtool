@@ -124,6 +124,6 @@ fn add_enter(data: String, len: usize) -> String {
 		v.push(chunk);
 		cur = rest;
 	}
-	v.join("\\\n")
+	v.join("\\ \n")
 
 }
