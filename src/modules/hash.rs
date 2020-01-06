@@ -6,11 +6,17 @@ use std::collections::HashMap;
 use ring::digest::{Context, SHA1_FOR_LEGACY_USE_ONLY};
 use sha2::{Digest, Sha224, Sha256, Sha384, Sha512, Sha512Trunc224, Sha512Trunc256};
 use crc::crc32;
+use crypto::blake2b::Blake2b;
 
 struct Algorithm{
 	name: &'static str,
 	help: &'static str,
-	f: fn(data: Vec<u8>) -> Result<Vec<u8>, String>,
+	f: AlgorithmF,
+}
+
+enum AlgorithmF {
+	Normal(fn(data: Vec<u8>) -> Result<Vec<u8>, String>),
+	WithKey(fn(data: Vec<u8>, key: Vec<u8>) -> Result<Vec<u8>, String>),
 }
 
 lazy_static!{
@@ -18,93 +24,113 @@ lazy_static!{
 		Algorithm {
 			name : "md5",
 			help : "MD5",
-			f: md5,
+			f: AlgorithmF::Normal(md5),
 		},
 		Algorithm {
 			name : "sha1",
 			help : "SHA-1",
-			f: sha1,
+			f: AlgorithmF::Normal(sha1),
 		},
 		Algorithm {
 			name : "sha2_224",
 			help : "SHA-2 224",
-			f: sha2_224,
+			f: AlgorithmF::Normal(sha2_224),
 		},
 		Algorithm {
 			name : "sha2_256",
 			help : "SHA-2 256",
-			f: sha2_256,
+			f: AlgorithmF::Normal(sha2_256),
 		},
 		Algorithm {
 			name : "sha2_384",
 			help : "SHA-2 384",
-			f: sha2_384,
+			f: AlgorithmF::Normal(sha2_384),
 		},
 		Algorithm {
 			name : "sha2_512",
 			help : "SHA-2 512",
-			f: sha2_512,
+			f: AlgorithmF::Normal(sha2_512),
 		},
 		Algorithm {
 			name : "sha2_512_224",
 			help : "SHA-2 512 truncate 224",
-			f: sha2_512_224,
+			f: AlgorithmF::Normal(sha2_512_224),
 		},
 		Algorithm {
 			name : "sha2_512_256",
 			help : "SHA-2 512 truncate 256",
-			f: sha2_512_256,
+			f: AlgorithmF::Normal(sha2_512_256),
 		},
 		Algorithm {
 			name : "sha3_224",
 			help : "SHA-3 224",
-			f: sha3_224,
+			f: AlgorithmF::Normal(sha3_224),
 		},
 		Algorithm {
 			name : "sha3_256",
 			help : "SHA-3 256",
-			f: sha3_256,
+			f: AlgorithmF::Normal(sha3_256),
 		},
 		Algorithm {
 			name : "sha3_384",
 			help : "SHA-3 384",
-			f: sha3_384,
+			f: AlgorithmF::Normal(sha3_384),
 		},
 		Algorithm {
 			name : "sha3_512",
 			help : "SHA-3 512",
-			f: sha3_512,
+			f: AlgorithmF::Normal(sha3_512),
 		},
 		Algorithm {
 			name : "sha3_k_224",
 			help : "SHA-3 keccak 224",
-			f: sha3_k_224,
+			f: AlgorithmF::Normal(sha3_k_224),
 		},
 		Algorithm {
 			name : "sha3_k_256",
 			help : "SHA-3 keccak 256",
-			f: sha3_k_256,
+			f: AlgorithmF::Normal(sha3_k_256),
 		},
 		Algorithm {
 			name : "sha3_k_384",
 			help : "SHA-3 keccak 384",
-			f: sha3_k_384,
+			f: AlgorithmF::Normal(sha3_k_384),
 		},
 		Algorithm {
 			name : "sha3_k_512",
 			help : "SHA-3 keccak 512",
-			f: sha3_k_512,
+			f: AlgorithmF::Normal(sha3_k_512),
 		},
 		Algorithm {
 			name : "ripemd_160",
 			help : "RIPEMD-160",
-			f: ripemd_160,
+			f: AlgorithmF::Normal(ripemd_160),
 		},
 		Algorithm {
 			name : "crc_32",
 			help : "CRC32",
-			f: crc_32,
-		}
+			f: AlgorithmF::Normal(crc_32),
+		},
+		Algorithm {
+			name : "blake2b_160",
+			help : "Blake2b 160",
+			f: AlgorithmF::WithKey(blake2b_160),
+		},
+		Algorithm {
+			name : "blake2b_256",
+			help : "Blake2b 256",
+			f: AlgorithmF::WithKey(blake2b_256),
+		},
+		Algorithm {
+			name : "blake2b_384",
+			help : "Blake2b 384",
+			f: AlgorithmF::WithKey(blake2b_384),
+		},
+		Algorithm {
+			name : "blake2b_512",
+			help : "Blake2b 512",
+			f: AlgorithmF::WithKey(blake2b_512),
+		},
 	];
 
 	static ref ALGORITHMS : HashMap<&'static str, &'static Algorithm> = RAW_ALGORITHMS.iter().map(|x|(x.name, x)).collect();
@@ -125,6 +151,12 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.short("a").help(&ALGORITHM_HELP)
 						.takes_value(true)
 						.required(true))
+				.arg(
+					Arg::with_name("KEY")
+						.long("key")
+						.short("k").help("Key for Blake2b")
+						.takes_value(true)
+						.required(false))
 				.arg(
 					Arg::with_name("INPUT")
 						.required(false)
@@ -275,6 +307,70 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					is_test: true,
 					since: "0.5.0".to_string(),
 				},
+				Case {
+					desc: "Blake2b 160".to_string(),
+					input: vec!["-a", "blake2b_160", "0x616263"].into_iter().map(Into::into).collect(),
+					output: vec!["0x384264f676f39536840523f284921cdc68b6846b"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.5.0".to_string(),
+				},
+				Case {
+					desc: "Blake2b 160".to_string(),
+					input: vec!["-a", "blake2b_160", "-k", "0x646566", "0x616263"].into_iter().map(Into::into).collect(),
+					output: vec!["0x6f558b35e06631b03446e7ab87802058d7cd265c"].into_iter().map(Into::into).collect(),
+					is_example: false,
+					is_test: true,
+					since: "0.5.0".to_string(),
+				},
+				Case {
+					desc: "Blake2b 256".to_string(),
+					input: vec!["-a", "blake2b_256", "0x616263"].into_iter().map(Into::into).collect(),
+					output: vec!["0xbddd813c634239723171ef3fee98579b94964e3bb1cb3e427262c8c068d52319"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.5.0".to_string(),
+				},
+				Case {
+					desc: "Blake2b 256".to_string(),
+					input: vec!["-a", "blake2b_256", "-k", "0x646566", "0x616263"].into_iter().map(Into::into).collect(),
+					output: vec!["0xc3e58ca5dfa559fe4809eeb2f19ee8694a311c5b98f0ebfc241ea2bbbe577d75"].into_iter().map(Into::into).collect(),
+					is_example: false,
+					is_test: true,
+					since: "0.5.0".to_string(),
+				},
+				Case {
+					desc: "Blake2b 384".to_string(),
+					input: vec!["-a", "blake2b_384", "0x616263"].into_iter().map(Into::into).collect(),
+					output: vec!["0x6f56a82c8e7ef526dfe182eb5212f7db9df1317e57815dbda46083fc30f54ee6c66ba83be64b302d7cba6ce15bb556f4"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.5.0".to_string(),
+				},
+				Case {
+					desc: "Blake2b 384".to_string(),
+					input: vec!["-a", "blake2b_384", "-k", "0x646566", "0x616263"].into_iter().map(Into::into).collect(),
+					output: vec!["0x3ddbbbe27b5a850bff56e0f5041f0e792730c17d648199e353f46bec666c314fa4ecbe31df150595169fc8c521643902"].into_iter().map(Into::into).collect(),
+					is_example: false,
+					is_test: true,
+					since: "0.5.0".to_string(),
+				},
+				Case {
+					desc: "Blake2b 512".to_string(),
+					input: vec!["-a", "blake2b_512", "0x616263"].into_iter().map(Into::into).collect(),
+					output: vec!["0xba80a53f981c4d0d6a2797b69f12f6e94c212f14685ac4b74b12bb6fdbffa2d17d87c5392aab792dc252d5de4533cc9518d38aa8dbf1925ab92386edd4009923"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.5.0".to_string(),
+				},
+				Case {
+					desc: "Blake2b 512".to_string(),
+					input: vec!["-a", "blake2b_512", "-k", "0x646566", "0x616263"].into_iter().map(Into::into).collect(),
+					output: vec!["0x956f2f56e2308b97120bb9f50eefaa5c6a5ae4238a372e308aeb824d3166d869c9a9ba32226d33ba081b235fc45c03852b262d97ce13018c55ed304d302c86b5"].into_iter().map(Into::into).collect(),
+					is_example: false,
+					is_test: true,
+					since: "0.5.0".to_string(),
+				},
 			],
 		},
 	]
@@ -291,7 +387,20 @@ fn hash(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	let a_name = matches.value_of("ALGORITHM").ok_or("Invalid algorithm")?;
 
 	let result = match ALGORITHMS.get(a_name) {
-		Some(a) => (a.f)(input)?,
+		Some(a) => {
+			match a.f{
+				AlgorithmF::Normal(f) => (f)(input)?,
+				AlgorithmF::WithKey(f) => {
+					let key = match matches.value_of("KEY") {
+						Some(key) => {
+							hex::decode(key.trim_start_matches("0x")).map_err(|_| "Invalid key")?
+						},
+						None => vec![],
+					};
+					(f)(input, key)?
+				},
+			}
+		}
 		None => return Err("Invalid algorithm".to_string()),
 	};
 
@@ -438,6 +547,31 @@ fn crc_32(data: Vec<u8>) -> Result<Vec<u8>, String> {
 
 	let result = crc32::checksum_ieee(&data);
 	let result = result.to_be_bytes().to_vec();
+
+	Ok(result)
+}
+
+fn blake2b_160(data: Vec<u8>, key: Vec<u8>) -> Result<Vec<u8>, String> {
+	blake2b(data, 20, key)
+}
+
+fn blake2b_256(data: Vec<u8>, key: Vec<u8>) -> Result<Vec<u8>, String> {
+	blake2b(data, 32, key)
+}
+
+fn blake2b_384(data: Vec<u8>, key: Vec<u8>) -> Result<Vec<u8>, String> {
+	blake2b(data, 48, key)
+}
+
+fn blake2b_512(data: Vec<u8>, key: Vec<u8>) -> Result<Vec<u8>, String> {
+	blake2b(data, 64, key)
+}
+
+fn blake2b(data: Vec<u8>, size: usize, key: Vec<u8>) -> Result<Vec<u8>, String> {
+
+	let mut result = vec![0u8; size];
+
+	Blake2b::blake2b(&mut result, &data, &key);
 
 	Ok(result)
 }
