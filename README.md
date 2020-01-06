@@ -19,7 +19,7 @@ Now `dtool` supports:
 - Hex / UTF-8 string conversion
 - Hex / binary conversion
 - Timestamp / date conversion
-- Number 2/8/10/16 conversion
+- Number 2/8/10/16 base conversion
 - Hex / base58 conversion
 - Hex / base58check conversion
 - Hex / base64 conversion
