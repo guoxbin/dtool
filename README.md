@@ -32,7 +32,7 @@ Now `dtool` supports:
 
 ## Usage
 
-`dtool` do different works by different sub commands:
+`dtool` does different works by different sub commands:
 
 |Sub command|           Desc            |                                                                                      Example                                                                                      |        Remark        |Since |
 |-----------|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------|------|
