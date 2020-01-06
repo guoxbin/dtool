@@ -27,8 +27,13 @@ pub mod test {
 			let f = &command.f.clone();
 			for (_i, case) in cases.iter().enumerate() {
 				if case.is_test {
+					let mut ori_input = case.input.clone().into_iter().map(|x|{
+						let x = x.trim_start_matches("'");
+						let x = x.trim_end_matches("'");
+						x.to_string()
+					}).collect();
 					let mut input = vec![app.get_name().to_string()];
-					input.append(&mut case.input.clone());
+					input.append(&mut ori_input);
 					let expected_output = Ok((&case.output).clone());
 					let matches = app.clone().get_matches_from(input.clone());
 					let output = f(&matches);

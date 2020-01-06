@@ -12,10 +12,12 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 			f: he,
 			cases: vec![
 				Case {
-					input: vec!["<b>"].into_iter().map(Into::into).collect(),
+					desc: "".to_string(),
+					input: vec!["'<b>'"].into_iter().map(Into::into).collect(),
 					output: vec!["&lt;b&gt;"].into_iter().map(Into::into).collect(),
 					is_example: true,
 					is_test: true,
+					since: "0.4.0".to_string(),
 				},
 			],
 		},
@@ -27,10 +29,12 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 			f: hd,
 			cases: vec![
 				Case {
-					input: vec!["&lt;b&gt;"].into_iter().map(Into::into).collect(),
+					desc: "".to_string(),
+					input: vec!["'&lt;b&gt;'"].into_iter().map(Into::into).collect(),
 					output: vec!["<b>"].into_iter().map(Into::into).collect(),
 					is_example: true,
 					is_test: true,
+					since: "0.4.0".to_string(),
 				},
 			],
 		}

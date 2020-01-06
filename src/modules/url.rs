@@ -12,10 +12,12 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 			f: ue,
 			cases: vec![
 				Case {
+					desc: "".to_string(),
 					input: vec!["a+b"].into_iter().map(Into::into).collect(),
 					output: vec!["a%2Bb"].into_iter().map(Into::into).collect(),
 					is_example: true,
 					is_test: true,
+					since: "0.1.0".to_string(),
 				},
 			],
 		},
@@ -27,10 +29,12 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 			f: ud,
 			cases: vec![
 				Case {
+					desc: "".to_string(),
 					input: vec!["a%2Bb"].into_iter().map(Into::into).collect(),
 					output: vec!["a+b"].into_iter().map(Into::into).collect(),
 					is_example: true,
 					is_test: true,
+					since: "0.1.0".to_string(),
 				},
 			],
 		}

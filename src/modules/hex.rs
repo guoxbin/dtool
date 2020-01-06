@@ -14,10 +14,12 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 			f: h2s,
 			cases: vec![
 				Case {
+					desc: "".to_string(),
 					input: vec!["0x61626364"].into_iter().map(Into::into).collect(),
 					output: vec!["abcd"].into_iter().map(Into::into).collect(),
 					is_example: true,
 					is_test: true,
+					since: "0.1.0".to_string(),
 				},
 			],
 		},
@@ -29,10 +31,12 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 			f: s2h,
 			cases: vec![
 				Case {
+					desc: "".to_string(),
 					input: vec!["abcd"].into_iter().map(Into::into).collect(),
 					output: vec!["0x61626364"].into_iter().map(Into::into).collect(),
 					is_example: true,
 					is_test: true,
+					since: "0.1.0".to_string(),
 				},
 			],
 		},
@@ -44,10 +48,12 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 			f: h2b,
 			cases: vec![
 				Case {
+					desc: "".to_string(),
 					input: vec!["0x61626364"].into_iter().map(Into::into).collect(),
 					output: vec!["abcd"].into_iter().map(Into::into).collect(),
 					is_example: true,
 					is_test: false,
+					since: "0.1.0".to_string(),
 				},
 			],
 		},
@@ -59,10 +65,12 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 			f: b2h,
 			cases: vec![
 				Case {
+					desc: "".to_string(),
 					input: vec!["abcd"].into_iter().map(Into::into).collect(),
 					output: vec!["0x61626364"].into_iter().map(Into::into).collect(),
 					is_example: true,
 					is_test: true,
+					since: "0.1.0".to_string(),
 				},
 			],
 		},

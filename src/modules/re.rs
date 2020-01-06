@@ -19,10 +19,12 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 			f: re,
 			cases: vec![
 				Case {
+					desc: "".to_string(),
 					input: vec!["-p", "a(.)c", "abc\nadc"].into_iter().map(Into::into).collect(),
 					output: vec!["abc", "    group#1: b", "adc", "    group#1: d"].into_iter().map(Into::into).collect(),
 					is_example: true,
 					is_test: true,
+					since: "0.4.0".to_string(),
 				},
 			],
 		}
