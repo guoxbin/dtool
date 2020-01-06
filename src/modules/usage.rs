@@ -9,10 +9,17 @@ use regex::Captures;
 
 pub fn usage_app<'a, 'b>() -> App<'a, 'b> {
 
-	SubCommand::with_name("usage").about("Show usage").arg(
+	SubCommand::with_name("usage").about("Show usage")
+		.arg(
 		Arg::with_name("FORMAT")
 			.long("format")
 			.short("f").help("Output format\n<default>: term table format\nmarkdown: markdown format")
+			.takes_value(true)
+			.required(false))
+		.arg(
+		Arg::with_name("SEARCH")
+			.long("search")
+			.short("s").help("")
 			.takes_value(true)
 			.required(false))
 }
@@ -20,6 +27,20 @@ pub fn usage_app<'a, 'b>() -> App<'a, 'b> {
 pub fn usage<'a, 'b>(matches: &ArgMatches, commands: &LinkedHashMap<String, Command<'a, 'b>>) -> Result<Vec<String>, String> {
 
 	let table = get_usage_table(commands);
+
+	let search = matches.value_of("SEARCH");
+
+	let table = match search {
+		Some(search) => {
+			let search = &search.to_lowercase();
+			let (header, body) = table;
+			let body = body.into_iter().filter(|row| {
+				row.iter().any(|cell|cell.to_lowercase().contains(search))
+			}).collect();
+			(header, body)
+		},
+		_ => table,
+	};
 
 	let format = matches.value_of("FORMAT");
 
@@ -33,20 +54,36 @@ fn term_output(table: (Vec<String>, Vec<Vec<String>>)) -> Result<Vec<String>, St
 
 	let (header, body) = table;
 
+	let mut result = vec![
+		"Usage".to_string(),
+		"".to_string()
+	];
+
+	if body.len() == 0 {
+		return Ok(result);
+	}
+
 	let mut table = Table::init(body.iter().map(|row| Row::new(row.iter().map(|c|Cell::new(c)).collect()) ).collect());
 	table.set_titles(Row::new(header.iter().map(|c|Cell::new(c)).collect()) );
 	table.set_format(*format::consts::FORMAT_NO_COLSEP);
 
-	Ok(vec![
-		"Usage".to_string(),
-		"".to_string(),
-		table.to_string()
-	])
+	result.push(table.to_string());
+
+	Ok(result)
 }
 
 fn markdown_output(table: (Vec<String>, Vec<Vec<String>>)) -> Result<Vec<String>, String> {
 
 	let (header, body) = table;
+
+	let mut result = vec![
+		"# Usage".to_string(),
+		"".to_string()
+	];
+
+	if body.len() == 0 {
+		return Ok(result);
+	}
 
 	let blanks_re = regex::Regex::new(" {2,}").expect("qed");
 
@@ -66,11 +103,9 @@ fn markdown_output(table: (Vec<String>, Vec<Vec<String>>)) -> Result<Vec<String>
 
 	let table = mk_table(&body, &None);
 
-	Ok(vec![
-		"# Usage".to_string(),
-		"".to_string(),
-		table
-	])
+	result.push(table);
+
+	Ok(result)
 }
 
 /// Get usage table

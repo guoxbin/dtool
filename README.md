@@ -42,10 +42,31 @@ Now `dtool` supports:
 
 [View full usage document](./docs/Usage.md)
 
-`dtool` provides a sub command `usage` to show how to use dtool:
+* `dtool` provides a sub command `usage` to show how to use dtool:
 
 ```bash
 $ dtool usage
+Usage
+
+--------------------------------------------------------------------------------------------------------------------------------
+ Sub command  Desc                         Example                                               Remark                  Since 
+================================================================================================================================
+ h2s          Convert hex to UTF-8 string  $ dtool h2s 0x61626364                                                        v0.1.0 
+                                           abcd                                                                           
+--------------------------------------------------------------------------------------------------------------------------------
+...
+```
+
+* You can search usage with a keyword:
+```bash
+$ dtool usage -s md5
+------------------------------------------------------------------------------
+ Sub command  Desc         Example                             Remark  Since 
+==============================================================================
+ hash         Hex to hash  $ dtool hash -a md5 0x616263        MD5     v0.2.0 
+                           0x900150983cd24fb0d6963f7d28e17f72           
+------------------------------------------------------------------------------
+
 ```
 
 ## Tips
