@@ -30,6 +30,7 @@ Now `dtool` supports:
 - HTML entity encode / decode
 - Regex match
 - Pbkdf2
+- Case conversion (upper, lower, title, camel, pascal, snake, shouty snake, kebab)
 
 ## Usage
 

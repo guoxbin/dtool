@@ -15,6 +15,7 @@ mod html;
 mod re;
 mod usage;
 mod pbkdf2;
+mod case;
 
 pub struct Command<'a, 'b> {
 	pub app: App<'a, 'b>,
@@ -53,6 +54,7 @@ impl<'a, 'b> ModuleManager<'a, 'b> {
 		mm.register(html::commands());
 		mm.register(re::commands());
 		mm.register(pbkdf2::commands());
+		mm.register(case::commands());
 		mm
 	}
 
