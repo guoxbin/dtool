@@ -29,6 +29,7 @@ Now `dtool` supports:
 - UTF-8 string / unicode conversion
 - HTML entity encode / decode
 - Regex match
+- Pbkdf2
 
 ## Usage
 
@@ -42,7 +43,7 @@ Now `dtool` supports:
 
 [View full usage document](./docs/Usage.md)
 
-* `dtool` provides a sub command `usage` to show how to use dtool:
+* Besides the sub command `help`, `dtool` provides a new sub command `usage` to show examples:
 
 ```bash
 $ dtool usage

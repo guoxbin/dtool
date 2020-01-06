@@ -14,6 +14,7 @@ mod unicode;
 mod html;
 mod re;
 mod usage;
+mod pbkdf2;
 
 pub struct Command<'a, 'b> {
 	pub app: App<'a, 'b>,
@@ -51,6 +52,7 @@ impl<'a, 'b> ModuleManager<'a, 'b> {
 		mm.register(unicode::commands());
 		mm.register(html::commands());
 		mm.register(re::commands());
+		mm.register(pbkdf2::commands());
 		mm
 	}
 
