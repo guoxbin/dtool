@@ -5,6 +5,7 @@ use lazy_static::lazy_static;
 use std::collections::HashMap;
 use ring::digest::{Context, SHA1_FOR_LEGACY_USE_ONLY};
 use sha2::{Digest, Sha224, Sha256, Sha384, Sha512, Sha512Trunc224, Sha512Trunc256};
+use crc::crc32;
 
 struct Algorithm{
 	name: &'static str,
@@ -98,6 +99,11 @@ lazy_static!{
 			name : "ripemd_160",
 			help : "RIPEMD-160",
 			f: ripemd_160,
+		},
+		Algorithm {
+			name : "crc_32",
+			help : "CRC32",
+			f: crc_32,
 		}
 	];
 
@@ -261,6 +267,14 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					is_test: true,
 					since: "0.2.0".to_string(),
 				},
+				Case {
+					desc: "CRC32".to_string(),
+					input: vec!["-a", "crc_32", "0x616263"].into_iter().map(Into::into).collect(),
+					output: vec!["0x352441c2"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.5.0".to_string(),
+				},
 			],
 		},
 	]
@@ -417,6 +431,14 @@ fn ripemd_160(data: Vec<u8>) -> Result<Vec<u8>, String> {
 	let mut hasher = ripemd160::Ripemd160::default();
 	hasher.input(data);
 	let result = hasher.result().to_vec();
+	Ok(result)
+}
+
+fn crc_32(data: Vec<u8>) -> Result<Vec<u8>, String> {
+
+	let result = crc32::checksum_ieee(&data);
+	let result = result.to_be_bytes().to_vec();
+
 	Ok(result)
 }
 
