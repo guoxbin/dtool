@@ -26,15 +26,15 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 			cases: vec![
 				Case {
 					desc: "".to_string(),
-					input: vec!["-z8", "0"].into_iter().map(Into::into).collect(),
-					output: vec!["1970-01-01 08:00:00"].into_iter().map(Into::into).collect(),
+					input: vec!["-z", "0", "0"].into_iter().map(Into::into).collect(),
+					output: vec!["1970-01-01 00:00:00"].into_iter().map(Into::into).collect(),
 					is_example: true,
 					is_test: true,
 					since: "0.1.0".to_string(),
 				},
 				Case {
 					desc: "".to_string(),
-					input: vec!["-z8", "10000"].into_iter().map(Into::into).collect(),
+					input: vec!["-z", "8", "10000"].into_iter().map(Into::into).collect(),
 					output: vec!["1970-01-01 10:46:40"].into_iter().map(Into::into).collect(),
 					is_example: false,
 					is_test: true,
@@ -58,7 +58,7 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 			cases: vec![
 				Case {
 					desc: "".to_string(),
-					input: vec!["-z8", "'1970-01-01 08:00:00'"].into_iter().map(Into::into).collect(),
+					input: vec!["-z", "8", "'1970-01-01 08:00:00'"].into_iter().map(Into::into).collect(),
 					output: vec!["0"].into_iter().map(Into::into).collect(),
 					is_example: true,
 					is_test: true,
@@ -66,7 +66,7 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 				},
 				Case {
 					desc: "".to_string(),
-					input: vec!["-z8", "1970-01-01 10:46:40"].into_iter().map(Into::into).collect(),
+					input: vec!["-z", "8", "1970-01-01 10:46:40"].into_iter().map(Into::into).collect(),
 					output: vec!["10000"].into_iter().map(Into::into).collect(),
 					is_example: false,
 					is_test: true,
@@ -99,7 +99,7 @@ fn ts2d(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	let timestamp : i64 = input.parse().map_err(|_| "Invalid input")?;
 
-	let timezone = matches.value_of("z");
+	let timezone = matches.value_of("TIMEZONE");
 
 	let result = match timezone {
 		Some(timezone) => {
@@ -121,7 +121,7 @@ fn d2ts(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	let input = base::input_string(matches)?;
 
-	let timezone = matches.value_of("z");
+	let timezone = matches.value_of("TIMEZONE");
 
 	let result = parse_standard(&input, timezone)
 		.or_else(|_| parse_rfc2822(&input))
