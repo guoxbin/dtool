@@ -15,3 +15,31 @@ pub fn input_bytes(matches: &ArgMatches) -> Result<Vec<u8>, String> {
 		None => io::stdin().bytes().collect::<Result<Vec<u8>, io::Error>>().map_err(|_| "Invalid input".to_string()),
 	}
 }
+
+#[cfg(test)]
+pub mod test {
+	use crate::modules::Command;
+
+	pub fn test_commands(commands: &Vec<Command>) {
+		for command in commands {
+			let app = &command.app;
+			let cases = &command.cases;
+			let f = &command.f.clone();
+			for (_i, case) in cases.iter().enumerate() {
+				if case.is_test {
+					let mut ori_input = case.input.clone().into_iter().map(|x|{
+						let x = x.trim_start_matches("'");
+						let x = x.trim_end_matches("'");
+						x.to_string()
+					}).collect();
+					let mut input = vec![app.get_name().to_string()];
+					input.append(&mut ori_input);
+					let expected_output = Ok((&case.output).clone());
+					let matches = app.clone().get_matches_from(input.clone());
+					let output = f(&matches);
+					assert_eq!(output, expected_output, "Test: {}", input.join(" "));
+				}
+			}
+		}
+	}
+}

@@ -1,5 +1,5 @@
 use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::{Command, base};
+use crate::modules::{Command, base, Case};
 use regex::Regex;
 
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
@@ -7,8 +7,9 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 		Command {
 			app: SubCommand::with_name("re").about("Regex match")
 				.arg(
-					Arg::with_name("p")
-						.short("p").help("Pattern")
+					Arg::with_name("PATTERN")
+						.long("pattern")
+						.short("p").help("Regex pattern")
 						.takes_value(true)
 						.required(true))
 				.arg(
@@ -16,6 +17,16 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.required(false)
 						.index(1)),
 			f: re,
+			cases: vec![
+				Case {
+					desc: "".to_string(),
+					input: vec!["-p", "'a(.)c'", "abcadc"].into_iter().map(Into::into).collect(),
+					output: vec!["abc", "    group#1: b", "adc", "    group#1: d"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.4.0".to_string(),
+				},
+			],
 		}
 	]
 }
@@ -23,7 +34,7 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 fn re(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	let input = base::input_string(matches)?;
 
-	let pattern = matches.value_of("p").ok_or("Invalid pattern")?;
+	let pattern = matches.value_of("PATTERN").ok_or("Invalid pattern")?;
 
 	let pattern = Regex::new(pattern).map_err(|_| "Invalid pattern")?;
 
@@ -45,12 +56,10 @@ fn re(matches: &ArgMatches) -> Result<Vec<String>, String> {
 #[cfg(test)]
 mod tests {
 	use super::*;
+	use crate::modules::base::test::test_commands;
 
 	#[test]
-	fn test_re() {
-		let app = &commands()[0].app;
-
-		let matches = app.clone().get_matches_from(vec!["re", "-p", "a(.)c", "abc\nadc"]);
-		assert_eq!(re(&matches), Ok(vec!["abc".to_string(), "    group#1: b".to_string(), "adc".to_string(), "    group#1: d".to_string()]));
+	fn test_cases() {
+		test_commands(&commands());
 	}
 }

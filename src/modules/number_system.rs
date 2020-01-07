@@ -1,24 +1,28 @@
 use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::{Command, base};
+use crate::modules::{Command, base, Case};
 
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 	vec![
 		Command {
 			app: SubCommand::with_name("ns").about("Number system")
 				.arg(
-					Arg::with_name("d")
+					Arg::with_name("DECIMAL")
+						.long("decimal")
 						.short("d").help("Output decimal result")
 						.required(false))
 				.arg(
-					Arg::with_name("b")
+					Arg::with_name("BINARY")
+						.long("binary")
 						.short("b").help("Output binary result")
 						.required(false))
 				.arg(
-					Arg::with_name("o")
+					Arg::with_name("OCTAL")
+						.long("octal")
 						.short("o").help("Output octal result")
 						.required(false))
 				.arg(
-					Arg::with_name("x")
+					Arg::with_name("HEXADECIMAL")
+						.long("hexadecimal")
 						.short("x").help("Output hexadecimal result")
 						.required(false))
 				.arg(
@@ -26,6 +30,56 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.required(false)
 						.index(1)),
 			f: ns,
+			cases: vec![
+				Case {
+					desc: "Input decimal".to_string(),
+					input: vec!["256"].into_iter().map(Into::into).collect(),
+					output: vec!["256", "0b100000000", "0o400", "0x100"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+				Case {
+					desc: "Input octal".to_string(),
+					input: vec!["0o400"].into_iter().map(Into::into).collect(),
+					output: vec!["256", "0b100000000", "0o400", "0x100"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+				Case {
+					desc: "Output decimal".to_string(),
+					input: vec!["-d", "256"].into_iter().map(Into::into).collect(),
+					output: vec!["256"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+				Case {
+					desc: "Output binary".to_string(),
+					input: vec!["-b", "256"].into_iter().map(Into::into).collect(),
+					output: vec!["0b100000000"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+				Case {
+					desc: "Output octal".to_string(),
+					input: vec!["-o", "256"].into_iter().map(Into::into).collect(),
+					output: vec!["0o400"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+				Case {
+					desc: "Output hexadecimal".to_string(),
+					input: vec!["-x", "256"].into_iter().map(Into::into).collect(),
+					output: vec!["0x100"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+			],
 		},
 	]
 }
@@ -44,16 +98,16 @@ fn ns(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	let mut results = Vec::new();
 
-	if matches.is_present("d") {
+	if matches.is_present("DECIMAL") {
 		results.push(format!("{}", number));
 	}
-	if matches.is_present("b") {
+	if matches.is_present("BINARY") {
 		results.push(format!("0b{:b}", number));
 	}
-	if matches.is_present("o") {
+	if matches.is_present("OCTAL") {
 		results.push(format!("0o{:o}", number));
 	}
-	if matches.is_present("x") {
+	if matches.is_present("HEXADECIMAL") {
 		results.push(format!("0x{:x}", number));
 	}
 	if results.len() == 0 {
@@ -72,26 +126,11 @@ fn ns(matches: &ArgMatches) -> Result<Vec<String>, String> {
 mod tests {
 
 	use super::*;
+	use crate::modules::base::test::test_commands;
 
 	#[test]
-	fn test_ns() {
-		let app =  &commands()[0].app;
-
-		let matches = app.clone().get_matches_from(vec!["ns", "256"]);
-		assert_eq!(ns(&matches) , Ok(vec!["256".to_string(), "0b100000000".to_string(), "0o400".to_string(), "0x100".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["ns", "-d", "256"]);
-		assert_eq!(ns(&matches) , Ok(vec!["256".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["ns", "-b", "256"]);
-		assert_eq!(ns(&matches) , Ok(vec!["0b100000000".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["ns", "-o", "256"]);
-		assert_eq!(ns(&matches) , Ok(vec!["0o400".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["ns", "-x", "256"]);
-		assert_eq!(ns(&matches) , Ok(vec!["0x100".to_string()]));
-
+	fn test_cases() {
+		test_commands(&commands());
 	}
 
 }

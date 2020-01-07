@@ -1,5 +1,5 @@
 use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::{Command, base};
+use crate::modules::{Command, base, Case};
 use hex;
 use base64;
 
@@ -11,6 +11,16 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: h2b64,
+			cases: vec![
+				Case {
+					desc: "".to_string(),
+					input: vec!["0x616263"].into_iter().map(Into::into).collect(),
+					output: vec!["YWJj"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+			],
 		},
 		Command {
 			app: SubCommand::with_name("b642h").about("Convert base64 to hex").arg(
@@ -18,6 +28,16 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: b642h,
+			cases: vec![
+				Case {
+					desc: "".to_string(),
+					input: vec!["YWJj"].into_iter().map(Into::into).collect(),
+					output: vec!["0x616263"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+			],
 		},
 	]
 }
@@ -50,22 +70,11 @@ fn b642h(matches: &ArgMatches) -> Result<Vec<String>, String> {
 mod tests {
 
 	use super::*;
+	use crate::modules::base::test::test_commands;
 
 	#[test]
-	fn test_h2b64() {
-		let app =  &commands()[0].app;
-
-		let matches = app.clone().get_matches_from(vec!["h2b64", "0x616263"]);
-		assert_eq!(h2b64(&matches) , Ok(vec!["YWJj".to_string()]));
-	}
-
-	#[test]
-	fn test_b642h() {
-		let app =  &commands()[1].app;
-
-		let matches = app.clone().get_matches_from(vec!["b642h", "YWJj"]);
-		assert_eq!(b642h(&matches) , Ok(vec!["0x616263".to_string()]));
-
+	fn test_cases() {
+		test_commands(&commands());
 	}
 
 }

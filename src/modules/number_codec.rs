@@ -1,5 +1,5 @@
 use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::{Command, base};
+use crate::modules::{Command, base, Case};
 use hex;
 use parity_codec::{Compact, Encode, Decode};
 
@@ -8,8 +8,10 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 		Command {
 			app: SubCommand::with_name("ne").about("Number encode")
 				.arg(
-				Arg::with_name("t")
-					.short("t").help("Number type: u8, u16, u32, u64, u128, c(Compact)")
+				Arg::with_name("TYPE")
+					.long("type")
+					.short("t")
+					.help("Number type\nu8\nu16\nu32\nu64\nu128\nc: Compact")
 					.takes_value(true)
 					.required(true))
 				.arg(
@@ -17,11 +19,70 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: ne,
+			cases: vec![
+				Case {
+					desc: "u8".to_string(),
+					input: vec!["-tu8", "1"].into_iter().map(Into::into).collect(),
+					output: vec!["0x01"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+				Case {
+					desc: "u16".to_string(),
+					input: vec!["-tu16", "1"].into_iter().map(Into::into).collect(),
+					output: vec!["0x0100"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+				Case {
+					desc: "u32".to_string(),
+					input: vec!["-tu32", "1"].into_iter().map(Into::into).collect(),
+					output: vec!["0x01000000"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+				Case {
+					desc: "u64".to_string(),
+					input: vec!["-tu64", "1"].into_iter().map(Into::into).collect(),
+					output: vec!["0x0100000000000000"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+				Case {
+					desc: "u128".to_string(),
+					input: vec!["-tu128", "1"].into_iter().map(Into::into).collect(),
+					output: vec!["0x01000000000000000000000000000000"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+				Case {
+					desc: "Compact".to_string(),
+					input: vec!["-tc", "6"].into_iter().map(Into::into).collect(),
+					output: vec!["0x18"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+				Case {
+					desc: "Compact".to_string(),
+					input: vec!["-tc", "251"].into_iter().map(Into::into).collect(),
+					output: vec!["0xed03"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+			],
 		},
 		Command {
 			app: SubCommand::with_name("nd").about("Number decode")
 				.arg(
-					Arg::with_name("t")
+					Arg::with_name("TYPE")
+						.long("type")
 						.short("t").help("Number type: u8, u16, u32, u64, u128, c(Compact)")
 						.takes_value(true)
 						.required(true))
@@ -30,6 +91,64 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.required(false)
 						.index(1)),
 			f: nd,
+			cases: vec![
+				Case {
+					desc: "u8".to_string(),
+					input: vec!["-tu8", "0x01"].into_iter().map(Into::into).collect(),
+					output: vec!["1"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+				Case {
+					desc: "u16".to_string(),
+					input: vec!["-tu16", "0x0100"].into_iter().map(Into::into).collect(),
+					output: vec!["1"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+				Case {
+					desc: "u32".to_string(),
+					input: vec!["-tu32", "0x01000000"].into_iter().map(Into::into).collect(),
+					output: vec!["1"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+				Case {
+					desc: "u64".to_string(),
+					input: vec!["-tu64", "0x0100000000000000"].into_iter().map(Into::into).collect(),
+					output: vec!["1"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+				Case {
+					desc: "u128".to_string(),
+					input: vec!["-tu128", "0x01000000000000000000000000000000"].into_iter().map(Into::into).collect(),
+					output: vec!["1"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+				Case {
+					desc: "Compact".to_string(),
+					input: vec!["-tc", "0x18"].into_iter().map(Into::into).collect(),
+					output: vec!["6"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+				Case {
+					desc: "Compact".to_string(),
+					input: vec!["-tc", "0xed03"].into_iter().map(Into::into).collect(),
+					output: vec!["251"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+			],
 		},
 	]
 }
@@ -38,7 +157,7 @@ fn ne(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	let input = base::input_string(matches)?;
 
-	let t = matches.value_of("t").ok_or("Invalid number type")?;
+	let t = matches.value_of("TYPE").ok_or("Invalid number type")?;
 
 	let result = match t{
 		"u8" => {
@@ -78,7 +197,7 @@ fn ne(matches: &ArgMatches) -> Result<Vec<String>, String> {
 fn nd(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	let input = base::input_string(matches)?;
 
-	let t = matches.value_of("t").ok_or("Invalid number type")?;
+	let t = matches.value_of("TYPE").ok_or("Invalid number type")?;
 
 	let input = input.trim_start_matches("0x");
 
@@ -121,58 +240,11 @@ fn nd(matches: &ArgMatches) -> Result<Vec<String>, String> {
 mod tests {
 
 	use super::*;
+	use crate::modules::base::test::test_commands;
 
 	#[test]
-	fn test_ne() {
-		let app =  &commands()[0].app;
-
-		let matches = app.clone().get_matches_from(vec!["ne", "-tu8", "1"]);
-		assert_eq!(ne(&matches) , Ok(vec!["0x01".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["ne", "-tu16", "1"]);
-		assert_eq!(ne(&matches) , Ok(vec!["0x0100".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["ne", "-tu32", "1"]);
-		assert_eq!(ne(&matches) , Ok(vec!["0x01000000".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["ne", "-tu64", "1"]);
-		assert_eq!(ne(&matches) , Ok(vec!["0x0100000000000000".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["ne", "-tu128", "1"]);
-		assert_eq!(ne(&matches) , Ok(vec!["0x01000000000000000000000000000000".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["ne", "-tc", "6"]);
-		assert_eq!(ne(&matches) , Ok(vec!["0x18".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["ne", "-tc", "251"]);
-		assert_eq!(ne(&matches) , Ok(vec!["0xed03".to_string()]));
-	}
-
-	#[test]
-	fn test_nd() {
-		let app =  &commands()[1].app;
-
-		let matches = app.clone().get_matches_from(vec!["nd", "-tu8", "0x01"]);
-		assert_eq!(nd(&matches) , Ok(vec!["1".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["nd", "-tu16", "0x0100"]);
-		assert_eq!(nd(&matches) , Ok(vec!["1".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["nd", "-tu32", "0x01000000"]);
-		assert_eq!(nd(&matches) , Ok(vec!["1".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["nd", "-tu64", "0x0100000000000000"]);
-		assert_eq!(nd(&matches) , Ok(vec!["1".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["nd", "-tu128", "0x01000000000000000000000000000000"]);
-		assert_eq!(nd(&matches) , Ok(vec!["1".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["nd", "-tc", "0x18"]);
-		assert_eq!(nd(&matches) , Ok(vec!["6".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["nd", "-tc", "0xed03"]);
-		assert_eq!(nd(&matches) , Ok(vec!["251".to_string()]));
-
+	fn test_cases() {
+		test_commands(&commands());
 	}
 
 }

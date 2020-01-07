@@ -1,5 +1,5 @@
 use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::{Command, base};
+use crate::modules::{Command, base, Case};
 use urlencoding;
 
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
@@ -10,6 +10,16 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: ue,
+			cases: vec![
+				Case {
+					desc: "".to_string(),
+					input: vec!["a+b"].into_iter().map(Into::into).collect(),
+					output: vec!["a%2Bb"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+			],
 		},
 		Command {
 			app: SubCommand::with_name("ud").about("URL decode").arg(
@@ -17,6 +27,16 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: ud,
+			cases: vec![
+				Case {
+					desc: "".to_string(),
+					input: vec!["a%2Bb"].into_iter().map(Into::into).collect(),
+					output: vec!["a+b"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+			],
 		}
 	]
 }
@@ -43,22 +63,11 @@ fn ud(matches: &ArgMatches) -> Result<Vec<String>, String> {
 mod tests {
 
 	use super::*;
+	use crate::modules::base::test::test_commands;
 
 	#[test]
-	fn test_ue() {
-		let app =  &commands()[0].app;
-
-		let matches = app.clone().get_matches_from(vec!["ue", "a+b"]);
-		assert_eq!(ue(&matches) , Ok(vec!["a%2Bb".to_string()]));
-	}
-
-	#[test]
-	fn test_ud() {
-		let app =  &commands()[1].app;
-
-		let matches = app.clone().get_matches_from(vec!["ud", "a%2Bb"]);
-		assert_eq!(ud(&matches) , Ok(vec!["a+b".to_string()]));
-
+	fn test_cases() {
+		test_commands(&commands());
 	}
 
 }

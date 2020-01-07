@@ -1,5 +1,5 @@
 use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::{Command, base};
+use crate::modules::{Command, base, Case};
 use escaper;
 
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
@@ -10,6 +10,16 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: he,
+			cases: vec![
+				Case {
+					desc: "".to_string(),
+					input: vec!["'<b>'"].into_iter().map(Into::into).collect(),
+					output: vec!["&lt;b&gt;"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.4.0".to_string(),
+				},
+			],
 		},
 		Command {
 			app: SubCommand::with_name("hd").about("HTML entity decode").arg(
@@ -17,6 +27,16 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: hd,
+			cases: vec![
+				Case {
+					desc: "".to_string(),
+					input: vec!["'&lt;b&gt;'"].into_iter().map(Into::into).collect(),
+					output: vec!["<b>"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.4.0".to_string(),
+				},
+			],
 		}
 	]
 }
@@ -43,22 +63,11 @@ fn hd(matches: &ArgMatches) -> Result<Vec<String>, String> {
 mod tests {
 
 	use super::*;
+	use crate::modules::base::test::test_commands;
 
 	#[test]
-	fn test_he() {
-		let app =  &commands()[0].app;
-
-		let matches = app.clone().get_matches_from(vec!["he", "<br>"]);
-		assert_eq!(he(&matches) , Ok(vec!["&lt;br&gt;".to_string()]));
-	}
-
-	#[test]
-	fn test_hd() {
-		let app =  &commands()[1].app;
-
-		let matches = app.clone().get_matches_from(vec!["hd", "&lt;br&gt;"]);
-		assert_eq!(hd(&matches) , Ok(vec!["<br>".to_string()]));
-
+	fn test_cases() {
+		test_commands(&commands());
 	}
 
 }

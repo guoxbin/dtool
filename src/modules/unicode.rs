@@ -1,8 +1,8 @@
 use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::{Command, base};
+use crate::modules::{Command, base, Case};
 use std::char::EscapeUnicode;
 
-static FORMAT_HELP: &str = "Format:
+static FORMAT_HELP: &str = "Format
 <default>: \\u7c
 html: &#x7c;
 html_d: &#124;
@@ -13,7 +13,8 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 		Command {
 			app: SubCommand::with_name("s2u").about("UTF-8 string to unicode")
 				.arg(
-					Arg::with_name("f")
+					Arg::with_name("FORMAT")
+						.long("format")
 						.short("f").help(FORMAT_HELP)
 						.takes_value(true)
 						.required(false))
@@ -22,6 +23,48 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.required(false)
 						.index(1)),
 			f: s2u,
+			cases: vec![
+				Case {
+					desc: "Default format".to_string(),
+					input: vec!["abc"].into_iter().map(Into::into).collect(),
+					output: vec!["\\u61\\u62\\u63"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.3.0".to_string(),
+				},
+				Case {
+					desc: "HTML format".to_string(),
+					input: vec!["-f", "html", "abc"].into_iter().map(Into::into).collect(),
+					output: vec!["&#x61;&#x62;&#x63;"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.3.0".to_string(),
+				},
+				Case {
+					desc: "HTML decimal format".to_string(),
+					input: vec!["-f", "html_d", "abc"].into_iter().map(Into::into).collect(),
+					output: vec!["&#97;&#98;&#99;"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.3.0".to_string(),
+				},
+				Case {
+					desc: "RUST format".to_string(),
+					input: vec!["-f", "rust", "abc"].into_iter().map(Into::into).collect(),
+					output: vec!["\\u{61}\\u{62}\\u{63}"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.3.0".to_string(),
+				},
+				Case {
+					desc: "Emoji".to_string(),
+					input: vec!["💯"].into_iter().map(Into::into).collect(),
+					output: vec!["\\u1f4af"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.3.0".to_string(),
+				},
+			],
 		},
 		Command {
 			app: SubCommand::with_name("u2s").about("Unicode to UTF-8 string")
@@ -30,6 +73,48 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.required(false)
 						.index(1)),
 			f: u2s,
+			cases: vec![
+				Case {
+					desc: "From default format".to_string(),
+					input: vec!["'\\u61\\u62\\u63'"].into_iter().map(Into::into).collect(),
+					output: vec!["abc"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.3.0".to_string(),
+				},
+				Case {
+					desc: "HTML format".to_string(),
+					input: vec!["'&#x61;&#x62;&#x63;'"].into_iter().map(Into::into).collect(),
+					output: vec!["abc"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.3.0".to_string(),
+				},
+				Case {
+					desc: "HTML decimal format".to_string(),
+					input: vec!["'&#97;&#98;&#99;'"].into_iter().map(Into::into).collect(),
+					output: vec!["abc"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.3.0".to_string(),
+				},
+				Case {
+					desc: "RUST format".to_string(),
+					input: vec!["'\\u{61}\\u{62}\\u{63}'"].into_iter().map(Into::into).collect(),
+					output: vec!["abc"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.3.0".to_string(),
+				},
+				Case {
+					desc: "Emoji".to_string(),
+					input: vec!["'\\u1f4af'"].into_iter().map(Into::into).collect(),
+					output: vec!["💯"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.3.0".to_string(),
+				},
+			],
 		},
 	]
 }
@@ -37,7 +122,7 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 fn s2u(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	let input = base::input_string(matches)?;
 
-	let format = match matches.value_of("f") {
+	let format = match matches.value_of("FORMAT") {
 		Some("html") => format_html,
 		Some("html_d") => format_html_d,
 		Some("rust") => format_rust,
@@ -160,38 +245,11 @@ fn from_default(data: &str) -> Option<Result<char, String>> {
 #[cfg(test)]
 mod tests {
 	use super::*;
+	use crate::modules::base::test::test_commands;
 
 	#[test]
-	fn test_h2u() {
-		let app = &commands()[0].app;
-
-		let matches = app.clone().get_matches_from(vec!["h2u", "abc"]);
-		assert_eq!(s2u(&matches), Ok(vec!["\\u61\\u62\\u63".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["h2u", "-f", "html", "abc"]);
-		assert_eq!(s2u(&matches), Ok(vec!["&#x61;&#x62;&#x63;".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["h2u", "-f", "html_d", "abc"]);
-		assert_eq!(s2u(&matches), Ok(vec!["&#97;&#98;&#99;".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["h2u", "-f", "rust", "abc"]);
-		assert_eq!(s2u(&matches), Ok(vec!["\\u{61}\\u{62}\\u{63}".to_string()]));
+	fn test_cases() {
+		test_commands(&commands());
 	}
 
-	#[test]
-	fn test_u2h() {
-		let app = &commands()[0].app;
-
-		let matches = app.clone().get_matches_from(vec!["h2u", "\\u61\\u62\\u63"]);
-		assert_eq!(u2s(&matches), Ok(vec!["abc".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["h2u", "&#x61;&#x62;&#x63;"]);
-		assert_eq!(u2s(&matches), Ok(vec!["abc".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["h2u", "&#97;&#98;&#99;"]);
-		assert_eq!(u2s(&matches), Ok(vec!["abc".to_string()]));
-
-		let matches = app.clone().get_matches_from(vec!["h2u", "\\u{61}\\u{62}\\u{63}"]);
-		assert_eq!(u2s(&matches), Ok(vec!["abc".to_string()]));
-	}
 }
