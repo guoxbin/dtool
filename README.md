@@ -100,6 +100,11 @@ $ cat pic.jpg | dtool b2h | dtool hash -a md5
 
 ## Installation
 ### Via cargo
-```
+```bash
 $ cargo install dtool
+```
+
+### Via brew
+```bash
+$ brew install guoxbin/guoxbin/dtool
 ```
