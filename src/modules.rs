@@ -16,6 +16,7 @@ mod re;
 mod usage;
 mod pbkdf2;
 mod case;
+mod completion;
 
 pub struct Command<'a, 'b> {
 	pub app: App<'a, 'b>,
@@ -60,24 +61,24 @@ impl<'a, 'b> ModuleManager<'a, 'b> {
 
 	pub fn apps(&self) -> Vec<App<'a, 'b>> {
 
-		self.commands.iter().map(|(_, command)| command.app.to_owned()).chain( iter::once(usage::usage_app()) ).collect()
+		self.commands.iter().map(|(_, command)| command.app.to_owned())
+			.chain( iter::once(usage::usage_app()) )
+			.chain(iter::once(completion::completion_app()))
+			.collect()
 
 	}
 
 	pub fn run(&self, name: &str, matches: &ArgMatches<'a>) {
 
-		if let Some(command) = self.commands.get(name){
-			match (command.f)(matches){
-				Ok(result) => result.iter().for_each(|x|println!("{}", x)),
-				Err(e) => eprintln!("{}", e),
-			}
-		}
+		let result = match name{
+			"usage" => usage::usage(matches, &self.commands),
+			"completion" => completion::completion(matches),
+			_ => (self.commands.get(name).expect("subcommand must exit").f)(matches),
+		};
 
-		if name == "usage" {
-			match usage::usage(matches, &self.commands){
-				Ok(result) => result.iter().for_each(|x|println!("{}", x)),
-				Err(e) => eprintln!("{}", e),
-			}
+		match result{
+			Ok(result) => result.iter().for_each(|x|println!("{}", x)),
+			Err(e) => eprintln!("{}", e),
 		}
 
 	}
