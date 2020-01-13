@@ -31,6 +31,7 @@ Now `dtool` supports:
 - Regex match
 - Pbkdf2
 - Case conversion (upper, lower, title, camel, pascal, snake, shouty snake, kebab)
+- AES encrypt / decrypt
 
 ## Usage
 
