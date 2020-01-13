@@ -100,12 +100,14 @@ $ cat pic.jpg | dtool b2h | dtool hash -a md5
 ```
 
 ## Installation
+### Via brew 
+```bash
+$ brew install guoxbin/guoxbin/dtool
+```
+Recommend! Brew will install `dtool bash completion` along with `dtool`
+
 ### Via cargo
 ```bash
 $ cargo install dtool
 ```
 
-### Via brew
-```bash
-$ brew install guoxbin/guoxbin/dtool
-```
