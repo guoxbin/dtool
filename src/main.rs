@@ -1,20 +1,9 @@
-use clap::{App};
-
+mod app;
 mod modules;
 
 fn main() {
 
-    let mut app = App::new(env!("CARGO_PKG_NAME"))
-        .version(env!("CARGO_PKG_VERSION"))
-        .author(env!("CARGO_PKG_AUTHORS"))
-        .about(env!("CARGO_PKG_DESCRIPTION"));
-
-    let module_manager = modules::ModuleManager::new();
-    let subcommands = module_manager.apps();
-
-    for subcommand in subcommands {
-        app = app.subcommand(subcommand);
-    }
+    let (app, module_manager) = app::build_app();
 
     let mut app_clone = app.clone();
 

@@ -1,14 +1,14 @@
 [package]
 name = "dtool"
-version = "0.5.0"
+version = "0.6.0"
 authors = ["GB <guoxbin@gmail.com>"]
-description = "A collection of development tools"
+description = "A command-line tool collection to assist development"
 categories = ["command-line-utilities"]
 homepage = "https://github.com/guoxbin/dtool"
 repository = "https://github.com/guoxbin/dtool"
 license = "GPL-3.0"
 readme = "README.md"
-keywords = [ "urlencode", "timestamp", "base58", "base64", "hex" ]
+keywords = [ "tools", "conversion", "codec", "utilities", "hex" ]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/guoxbin/dtool.svg?branch=master)](https://travis-ci.org/guoxbin/dtool)
 [![Crates.io](https://img.shields.io/crates/v/dtool)](https://crates.io/crates/dtool)
 
-`dtool` is a command line tool collection to assist development
+`dtool` is a command-line tool collection to assist development
 
 ## Table of Contents
 
@@ -31,6 +31,7 @@ Now `dtool` supports:
 - Regex match
 - Pbkdf2
 - Case conversion (upper, lower, title, camel, pascal, snake, shouty snake, kebab)
+- AES encrypt / decrypt
 
 ## Usage
 
