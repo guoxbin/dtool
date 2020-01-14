@@ -7,6 +7,7 @@ use ring::digest::{Context, SHA1_FOR_LEGACY_USE_ONLY};
 use sha2::{Digest, Sha224, Sha256, Sha384, Sha512, Sha512Trunc224, Sha512Trunc256};
 use crc::crc32;
 use crypto::blake2b::Blake2b;
+use yogcrypt::sm3::sm3_enc;
 
 struct Algorithm{
 	name: &'static str,
@@ -130,6 +131,11 @@ lazy_static!{
 			name : "blake2b_512",
 			help : "Blake2b 512",
 			f: AlgorithmF::WithKey(blake2b_512),
+		},
+		Algorithm {
+			name : "sm3",
+			help : "Chinese National Standard SM3",
+			f: AlgorithmF::Normal(sm3),
 		},
 	];
 
@@ -371,6 +377,14 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					is_test: true,
 					since: "0.5.0".to_string(),
 				},
+				Case {
+					desc: "SM3".to_string(),
+					input: vec!["-a", "sm3", "0x616263"].into_iter().map(Into::into).collect(),
+					output: vec!["0x66c7f0f462eeedd9d1f2d46bdc10e4e24167c4875cf2f7a2297da02b8f4ba8e0"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.7.0".to_string(),
+				},
 			],
 		},
 	]
@@ -575,6 +589,18 @@ fn blake2b(data: Vec<u8>, size: usize, key: Vec<u8>) -> Result<Vec<u8>, String> 
 
 	Ok(result)
 }
+
+fn sm3(data: Vec<u8>) -> Result<Vec<u8>, String> {
+
+	let result = sm3_enc(&data);
+
+	let result : Vec<u8> = result.iter().map(|x|{
+		x.to_be_bytes().to_vec()
+	}).flatten().collect();
+
+	Ok(result)
+}
+
 
 #[cfg(test)]
 mod tests {

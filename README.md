@@ -25,7 +25,7 @@ Now `dtool` supports:
 - Hex / base64 conversion
 - URL encode / decode
 - Number codec
-- Hash (MD5, SHA-1, SHA-2, SHA-3, RIPEMD, CRC, Blake2b)
+- Hash (MD5, SHA-1, SHA-2, SHA-3, RIPEMD, CRC, Blake2b, SM3)
 - UTF-8 string / unicode conversion
 - HTML entity encode / decode
 - Regex match

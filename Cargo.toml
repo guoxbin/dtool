@@ -1,6 +1,6 @@
 [package]
 name = "dtool"
-version = "0.6.0"
+version = "0.7.0"
 authors = ["GB <guoxbin@gmail.com>"]
 description = "A command-line tool collection to assist development"
 categories = ["command-line-utilities"]
@@ -35,3 +35,4 @@ madato = "0.5.3"
 crc = "1.8.1"
 heck = "0.3.1"
 rust-crypto = "0.2.36"
+yogcrypt = "0.0.0"
