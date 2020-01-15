@@ -106,6 +106,16 @@ $ brew install guoxbin/guoxbin/dtool
 ```
 Recommend! Brew will install `dtool bash completion` along with `dtool`
 
+### Arch Linux
+
+There is [an AUR package for dtool](https://aur.archlinux.org/packages/dtool/) that includes shell completion for bash, fish, and zsh.
+
+```bash
+git clone https://aur.archlinux.org/dtool.git
+cd dtool
+makepkg -si
+```
+
 ### Via cargo
 ```bash
 $ cargo install dtool
