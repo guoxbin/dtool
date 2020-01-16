@@ -1,8 +1,8 @@
 use clap::{SubCommand, Arg, ArgMatches};
 use crate::modules::{Command, base, Case};
-use hex;
 use std::io;
 use std::io::Write;
+use crate::modules::base::Hex;
 
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 	vec![
@@ -80,10 +80,9 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 fn h2s(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	let input = base::input_string(matches)?;
-	let input = input.trim_start_matches("0x");
+	let input : Vec<u8> = input.parse::<Hex>().map_err(|_| "Convert failed")?.into();
 
-	let result = hex::decode(input).map_err(|_| "Convert failed")?;
-	let result = String::from_utf8(result).map_err(|_| "Not UTF-8")?;
+	let result = String::from_utf8(input).map_err(|_| "Not UTF-8")?;
 
 	Ok(vec![result])
 }
@@ -92,8 +91,8 @@ fn s2h(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	let input = base::input_string(matches).map_err(|_| "Not UTF-8")?;
 
-	let result = hex::encode(input);
-	let result = "0x".to_string() + &result;
+	let input = input.as_bytes().to_vec();
+	let result : String = Hex::from(input).into();
 
 	Ok(vec![result])
 }
@@ -101,9 +100,7 @@ fn s2h(matches: &ArgMatches) -> Result<Vec<String>, String> {
 fn h2b_inner(matches: &ArgMatches) -> Result<Vec<u8>, String> {
 
 	let input = base::input_string(matches)?;
-	let input = input.trim_start_matches("0x");
-
-	let result = hex::decode(input).map_err(|_| "Convert failed")?;
+	let result: Vec<u8>  = input.parse::<Hex>().map_err(|_|"Convert failed")?.into();
 
 	Ok(result)
 }
@@ -121,8 +118,7 @@ fn b2h(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	let input = base::input_bytes(matches)?;
 
-	let result = hex::encode(input);
-	let result = "0x".to_string() + &result;
+	let result : String = Hex::from(input).into();
 
 	Ok(vec![result])
 }

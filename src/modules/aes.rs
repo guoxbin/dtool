@@ -5,6 +5,7 @@ use crypto::blockmodes::PkcsPadding;
 use crypto::buffer::{RefReadBuffer, RefWriteBuffer, WriteBuffer};
 use self::Mode::{ECB, CBC, CTR};
 use crypto::symmetriccipher::{Encryptor, Decryptor};
+use crate::modules::base::Hex;
 
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 	vec![
@@ -340,8 +341,7 @@ fn aes_enc(matches: &ArgMatches) -> Result<Vec<String>, String> {
 			aes_enc_ctr(key_size, &key, &input, &iv)
 		}
 	}?;
-	let result = hex::encode(result);
-	let result = "0x".to_string() + &result;
+	let result = Hex::from(result).into();
 
 	Ok(vec![result])
 }
@@ -361,8 +361,7 @@ fn aes_dec(matches: &ArgMatches) -> Result<Vec<String>, String> {
 			aes_dec_ctr(key_size, &key, &input, &iv)
 		}
 	}?;
-	let result = hex::encode(result);
-	let result = "0x".to_string() + &result;
+	let result = Hex::from(result).into();
 
 	Ok(vec![result])
 }
@@ -372,7 +371,7 @@ fn get_common_arg(matches: &ArgMatches) -> Result<(KeySize, Vec<u8>, Mode, Vec<u
 
 	// key and key_size
 	let key = matches.value_of("KEY").ok_or("Invalid key".to_string())?;
-	let key = hex::decode(key.trim_start_matches("0x")).map_err(|_| "Invalid key")?;
+	let key : Vec<u8> = key.parse::<Hex>().map_err(|_| "Invalid key")?.into();
 	let key_size = match key.len() {
 		16 => KeySize::KeySize128,
 		24 => KeySize::KeySize192,
@@ -382,7 +381,7 @@ fn get_common_arg(matches: &ArgMatches) -> Result<(KeySize, Vec<u8>, Mode, Vec<u
 
 	let get_iv = || -> Result<Vec<u8>, String> {
 		let iv = matches.value_of("IV").ok_or("Invalid IV".to_string())?;
-		let iv = hex::decode(iv.trim_start_matches("0x")).map_err(|_| "Invalid IV")?;
+		let iv : Vec<u8> = iv.parse::<Hex>().map_err(|_| "Invalid IV")?.into();
 		Ok(iv)
 	};
 
@@ -396,7 +395,7 @@ fn get_common_arg(matches: &ArgMatches) -> Result<(KeySize, Vec<u8>, Mode, Vec<u
 	};
 
 	// input
-	let input = hex::decode(input.trim_start_matches("0x")).map_err(|_| "Invalid input")?;
+	let input = input.parse::<Hex>().map_err(|_| "Invalid input")?.into();
 
 	Ok((key_size, key, mode, input))
 }

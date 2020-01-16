@@ -1,6 +1,5 @@
 use clap::{SubCommand, Arg, ArgMatches};
 use crate::modules::{Command, base, Case};
-use hex;
 use lazy_static::lazy_static;
 use std::collections::HashMap;
 use ring::digest::{Context, SHA1_FOR_LEGACY_USE_ONLY};
@@ -8,6 +7,7 @@ use sha2::{Digest, Sha224, Sha256, Sha384, Sha512, Sha512Trunc224, Sha512Trunc25
 use crc::crc32;
 use crypto::blake2b::Blake2b;
 use yogcrypt::sm3::sm3_enc;
+use crate::modules::base::Hex;
 
 struct Algorithm{
 	name: &'static str,
@@ -394,9 +394,7 @@ fn hash(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	let input = base::input_string(matches)?;
 
-	let input = input.trim_start_matches("0x");
-
-	let input = hex::decode(input).map_err(|_| "Convert failed")?;
+	let input : Vec<u8> =  input.parse::<Hex>().map_err(|_| "Convert failed")?.into();
 
 	let a_name = matches.value_of("ALGORITHM").ok_or("Invalid algorithm")?;
 
@@ -407,7 +405,7 @@ fn hash(matches: &ArgMatches) -> Result<Vec<String>, String> {
 				AlgorithmF::WithKey(f) => {
 					let key = match matches.value_of("KEY") {
 						Some(key) => {
-							hex::decode(key.trim_start_matches("0x")).map_err(|_| "Invalid key")?
+							key.parse::<Hex>().map_err(|_| "Invalid key")?.into()
 						},
 						None => vec![],
 					};
@@ -418,8 +416,7 @@ fn hash(matches: &ArgMatches) -> Result<Vec<String>, String> {
 		None => return Err("Invalid algorithm".to_string()),
 	};
 
-	let result = hex::encode(result);
-	let result = "0x".to_string() + &result;
+	let result = Hex::from(result).into();
 
 	Ok(vec![result])
 }

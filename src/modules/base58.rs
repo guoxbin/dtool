@@ -1,7 +1,7 @@
 use clap::{SubCommand, Arg, ArgMatches};
 use crate::modules::{Command, base, Case};
-use hex;
 use bs58;
+use crate::modules::base::Hex;
 
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 	vec![
@@ -96,9 +96,7 @@ fn h2b58(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	let input = base::input_string(matches)?;
 
-	let input = input.trim_start_matches("0x");
-
-	let input = hex::decode(input).map_err(|_| "Convert failed")?;
+	let input : Vec<u8> = input.parse::<Hex>().map_err(|_| "Convert failed")?.into();
 
 	let result = bs58::encode(input).into_string();
 
@@ -109,9 +107,7 @@ fn h2b58c(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	let input = base::input_string(matches)?;
 
-	let input = input.trim_start_matches("0x");
-
-	let input = hex::decode(input).map_err(|_| "Convert failed")?;
+	let input : Vec<u8> = input.parse::<Hex>().map_err(|_| "Convert failed")?.into();
 
 	let result = bs58::encode(input).with_check().into_string();
 
@@ -123,8 +119,7 @@ fn b582h(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	let input = base::input_string(matches)?;
 
 	let input = bs58::decode(&input).into_vec().map_err(|_| "Convert failed")?;
-	let result = hex::encode(input);
-	let result = format!("0x{}", result);
+	let result = Hex::from(input).into();
 
 	Ok(vec![result])
 }
@@ -134,8 +129,7 @@ fn b58c2h(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	let input = base::input_string(matches)?;
 
 	let input = bs58::decode(&input).with_check(None).into_vec().map_err(|_| "Convert failed")?;
-	let result = hex::encode(input);
-	let result = format!("0x{}", result);
+	let result = Hex::from(input).into();
 
 	Ok(vec![result])
 }

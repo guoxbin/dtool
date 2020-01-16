@@ -6,6 +6,7 @@ use signatory::signature::{Signer, Verifier, Signature};
 use signatory::public_key::PublicKeyed;
 use lazy_static::lazy_static;
 use std::collections::HashMap;
+use crate::modules::base::Hex;
 
 struct Curve {
 	name: &'static str,
@@ -129,14 +130,14 @@ fn ec_sign(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	let curve = CURVES.get(curve).ok_or("Invalid curve")?;
 
 	let secret_key = matches.value_of("SECRET_KEY").ok_or("Invalid secret key")?;
-	let secret_key = hex::decode(secret_key.trim_start_matches("0x")).map_err(|_| "Invalid secret key")?;
+	let secret_key : Vec<u8> = secret_key.parse::<Hex>().map_err(|_| "Invalid secret key")?.into();
 
 	let input = base::input_string(matches)?;
-	let input = hex::decode(input.trim_start_matches("0x")).map_err(|_| "Invalid input")?;
+	let input : Vec<u8> = input.parse::<Hex>().map_err(|_| "Invalid input")?.into();
 
 	let sig = (curve.sign_f)(secret_key, input)?;
 
-	let result = format!("0x{}", hex::encode(sig));
+	let result = Hex::from(sig).into();
 
 	Ok(vec![result])
 }
@@ -147,13 +148,13 @@ fn ec_verify(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	let curve = CURVES.get(curve).ok_or("Invalid curve")?;
 
 	let public_key = matches.value_of("PUBLIC_KEY").ok_or("Invalid public key")?;
-	let public_key = hex::decode(public_key.trim_start_matches("0x")).map_err(|_| "Invalid secret key")?;
+	let public_key : Vec<u8> = public_key.parse::<Hex>().map_err(|_| "Invalid secret key")?.into();
 
 	let sig = matches.value_of("SIGNATURE").ok_or("Invalid signature")?;
-	let sig = hex::decode(sig.trim_start_matches("0x")).map_err(|_| "Invalid signature")?;
+	let sig : Vec<u8> = sig.parse::<Hex>().map_err(|_| "Invalid signature")?.into();
 
 	let input = base::input_string(matches)?;
-	let input = hex::decode(input.trim_start_matches("0x")).map_err(|_| "Invalid input")?;
+	let input : Vec<u8> = input.parse::<Hex>().map_err(|_| "Invalid input")?.into();
 
 	(curve.verify_f)(public_key, sig, input)?;
 
@@ -168,13 +169,13 @@ fn ec_pk(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	let curve = CURVES.get(curve).ok_or("Invalid curve")?;
 
 	let secret_key = matches.value_of("SECRET_KEY").ok_or("Invalid secret key")?;
-	let secret_key = hex::decode(secret_key.trim_start_matches("0x")).map_err(|_| "Invalid secret key")?;
+	let secret_key : Vec<u8> = secret_key.parse::<Hex>().map_err(|_| "Invalid secret key")?.into();
 
 	let compress: bool = matches.value_of("COMPRESS").ok_or("Invalid compress")?.parse().map_err(|_| "Invalid compress")?;
 
 	let public_key = (curve.pk_f)(secret_key, compress)?;
 
-	let result = format!("0x{}", hex::encode(public_key));
+	let result = Hex::from(public_key).into();
 
 	Ok(vec![result])
 }

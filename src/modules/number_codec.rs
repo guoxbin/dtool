@@ -1,7 +1,7 @@
 use clap::{SubCommand, Arg, ArgMatches};
 use crate::modules::{Command, base, Case};
-use hex;
 use parity_codec::{Compact, Encode, Decode};
+use crate::modules::base::Hex;
 
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 	vec![
@@ -187,9 +187,7 @@ fn ne(matches: &ArgMatches) -> Result<Vec<String>, String> {
 		_ => return Err("Invalid input".to_string()),
 	};
 
-	let result = hex::encode(result);
-
-	let result = format!("0x{}", result);
+	let result = Hex::from(result).into();
 
 	Ok(vec![result])
 }
@@ -199,9 +197,7 @@ fn nd(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	let t = matches.value_of("TYPE").ok_or("Invalid number type")?;
 
-	let input = input.trim_start_matches("0x");
-
-	let input = hex::decode(input).map_err(|_|"Invalid input")?;
+	let input : Vec<u8> = input.parse::<Hex>().map_err(|_|"Invalid input")?.into();
 
 	let mut input = &input[..];
 

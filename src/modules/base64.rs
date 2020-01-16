@@ -1,7 +1,7 @@
 use clap::{SubCommand, Arg, ArgMatches};
 use crate::modules::{Command, base, Case};
-use hex;
 use base64;
+use crate::modules::base::Hex;
 
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 	vec![
@@ -46,9 +46,7 @@ fn h2b64(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	let input = base::input_string(matches)?;
 
-	let input = input.trim_start_matches("0x");
-
-	let input = hex::decode(input).map_err(|_| "Convert failed")?;
+	let input : Vec<u8> = input.parse::<Hex>().map_err(|_| "Convert failed")?.into();
 
 	let result = base64::encode(&input);
 
@@ -60,8 +58,7 @@ fn b642h(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	let input = base::input_string(matches)?;
 
 	let result = base64::decode(&input).map_err(|_| "Convert failed")?;
-	let result = hex::encode(result);
-	let result = format!("0x{}", result);
+	let result = Hex::from(result).into();
 
 	Ok(vec![result])
 }
