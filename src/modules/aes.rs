@@ -3,7 +3,7 @@ use crate::modules::{Command, base, Case};
 use crypto::aes::{cbc_decryptor, cbc_encryptor, KeySize, ecb_encryptor, ecb_decryptor, ctr};
 use crypto::blockmodes::PkcsPadding;
 use crypto::buffer::{RefReadBuffer, RefWriteBuffer, WriteBuffer};
-use crate::modules::aes::Mode::{ECB, CBC, CTR};
+use self::Mode::{ECB, CBC, CTR};
 use crypto::symmetriccipher::{Encryptor, Decryptor};
 
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
@@ -18,7 +18,7 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 				.arg(
 					Arg::with_name("MODE")
 						.long("mode")
-						.short("m").help("Mode\necb: ECB\ncbc: CBC\nctr: CTR")
+						.short("m").help("Mode\necb: ECB\ncbc: CBC\nctr: CTR\n")
 						.takes_value(true)
 						.possible_values(&["ecb", "cbc", "ctr"])
 						.required(true))
@@ -168,7 +168,7 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 				.arg(
 					Arg::with_name("MODE")
 						.long("mode")
-						.short("m").help("Mode\necb: ECB\ncbc: CBC\nctr: CTR")
+						.short("m").help("Mode\necb: ECB\ncbc: CBC\nctr: CTR\n")
 						.takes_value(true)
 						.possible_values(&["ecb", "cbc", "ctr"])
 						.required(true))
