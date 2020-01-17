@@ -32,6 +32,7 @@ Now `dtool` supports:
 - Pbkdf2
 - Case conversion (upper, lower, title, camel, pascal, snake, shouty snake, kebab)
 - AES encrypt / decrypt
+- ECDSA (Secp256k1, NIST P-256)
 
 ## Usage
 

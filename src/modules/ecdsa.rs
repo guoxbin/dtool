@@ -1,9 +1,5 @@
 use clap::{SubCommand, Arg, ArgMatches};
 use crate::modules::{Command, base, Case};
-use signatory_secp256k1::{SecretKey, EcdsaSigner, PublicKey, EcdsaVerifier};
-use signatory::ecdsa::curve::secp256k1::{Asn1Signature, FixedSignature};
-use signatory::signature::{Signer, Verifier, Signature};
-use signatory::public_key::PublicKeyed;
 use lazy_static::lazy_static;
 use std::collections::HashMap;
 use crate::modules::base::Hex;
@@ -11,13 +7,14 @@ use crate::modules::base::Hex;
 struct Curve {
 	name: &'static str,
 	help: &'static str,
+	gk_f: fn(compress: bool) -> Result<(Vec<u8>, Vec<u8>), String>,
 	sign_f: fn(secret_key: Vec<u8>, message: Vec<u8>, sig_form: SignatureFormEnum) -> Result<Vec<u8>, String>,
 	verify_f: fn(public_key: Vec<u8>, sig: Vec<u8>, message: Vec<u8>, sig_form: SignatureFormEnum) -> Result<(), String>,
 	pk_f: fn(secret_key: Vec<u8>, compress: bool) -> Result<Vec<u8>, String>,
 }
 
 #[derive(Clone)]
-enum SignatureFormEnum{
+pub enum SignatureFormEnum{
 	Der,
 	Fixed,
 }
@@ -33,16 +30,18 @@ lazy_static! {
 		Curve {
 			name: "secp256k1",
 			help: "Secp256k1",
-			sign_f: ec_sign_secp256k1,
-			verify_f: ec_verify_secp256k1,
-			pk_f: ec_pk_secp256k1,
+			gk_f: secp256k1::ec_gk_secp256k1,
+			sign_f: secp256k1::ec_sign_secp256k1,
+			verify_f: secp256k1::ec_verify_secp256k1,
+			pk_f: secp256k1::ec_pk_secp256k1,
 		},
 		Curve {
 			name: "p256",
 			help: "NIST P-256",
-			sign_f: ec_sign_secp256k1,
-			verify_f: ec_verify_secp256k1,
-			pk_f: ec_pk_secp256k1,
+			gk_f: p256::ec_gk_p256,
+			sign_f: p256::ec_sign_p256,
+			verify_f: p256::ec_verify_p256,
+			pk_f: p256::ec_pk_p256,
 		},
 	];
 
@@ -74,6 +73,35 @@ lazy_static! {
 
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 	vec![
+		Command {
+			app: SubCommand::with_name("ec_gk").about("Elliptic-curve generate key pair (Secret key, Public key)")
+				.arg(
+					Arg::with_name("CURVE")
+						.long("curve")
+						.short("c").help(&CURVE_HELP)
+						.takes_value(true)
+						.possible_values(&CURVE_NAMES)
+						.required(true))
+				.arg(
+					Arg::with_name("COMPRESS")
+						.long("compress")
+						.short("C").help("Compress")
+						.takes_value(true)
+						.possible_values(&["true", "false"])
+						.default_value("true")
+						.required(false)),
+			f: ec_gk,
+			cases: vec![
+				Case {
+					desc: "".to_string(),
+					input: vec![ "-c", "secp256k1"].into_iter().map(Into::into).collect(),
+					output: vec!["(0x9cbe9cd5d7759ca46296f64e3e8211ef5ccaf86b5cb7169711554d1ed2ed68ca, 0x0379ce37925295f3103855da38ee2bf0e06a60ec9d86806d0efd2de3649a74b40d)"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: false,
+					since: "0.7.0".to_string(),
+				},
+			],
+		},
 		Command {
 			app: SubCommand::with_name("ec_sign").about("Elliptic-curve sign")
 				.arg(
@@ -215,7 +243,7 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 				},
 				Case {
 					desc: "Uncompressed public key".to_string(),
-					input: vec![ "-c", "secp256k1", "-s", "0x9cb4f775e9b67118242cea15285555c287a7e3d2f86ba238c1fe87284b898e9a"].into_iter().map(Into::into).collect(),
+					input: vec![ "-c", "secp256k1", "-C", "false", "-s", "0x9cb4f775e9b67118242cea15285555c287a7e3d2f86ba238c1fe87284b898e9a"].into_iter().map(Into::into).collect(),
 					output: vec!["0x04391aa7238b79e1aad1e038c95306171a8ac7499357dc99586f96c5f3b9618d6035af9529d80a85ebecb1120d1cfaf1591b7c686907b0a3d18858a95e86976747"].into_iter().map(Into::into).collect(),
 					is_example: true,
 					is_test: true,
@@ -224,6 +252,22 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 			],
 		},
 	]
+}
+
+fn ec_gk(matches: &ArgMatches) -> Result<Vec<String>, String> {
+	let curve = matches.value_of("CURVE").ok_or("Invalid curve")?;
+
+	let curve = CURVES.get(curve).ok_or("Invalid curve")?;
+
+	let compress: bool = matches.value_of("COMPRESS").ok_or("Invalid compress")?.parse().map_err(|_| "Invalid compress")?;
+
+	let (private_key, public_key) = (curve.gk_f)(compress)?;
+
+	let (private_key, public_key) : (String, String) = (Hex::from(private_key).into(), Hex::from(public_key).into(), );
+
+	let result = format!("({}, {})", private_key, public_key);
+
+	Ok(vec![result])
 }
 
 fn ec_sign(matches: &ArgMatches) -> Result<Vec<String>, String> {
@@ -288,58 +332,108 @@ fn ec_pk(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	Ok(vec![result])
 }
 
-fn ec_sign_secp256k1(secret_key: Vec<u8>, message: Vec<u8>, sig_form: SignatureFormEnum) -> Result<Vec<u8>, String> {
-	let secret_key = SecretKey::from_bytes(secret_key).map_err(|e| format!("Invalid secret key: {}", e))?;
-	let signer = EcdsaSigner::from(&secret_key);
+mod secp256k1 {
 
-	let signature = match sig_form{
-		SignatureFormEnum::Fixed => {
-			let signature: FixedSignature = signer.sign(&message);
-			signature.as_ref().to_vec()
-		},
-		SignatureFormEnum::Der => {
-			let signature: Asn1Signature = signer.sign(&message);
-			signature.as_ref().to_vec()
-		},
-	};
+	use signatory_secp256k1::{SecretKey, EcdsaSigner, PublicKey, EcdsaVerifier};
+	use signatory::ecdsa::curve::secp256k1::{Asn1Signature, FixedSignature};
+	use crate::modules::ecdsa::SignatureFormEnum;
+	use signatory::public_key::PublicKeyed;
+	use signatory::signature::{Signer, Verifier, Signature};
+	use secp256k1::rand::thread_rng;
+	use secp256k1::Secp256k1;
+	use crate::modules::base::Hex;
 
-	Ok(signature)
+	pub fn ec_gk_secp256k1(compress: bool) -> Result<(Vec<u8>, Vec<u8>), String> {
+
+		let (secret_key, public_key) = Secp256k1::new().generate_keypair(&mut thread_rng());
+
+		let secret_key : Vec<u8> = secret_key.to_string().parse::<Hex>().map_err(|_|"Invalid secret key")?.into();
+
+		let public_key = match compress{
+			true => public_key.serialize().to_vec(),
+			false => public_key.serialize_uncompressed().to_vec(),
+		};
+		Ok((secret_key, public_key))
+	}
+
+	pub fn ec_sign_secp256k1(secret_key: Vec<u8>, message: Vec<u8>, sig_form: SignatureFormEnum) -> Result<Vec<u8>, String> {
+		let secret_key = SecretKey::from_bytes(secret_key).map_err(|e| format!("Invalid secret key: {}", e))?;
+		let signer = EcdsaSigner::from(&secret_key);
+
+		let signature = match sig_form {
+			SignatureFormEnum::Fixed => {
+				let signature: FixedSignature = signer.sign(&message);
+				signature.as_ref().to_vec()
+			},
+			SignatureFormEnum::Der => {
+				let signature: Asn1Signature = signer.sign(&message);
+				signature.as_ref().to_vec()
+			},
+		};
+
+		Ok(signature)
+	}
+
+	pub fn ec_verify_secp256k1(public_key: Vec<u8>, sig: Vec<u8>, message: Vec<u8>, sig_form: SignatureFormEnum) -> Result<(), String> {
+		let public_key = PublicKey::from_bytes(public_key).ok_or("Invalid public key")?;
+		let verifier = EcdsaVerifier::from(&public_key);
+
+		let result = match sig_form {
+			SignatureFormEnum::Fixed => {
+				let sig = FixedSignature::from_bytes(sig).map_err(|e| format!("Invalid signature: {}", e))?;
+				verifier.verify(&message, &sig).map_err(|e| format!("{}", e))
+			},
+			SignatureFormEnum::Der => {
+				let sig = Asn1Signature::from_bytes(sig).map_err(|e| format!("Invalid signature: {}", e))?;
+				verifier.verify(&message, &sig).map_err(|e| format!("{}", e))
+			},
+		};
+		result
+	}
+
+	pub fn ec_pk_secp256k1(secret_key: Vec<u8>, compress: bool) -> Result<Vec<u8>, String> {
+		let secret_key = SecretKey::from_bytes(secret_key).map_err(|e| format!("Invalid secret key: {}", e))?;
+		let signer = EcdsaSigner::from(&secret_key);
+
+		let public_key: PublicKey = signer.public_key().map_err(|_| "Failed")?;
+
+		let public_key = public_key.as_bytes();
+
+		let public_key = match compress {
+			true => public_key.to_vec(),
+			false => {
+				let public_key = secp256k1::PublicKey::from_slice(public_key).expect("Should be valid public key; qed");
+				public_key.serialize_uncompressed().to_vec()
+			}
+		};
+
+		Ok(public_key)
+	}
 }
 
-fn ec_verify_secp256k1(public_key: Vec<u8>, sig: Vec<u8>, message: Vec<u8>, sig_form: SignatureFormEnum) -> Result<(), String> {
-	let public_key = PublicKey::from_bytes(public_key).ok_or("Invalid public key")?;
-	let verifier = EcdsaVerifier::from(&public_key);
+mod p256 {
 
-	let result = match sig_form{
-		SignatureFormEnum::Fixed => {
-			let sig = FixedSignature::from_bytes(sig).map_err(|e| format!("Invalid signature: {}", e))?;
-			verifier.verify(&message, &sig).map_err(|e| format!("{}", e))
-		},
-		SignatureFormEnum::Der => {
-			let sig = Asn1Signature::from_bytes(sig).map_err(|e| format!("Invalid signature: {}", e))?;
-			verifier.verify(&message, &sig).map_err(|e| format!("{}", e))
-		},
-	};
-	result
-}
+	use crate::modules::ecdsa::SignatureFormEnum;
 
-fn ec_pk_secp256k1(secret_key: Vec<u8>, compress: bool) -> Result<Vec<u8>, String> {
-	let secret_key = SecretKey::from_bytes(secret_key).map_err(|e| format!("Invalid secret key: {}", e))?;
-	let signer = EcdsaSigner::from(&secret_key);
+	pub fn ec_gk_p256(compress: bool) -> Result<(Vec<u8>, Vec<u8>), String> {
 
-	let public_key: PublicKey = signer.public_key().map_err(|_| "Failed")?;
+		unimplemented!()
+	}
 
-	let public_key = public_key.as_bytes();
+	pub fn ec_sign_p256(secret_key: Vec<u8>, message: Vec<u8>, sig_form: SignatureFormEnum) -> Result<Vec<u8>, String> {
 
-	let public_key = match compress {
-		true => public_key.to_vec(),
-		false => {
-			let public_key = secp256k1::PublicKey::from_slice(public_key).expect("Should be valid public key; qed");
-			public_key.serialize_uncompressed().to_vec()
-		}
-	};
+		unimplemented!()
+	}
 
-	Ok(public_key)
+	pub fn ec_verify_p256(public_key: Vec<u8>, sig: Vec<u8>, message: Vec<u8>, sig_form: SignatureFormEnum) -> Result<(), String> {
+
+		unimplemented!()
+	}
+
+	pub fn ec_pk_p256(secret_key: Vec<u8>, compress: bool) -> Result<Vec<u8>, String> {
+
+		unimplemented!()
+	}
 }
 
 #[cfg(test)]
