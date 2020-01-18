@@ -20,6 +20,12 @@ mod ecdsa;
 mod case;
 mod completion;
 
+pub struct Module<'a, 'b> {
+	pub desc: String,
+	pub commands: Vec<Command<'a, 'b>>,
+	pub get_cases: fn() -> LinkedHashMap<&'static str, Vec<Case>>,
+}
+
 pub struct Command<'a, 'b> {
 	pub app: App<'a, 'b>,
 	pub f: fn(&ArgMatches<'a>) -> Result<Vec<String>, String>,
@@ -66,8 +72,8 @@ impl<'a, 'b> ModuleManager<'a, 'b> {
 	pub fn apps(&self) -> Vec<App<'a, 'b>> {
 
 		self.commands.iter().map(|(_, command)| command.app.to_owned())
-			.chain( iter::once(usage::usage_app()) )
-			.chain(iter::once(completion::completion_app()))
+			.chain( iter::once(usage::app()) )
+			.chain(iter::once(completion::app()))
 			.collect()
 
 	}
@@ -75,8 +81,8 @@ impl<'a, 'b> ModuleManager<'a, 'b> {
 	pub fn run(&self, name: &str, matches: &ArgMatches<'a>) {
 
 		let result = match name{
-			"usage" => usage::usage(matches, &self.commands),
-			"completion" => completion::completion(matches),
+			"usage" => usage::run(matches, &self.commands),
+			"completion" => completion::run(matches),
 			_ => (self.commands.get(name).expect("subcommand must exit").f)(matches),
 		};
 

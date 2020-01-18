@@ -1,6 +1,14 @@
 use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::{Command, base, Case};
+use crate::modules::{Command, base, Module};
 use std::char::EscapeUnicode;
+
+pub fn module<'a, 'b>() -> Module<'a, 'b> {
+	Module {
+		desc: "UTF-8 string / unicode conversion".to_string(),
+		commands: commands(),
+		get_cases: cases::cases,
+	}
+}
 
 static FORMAT_HELP: &str = "Format
 <default>: \\u7c
@@ -23,48 +31,7 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.required(false)
 						.index(1)),
 			f: s2u,
-			cases: vec![
-				Case {
-					desc: "Default format".to_string(),
-					input: vec!["abc"].into_iter().map(Into::into).collect(),
-					output: vec!["\\u61\\u62\\u63"].into_iter().map(Into::into).collect(),
-					is_example: true,
-					is_test: true,
-					since: "0.3.0".to_string(),
-				},
-				Case {
-					desc: "HTML format".to_string(),
-					input: vec!["-f", "html", "abc"].into_iter().map(Into::into).collect(),
-					output: vec!["&#x61;&#x62;&#x63;"].into_iter().map(Into::into).collect(),
-					is_example: true,
-					is_test: true,
-					since: "0.3.0".to_string(),
-				},
-				Case {
-					desc: "HTML decimal format".to_string(),
-					input: vec!["-f", "html_d", "abc"].into_iter().map(Into::into).collect(),
-					output: vec!["&#97;&#98;&#99;"].into_iter().map(Into::into).collect(),
-					is_example: true,
-					is_test: true,
-					since: "0.3.0".to_string(),
-				},
-				Case {
-					desc: "RUST format".to_string(),
-					input: vec!["-f", "rust", "abc"].into_iter().map(Into::into).collect(),
-					output: vec!["\\u{61}\\u{62}\\u{63}"].into_iter().map(Into::into).collect(),
-					is_example: true,
-					is_test: true,
-					since: "0.3.0".to_string(),
-				},
-				Case {
-					desc: "Emoji".to_string(),
-					input: vec!["💯"].into_iter().map(Into::into).collect(),
-					output: vec!["\\u1f4af"].into_iter().map(Into::into).collect(),
-					is_example: true,
-					is_test: true,
-					since: "0.3.0".to_string(),
-				},
-			],
+			cases: vec![],
 		},
 		Command {
 			app: SubCommand::with_name("u2s").about("Unicode to UTF-8 string")
@@ -73,48 +40,7 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.required(false)
 						.index(1)),
 			f: u2s,
-			cases: vec![
-				Case {
-					desc: "From default format".to_string(),
-					input: vec!["'\\u61\\u62\\u63'"].into_iter().map(Into::into).collect(),
-					output: vec!["abc"].into_iter().map(Into::into).collect(),
-					is_example: true,
-					is_test: true,
-					since: "0.3.0".to_string(),
-				},
-				Case {
-					desc: "HTML format".to_string(),
-					input: vec!["'&#x61;&#x62;&#x63;'"].into_iter().map(Into::into).collect(),
-					output: vec!["abc"].into_iter().map(Into::into).collect(),
-					is_example: true,
-					is_test: true,
-					since: "0.3.0".to_string(),
-				},
-				Case {
-					desc: "HTML decimal format".to_string(),
-					input: vec!["'&#97;&#98;&#99;'"].into_iter().map(Into::into).collect(),
-					output: vec!["abc"].into_iter().map(Into::into).collect(),
-					is_example: true,
-					is_test: true,
-					since: "0.3.0".to_string(),
-				},
-				Case {
-					desc: "RUST format".to_string(),
-					input: vec!["'\\u{61}\\u{62}\\u{63}'"].into_iter().map(Into::into).collect(),
-					output: vec!["abc"].into_iter().map(Into::into).collect(),
-					is_example: true,
-					is_test: true,
-					since: "0.3.0".to_string(),
-				},
-				Case {
-					desc: "Emoji".to_string(),
-					input: vec!["'\\u1f4af'"].into_iter().map(Into::into).collect(),
-					output: vec!["💯"].into_iter().map(Into::into).collect(),
-					is_example: true,
-					is_test: true,
-					since: "0.3.0".to_string(),
-				},
-			],
+			cases: vec![],
 		},
 	]
 }
@@ -242,14 +168,109 @@ fn from_default(data: &str) -> Option<Result<char, String>> {
 	}
 }
 
+mod cases {
+	use crate::modules::Case;
+	use linked_hash_map::LinkedHashMap;
+
+	pub fn cases() -> LinkedHashMap<&'static str, Vec<Case>> {
+		vec![
+			("s2u",
+			 vec![
+				 Case {
+					 desc: "Default format".to_string(),
+					 input: vec!["abc"].into_iter().map(Into::into).collect(),
+					 output: vec!["\\u61\\u62\\u63"].into_iter().map(Into::into).collect(),
+					 is_example: true,
+					 is_test: true,
+					 since: "0.3.0".to_string(),
+				 },
+				 Case {
+					 desc: "HTML format".to_string(),
+					 input: vec!["-f", "html", "abc"].into_iter().map(Into::into).collect(),
+					 output: vec!["&#x61;&#x62;&#x63;"].into_iter().map(Into::into).collect(),
+					 is_example: true,
+					 is_test: true,
+					 since: "0.3.0".to_string(),
+				 },
+				 Case {
+					 desc: "HTML decimal format".to_string(),
+					 input: vec!["-f", "html_d", "abc"].into_iter().map(Into::into).collect(),
+					 output: vec!["&#97;&#98;&#99;"].into_iter().map(Into::into).collect(),
+					 is_example: true,
+					 is_test: true,
+					 since: "0.3.0".to_string(),
+				 },
+				 Case {
+					 desc: "RUST format".to_string(),
+					 input: vec!["-f", "rust", "abc"].into_iter().map(Into::into).collect(),
+					 output: vec!["\\u{61}\\u{62}\\u{63}"].into_iter().map(Into::into).collect(),
+					 is_example: true,
+					 is_test: true,
+					 since: "0.3.0".to_string(),
+				 },
+				 Case {
+					 desc: "Emoji".to_string(),
+					 input: vec!["💯"].into_iter().map(Into::into).collect(),
+					 output: vec!["\\u1f4af"].into_iter().map(Into::into).collect(),
+					 is_example: true,
+					 is_test: true,
+					 since: "0.3.0".to_string(),
+				 },
+			 ]),
+			("u2s",
+			 vec![
+				 Case {
+					 desc: "From default format".to_string(),
+					 input: vec!["'\\u61\\u62\\u63'"].into_iter().map(Into::into).collect(),
+					 output: vec!["abc"].into_iter().map(Into::into).collect(),
+					 is_example: true,
+					 is_test: true,
+					 since: "0.3.0".to_string(),
+				 },
+				 Case {
+					 desc: "HTML format".to_string(),
+					 input: vec!["'&#x61;&#x62;&#x63;'"].into_iter().map(Into::into).collect(),
+					 output: vec!["abc"].into_iter().map(Into::into).collect(),
+					 is_example: true,
+					 is_test: true,
+					 since: "0.3.0".to_string(),
+				 },
+				 Case {
+					 desc: "HTML decimal format".to_string(),
+					 input: vec!["'&#97;&#98;&#99;'"].into_iter().map(Into::into).collect(),
+					 output: vec!["abc"].into_iter().map(Into::into).collect(),
+					 is_example: true,
+					 is_test: true,
+					 since: "0.3.0".to_string(),
+				 },
+				 Case {
+					 desc: "RUST format".to_string(),
+					 input: vec!["'\\u{61}\\u{62}\\u{63}'"].into_iter().map(Into::into).collect(),
+					 output: vec!["abc"].into_iter().map(Into::into).collect(),
+					 is_example: true,
+					 is_test: true,
+					 since: "0.3.0".to_string(),
+				 },
+				 Case {
+					 desc: "Emoji".to_string(),
+					 input: vec!["'\\u1f4af'"].into_iter().map(Into::into).collect(),
+					 output: vec!["💯"].into_iter().map(Into::into).collect(),
+					 is_example: true,
+					 is_test: true,
+					 since: "0.3.0".to_string(),
+				 },
+			 ]),
+		].into_iter().collect()
+	}
+}
+
 #[cfg(test)]
 mod tests {
 	use super::*;
-	use crate::modules::base::test::test_commands;
+	use crate::modules::base::test::test_module;
 
 	#[test]
 	fn test_cases() {
-		test_commands(&commands());
+		test_module(module());
 	}
-
 }

@@ -7,7 +7,7 @@ use madato::mk_table;
 use escaper;
 use regex::Captures;
 
-pub fn usage_app<'a, 'b>() -> App<'a, 'b> {
+pub fn app<'a, 'b>() -> App<'a, 'b> {
 
 	SubCommand::with_name("usage").about("Show usage")
 		.arg(
@@ -24,7 +24,7 @@ pub fn usage_app<'a, 'b>() -> App<'a, 'b> {
 			.required(false))
 }
 
-pub fn usage<'a, 'b>(matches: &ArgMatches, commands: &LinkedHashMap<String, Command<'a, 'b>>) -> Result<Vec<String>, String> {
+pub fn run<'a, 'b>(matches: &ArgMatches, commands: &LinkedHashMap<String, Command<'a, 'b>>) -> Result<Vec<String>, String> {
 
 	let table = get_usage_table(commands);
 

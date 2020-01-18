@@ -1,5 +1,13 @@
 use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::{Command, base, Case};
+use crate::modules::{Command, base, Module};
+
+pub fn module<'a, 'b>() -> Module<'a, 'b> {
+	Module {
+		desc: "Number 10/2/8/16 base conversion".to_string(),
+		commands: commands(),
+		get_cases: cases::cases,
+	}
+}
 
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 	vec![
@@ -31,54 +39,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.index(1)),
 			f: ns,
 			cases: vec![
-				Case {
-					desc: "Input decimal".to_string(),
-					input: vec!["256"].into_iter().map(Into::into).collect(),
-					output: vec!["256", "0b100000000", "0o400", "0x100"].into_iter().map(Into::into).collect(),
-					is_example: true,
-					is_test: true,
-					since: "0.1.0".to_string(),
-				},
-				Case {
-					desc: "Input octal".to_string(),
-					input: vec!["0o400"].into_iter().map(Into::into).collect(),
-					output: vec!["256", "0b100000000", "0o400", "0x100"].into_iter().map(Into::into).collect(),
-					is_example: true,
-					is_test: true,
-					since: "0.1.0".to_string(),
-				},
-				Case {
-					desc: "Output decimal".to_string(),
-					input: vec!["-d", "256"].into_iter().map(Into::into).collect(),
-					output: vec!["256"].into_iter().map(Into::into).collect(),
-					is_example: true,
-					is_test: true,
-					since: "0.1.0".to_string(),
-				},
-				Case {
-					desc: "Output binary".to_string(),
-					input: vec!["-b", "256"].into_iter().map(Into::into).collect(),
-					output: vec!["0b100000000"].into_iter().map(Into::into).collect(),
-					is_example: true,
-					is_test: true,
-					since: "0.1.0".to_string(),
-				},
-				Case {
-					desc: "Output octal".to_string(),
-					input: vec!["-o", "256"].into_iter().map(Into::into).collect(),
-					output: vec!["0o400"].into_iter().map(Into::into).collect(),
-					is_example: true,
-					is_test: true,
-					since: "0.1.0".to_string(),
-				},
-				Case {
-					desc: "Output hexadecimal".to_string(),
-					input: vec!["-x", "256"].into_iter().map(Into::into).collect(),
-					output: vec!["0x100"].into_iter().map(Into::into).collect(),
-					is_example: true,
-					is_test: true,
-					since: "0.1.0".to_string(),
-				},
 			],
 		},
 	]
@@ -122,15 +82,76 @@ fn ns(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	Ok(results)
 }
 
+mod cases {
+	use crate::modules::Case;
+	use linked_hash_map::LinkedHashMap;
+
+	pub fn cases() -> LinkedHashMap<&'static str, Vec<Case>> {
+		vec![
+			("ns",
+			 vec![
+				 Case {
+					 desc: "Input decimal".to_string(),
+					 input: vec!["256"].into_iter().map(Into::into).collect(),
+					 output: vec!["256", "0b100000000", "0o400", "0x100"].into_iter().map(Into::into).collect(),
+					 is_example: true,
+					 is_test: true,
+					 since: "0.1.0".to_string(),
+				 },
+				 Case {
+					 desc: "Input octal".to_string(),
+					 input: vec!["0o400"].into_iter().map(Into::into).collect(),
+					 output: vec!["256", "0b100000000", "0o400", "0x100"].into_iter().map(Into::into).collect(),
+					 is_example: true,
+					 is_test: true,
+					 since: "0.1.0".to_string(),
+				 },
+				 Case {
+					 desc: "Output decimal".to_string(),
+					 input: vec!["-d", "256"].into_iter().map(Into::into).collect(),
+					 output: vec!["256"].into_iter().map(Into::into).collect(),
+					 is_example: true,
+					 is_test: true,
+					 since: "0.1.0".to_string(),
+				 },
+				 Case {
+					 desc: "Output binary".to_string(),
+					 input: vec!["-b", "256"].into_iter().map(Into::into).collect(),
+					 output: vec!["0b100000000"].into_iter().map(Into::into).collect(),
+					 is_example: true,
+					 is_test: true,
+					 since: "0.1.0".to_string(),
+				 },
+				 Case {
+					 desc: "Output octal".to_string(),
+					 input: vec!["-o", "256"].into_iter().map(Into::into).collect(),
+					 output: vec!["0o400"].into_iter().map(Into::into).collect(),
+					 is_example: true,
+					 is_test: true,
+					 since: "0.1.0".to_string(),
+				 },
+				 Case {
+					 desc: "Output hexadecimal".to_string(),
+					 input: vec!["-x", "256"].into_iter().map(Into::into).collect(),
+					 output: vec!["0x100"].into_iter().map(Into::into).collect(),
+					 is_example: true,
+					 is_test: true,
+					 since: "0.1.0".to_string(),
+				 },
+			 ]),
+		].into_iter().collect()
+	}
+}
+
 #[cfg(test)]
 mod tests {
 
 	use super::*;
-	use crate::modules::base::test::test_commands;
+	use crate::modules::base::test::test_module;
 
 	#[test]
 	fn test_cases() {
-		test_commands(&commands());
+		test_module(module());
 	}
 
 }
