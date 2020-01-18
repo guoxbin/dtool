@@ -19,7 +19,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: h2b64,
-			cases: vec![],
 		},
 		Command {
 			app: SubCommand::with_name("b642h").about("Convert base64 to hex").arg(
@@ -27,7 +26,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: b642h,
-			cases: vec![],
 		},
 	]
 }

@@ -18,7 +18,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: he,
-			cases: vec![],
 		},
 		Command {
 			app: SubCommand::with_name("hd").about("HTML entity decode").arg(
@@ -26,7 +25,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: hd,
-			cases: vec![],
 		}
 	]
 }

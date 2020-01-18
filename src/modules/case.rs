@@ -28,7 +28,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.required(false)
 						.index(1)),
 			f: case,
-			cases: vec![],
 		},
 	]
 }

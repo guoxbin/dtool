@@ -27,7 +27,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.required(false)
 						.index(1)),
 			f: ne,
-			cases: vec![],
 		},
 		Command {
 			app: SubCommand::with_name("nd").about("Number decode")
@@ -42,7 +41,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.required(false)
 						.index(1)),
 			f: nd,
-			cases: vec![],
 		},
 	]
 }

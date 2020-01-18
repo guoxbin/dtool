@@ -20,7 +20,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: h2s,
-			cases: vec![],
 		},
 		Command {
 			app: SubCommand::with_name("s2h").about("Convert UTF-8 string to hex").arg(
@@ -28,7 +27,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: s2h,
-			cases: vec![],
 		},
 		Command {
 			app: SubCommand::with_name("h2b").about("Convert hex to binary").arg(
@@ -36,7 +34,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: h2b,
-			cases: vec![],
 		},
 		Command {
 			app: SubCommand::with_name("b2h").about("Convert binary to hex").arg(
@@ -44,7 +41,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: b2h,
-			cases: vec![],
 		},
 	]
 }

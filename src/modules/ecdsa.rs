@@ -108,7 +108,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.short("C").help("Compress")
 						.required(false)),
 			f: ec_gk,
-			cases: vec![],
 		},
 		Command {
 			app: SubCommand::with_name("ec_sign").about("Elliptic-curve sign")
@@ -139,7 +138,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.default_value("fixed")
 						.required(false)),
 			f: ec_sign,
-			cases: vec![],
 		},
 		Command {
 			app: SubCommand::with_name("ec_verify").about("Elliptic-curve verify")
@@ -176,7 +174,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.default_value("fixed")
 						.required(false)),
 			f: ec_verify,
-			cases: vec![],
 		},
 		Command {
 			app: SubCommand::with_name("ec_pk").about("Elliptic-curve calculate public key")
@@ -199,7 +196,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.short("C").help("Compress")
 						.required(false)),
 			f: ec_pk,
-			cases: vec![],
 		},
 	]
 }

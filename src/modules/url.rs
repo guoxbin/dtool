@@ -18,9 +18,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: ue,
-			cases: vec![
-
-			],
 		},
 		Command {
 			app: SubCommand::with_name("ud").about("URL decode").arg(
@@ -28,15 +25,11 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: ud,
-			cases: vec![
-
-			],
 		}
 	]
 }
 
 fn ue(matches: &ArgMatches) -> Result<Vec<String>, String> {
-
 	let input = base::input_string(matches)?;
 
 	let result = urlencoding::encode(&input);
@@ -45,7 +38,6 @@ fn ue(matches: &ArgMatches) -> Result<Vec<String>, String> {
 }
 
 fn ud(matches: &ArgMatches) -> Result<Vec<String>, String> {
-
 	let input = base::input_string(matches)?;
 
 	let result = urlencoding::decode(&input).map_err(|_| "Decode failed")?;
@@ -87,7 +79,6 @@ mod cases {
 
 #[cfg(test)]
 mod tests {
-
 	use super::*;
 	use crate::modules::base::test::test_module;
 
@@ -95,5 +86,4 @@ mod tests {
 	fn test_cases() {
 		test_module(module());
 	}
-
 }

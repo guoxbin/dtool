@@ -31,7 +31,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.required(false)
 						.index(1)),
 			f: ts2d,
-			cases: vec![],
 		},
 		Command {
 			app: SubCommand::with_name("d2ts").about("Convert date to timestamp")
@@ -46,7 +45,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.required(false)
 						.index(1)),
 			f: d2ts,
-			cases: vec![],
 		}
 	]
 }

@@ -45,7 +45,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.takes_value(true)
 						.required(false)),
 			f: aes_enc,
-			cases: vec![],
 		},
 		Command {
 			app: SubCommand::with_name("aes_dec").about("AES decrypt")
@@ -74,7 +73,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.takes_value(true)
 						.required(false)),
 			f: aes_dec,
-			cases: vec![],
 		}
 	]
 }

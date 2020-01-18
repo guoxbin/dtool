@@ -51,8 +51,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.index(1)),
 
 			f: pbkdf2,
-			cases: vec![
-			],
 		}
 	]
 }

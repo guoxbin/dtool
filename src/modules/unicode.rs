@@ -31,7 +31,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.required(false)
 						.index(1)),
 			f: s2u,
-			cases: vec![],
 		},
 		Command {
 			app: SubCommand::with_name("u2s").about("Unicode to UTF-8 string")
@@ -40,7 +39,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.required(false)
 						.index(1)),
 			f: u2s,
-			cases: vec![],
 		},
 	]
 }

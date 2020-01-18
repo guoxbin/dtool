@@ -20,18 +20,20 @@ mod ecdsa;
 mod case;
 mod completion;
 
+#[derive(Clone)]
 pub struct Module<'a, 'b> {
 	pub desc: String,
 	pub commands: Vec<Command<'a, 'b>>,
-	pub get_cases: fn() -> LinkedHashMap<&'static str, Vec<Case>>,
+	pub get_cases: fn() -> LinkedHashMap<&'static str, Vec<Case>>, //lazy
 }
 
+#[derive(Clone)]
 pub struct Command<'a, 'b> {
 	pub app: App<'a, 'b>,
 	pub f: fn(&ArgMatches<'a>) -> Result<Vec<String>, String>,
-	pub cases: Vec<Case>,
 }
 
+#[derive(Clone)]
 pub struct Case {
 	pub desc: String,
 	pub input: Vec<String>,
@@ -42,30 +44,32 @@ pub struct Case {
 }
 
 pub struct ModuleManager<'a, 'b>{
-	commands : LinkedHashMap<String, Command<'a, 'b>>,
+	modules: Vec<Module<'a, 'b>>,
+	commands: LinkedHashMap<String, Command<'a, 'b>>,
 }
 
 impl<'a, 'b> ModuleManager<'a, 'b> {
 
 	pub fn new() -> Self {
 		let mut mm = Self {
+			modules: Vec::new(),
 			commands: LinkedHashMap::new(),
 		};
-		mm.register(hex::commands());
-		mm.register(time::commands());
-		mm.register(number_system::commands());
-		mm.register(base58::commands());
-		mm.register(base64::commands());
-		mm.register(url::commands());
-		mm.register(number_codec::commands());
-		mm.register(hash::commands());
-		mm.register(unicode::commands());
-		mm.register(html::commands());
-		mm.register(re::commands());
-		mm.register(pbkdf2::commands());
-		mm.register(case::commands());
-		mm.register(aes::commands());
-		mm.register(ecdsa::commands());
+		mm.register(hex::module());
+		mm.register(time::module());
+		mm.register(number_system::module());
+		mm.register(base58::module());
+		mm.register(base64::module());
+		mm.register(url::module());
+		mm.register(number_codec::module());
+		mm.register(hash::module());
+		mm.register(unicode::module());
+		mm.register(html::module());
+		mm.register(re::module());
+		mm.register(pbkdf2::module());
+		mm.register(case::module());
+		mm.register(aes::module());
+		mm.register(ecdsa::module());
 		mm
 	}
 
@@ -81,7 +85,7 @@ impl<'a, 'b> ModuleManager<'a, 'b> {
 	pub fn run(&self, name: &str, matches: &ArgMatches<'a>) {
 
 		let result = match name{
-			"usage" => usage::run(matches, &self.commands),
+			"usage" => usage::run(matches, &self.modules),
 			"completion" => completion::run(matches),
 			_ => (self.commands.get(name).expect("subcommand must exit").f)(matches),
 		};
@@ -93,10 +97,12 @@ impl<'a, 'b> ModuleManager<'a, 'b> {
 
 	}
 
-	fn register(&mut self, commands: Vec<Command<'a, 'b>>) {
-		for command in commands {
+	fn register(&mut self, module: Module<'a, 'b>) {
+		self.modules.push(module.clone());
+		for command in module.commands {
 			self.commands.insert(command.app.get_name().to_string(), command);
 		}
+
 	}
 
 }

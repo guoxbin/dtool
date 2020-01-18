@@ -19,7 +19,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: h2b58,
-			cases: vec![],
 		},
 		Command {
 			app: SubCommand::with_name("h2b58c").about("Convert hex to base58 check").arg(
@@ -27,7 +26,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: h2b58c,
-			cases: vec![],
 		},
 		Command {
 			app: SubCommand::with_name("b582h").about("Convert base58 to hex").arg(
@@ -35,7 +33,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: b582h,
-			cases: vec![],
 		},
 		Command {
 			app: SubCommand::with_name("b58c2h").about("Convert base58 check to hex").arg(
@@ -43,7 +40,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.required(false)
 					.index(1)),
 			f: b58c2h,
-			cases: vec![],
 		},
 	]
 }
