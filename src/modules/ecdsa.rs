@@ -4,6 +4,10 @@ use lazy_static::lazy_static;
 use std::collections::HashMap;
 use crate::modules::base::Hex;
 
+mod secp256k1;
+mod p256;
+mod p384;
+
 struct Curve {
 	name: &'static str,
 	help: &'static str,
@@ -14,7 +18,7 @@ struct Curve {
 }
 
 #[derive(Clone)]
-pub(crate) enum SignatureFormEnum {
+pub enum SignatureFormEnum {
 	Der,
 	Fixed,
 }
@@ -42,6 +46,14 @@ lazy_static! {
 			sign_f: p256::ec_sign_p256,
 			verify_f: p256::ec_verify_p256,
 			pk_f: p256::ec_pk_p256,
+		},
+		Curve {
+			name: "p384",
+			help: "NIST P-384",
+			gk_f: p384::ec_gk_p384,
+			sign_f: p384::ec_sign_p384,
+			verify_f: p384::ec_verify_p384,
+			pk_f: p384::ec_pk_p384,
 		},
 	];
 
@@ -101,6 +113,14 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					desc: "".to_string(),
 					input: vec!["-c", "p256", "-C"].into_iter().map(Into::into).collect(),
 					output: vec!["(0xf0b3b41add2d79932cdf2a4ba083c16e72647ddcd8718e2187d1567ed5a611c9, 0x045c79019e39199effa07576de6e3745fa1dba402854314aef05790e9e827cf7782ac5feb26e28039f94d73078c57b5f29be14ef9da57cb53e16e2839bdbbee630)"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: false,
+					since: "0.7.0".to_string(),
+				},
+				Case {
+					desc: "".to_string(),
+					input: vec!["-c", "p384", "-C"].into_iter().map(Into::into).collect(),
+					output: vec!["(0xfbc89e8fae9340747f162330345f7cfac7387a2049f6bedb55f7a30faf8b1d24da9b1e618db7b215daa1c7b0fd54858f, 0x044978c6c7be1a5c5194983a945d2d8c81ae4b421dd89d12c6dd1756d2387fa2601993657eeb93d289a57625a70c2830db5f06f988a3e4549e26e8b6d27c7f1e6e8949d6ce5bf3f88a0f5eebaa14499d4379bc81cca6e9ff17d18b8efb370fffe3)"].into_iter().map(Into::into).collect(),
 					is_example: true,
 					is_test: false,
 					since: "0.7.0".to_string(),
@@ -165,6 +185,22 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					desc: "DER signature form".to_string(),
 					input: vec!["-c", "p256", "-s", "0xf0b3b41add2d79932cdf2a4ba083c16e72647ddcd8718e2187d1567ed5a611c9", "-f", "der", "0x616263"].into_iter().map(Into::into).collect(),
 					output: vec!["0x3045022100ed94d4f7022cc2335ef5e34432fed541932e2c2b0c1430e2d51c06e66320302b022002cc2e13e6f5bde7f079a026399e2a6012c5ce4ad2babbe8e1e3444010b72d78"].into_iter().map(Into::into).collect(),
+					is_example: false,
+					is_test: false,
+					since: "0.7.0".to_string(),
+				},
+				Case {
+					desc: "".to_string(),
+					input: vec!["-c", "p384", "-s", "0xfbc89e8fae9340747f162330345f7cfac7387a2049f6bedb55f7a30faf8b1d24da9b1e618db7b215daa1c7b0fd54858f", "0x616263"].into_iter().map(Into::into).collect(),
+					output: vec!["0xa0d387bc5d5de4979750f531f337fd1d04384ab4a9d251a18852c1ce1a16e2e46a2778764d0b3ee090babbc5092ea57a108ddabf9a9fcf8efaad7c0862da2beddde806745c0c3972d738c416d55cfde19b85e39ab54151c87b537c4df7d177ff"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: false,
+					since: "0.7.0".to_string(),
+				},
+				Case {
+					desc: "DER signature form".to_string(),
+					input: vec!["-c", "p384", "-s", "0xfbc89e8fae9340747f162330345f7cfac7387a2049f6bedb55f7a30faf8b1d24da9b1e618db7b215daa1c7b0fd54858f", "-f", "der", "0x616263"].into_iter().map(Into::into).collect(),
+					output: vec!["0x3065023100e48b9cd154ecd8dfd138f2e3c5d79af62b3cdc413e52565822edcc96786b03d8e996f132cf793b17c267dc177a5e6525023043dd0485f762b48e3a4a9daeeef57ceff2cf84da6a00b6a65293ee7233efe392ba4514a475476815dddfbbb7ea9e269c"].into_iter().map(Into::into).collect(),
 					is_example: false,
 					is_test: false,
 					since: "0.7.0".to_string(),
@@ -247,6 +283,26 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					is_test: true,
 					since: "0.7.0".to_string(),
 				},
+				Case {
+					desc: "".to_string(),
+					input: vec!["-c", "p384", "-p", "0x044978c6c7be1a5c5194983a945d2d8c81ae4b421dd89d12c6dd1756d2387fa2601993657eeb93d289a57625a70c2830db5f06f988a3e4549e26e8b6d27c7f1e6e8949d6ce5bf3f88a0f5eebaa14499d4379bc81cca6e9ff17d18b8efb370fffe3", "-S",
+					            "0xa0d387bc5d5de4979750f531f337fd1d04384ab4a9d251a18852c1ce1a16e2e46a2778764d0b3ee090babbc5092ea57a108ddabf9a9fcf8efaad7c0862da2beddde806745c0c3972d738c416d55cfde19b85e39ab54151c87b537c4df7d177ff",
+					            "0x616263"].into_iter().map(Into::into).collect(),
+					output: vec!["true"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.7.0".to_string(),
+				},
+				Case {
+					desc: "DER signature form".to_string(),
+					input: vec!["-c", "p384", "-p", "0x044978c6c7be1a5c5194983a945d2d8c81ae4b421dd89d12c6dd1756d2387fa2601993657eeb93d289a57625a70c2830db5f06f988a3e4549e26e8b6d27c7f1e6e8949d6ce5bf3f88a0f5eebaa14499d4379bc81cca6e9ff17d18b8efb370fffe3", "-f", "der", "-S",
+					            "0x3065023100e48b9cd154ecd8dfd138f2e3c5d79af62b3cdc413e52565822edcc96786b03d8e996f132cf793b17c267dc177a5e6525023043dd0485f762b48e3a4a9daeeef57ceff2cf84da6a00b6a65293ee7233efe392ba4514a475476815dddfbbb7ea9e269c",
+					            "0x616263"].into_iter().map(Into::into).collect(),
+					output: vec!["true"].into_iter().map(Into::into).collect(),
+					is_example: false,
+					is_test: true,
+					since: "0.7.0".to_string(),
+				},
 			],
 		},
 		Command {
@@ -287,11 +343,18 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					is_test: true,
 					since: "0.7.0".to_string(),
 				},
-
 				Case {
 					desc: "".to_string(),
 					input: vec!["-c", "p256", "-s", "0xf0b3b41add2d79932cdf2a4ba083c16e72647ddcd8718e2187d1567ed5a611c9"].into_iter().map(Into::into).collect(),
 					output: vec!["0x045c79019e39199effa07576de6e3745fa1dba402854314aef05790e9e827cf7782ac5feb26e28039f94d73078c57b5f29be14ef9da57cb53e16e2839bdbbee630"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.7.0".to_string(),
+				},
+				Case {
+					desc: "".to_string(),
+					input: vec!["-c", "p384", "-s", "0xfbc89e8fae9340747f162330345f7cfac7387a2049f6bedb55f7a30faf8b1d24da9b1e618db7b215daa1c7b0fd54858f"].into_iter().map(Into::into).collect(),
+					output: vec!["0x044978c6c7be1a5c5194983a945d2d8c81ae4b421dd89d12c6dd1756d2387fa2601993657eeb93d289a57625a70c2830db5f06f988a3e4549e26e8b6d27c7f1e6e8949d6ce5bf3f88a0f5eebaa14499d4379bc81cca6e9ff17d18b8efb370fffe3"].into_iter().map(Into::into).collect(),
 					is_example: true,
 					is_test: true,
 					since: "0.7.0".to_string(),
@@ -377,145 +440,6 @@ fn ec_pk(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	let result = Hex::from(public_key).into();
 
 	Ok(vec![result])
-}
-
-mod secp256k1 {
-	use signatory_secp256k1::{SecretKey, EcdsaSigner, PublicKey, EcdsaVerifier};
-	use signatory::ecdsa::curve::secp256k1::{Asn1Signature, FixedSignature};
-	use crate::modules::ecdsa::SignatureFormEnum;
-	use signatory::public_key::PublicKeyed;
-	use signatory::signature::{Signer, Verifier, Signature};
-	use secp256k1::rand::thread_rng;
-	use secp256k1::Secp256k1;
-	use crate::modules::base::Hex;
-
-	pub(crate) fn ec_gk_secp256k1(compress: bool) -> Result<(Vec<u8>, Vec<u8>), String> {
-		let (secret_key, public_key) = Secp256k1::new().generate_keypair(&mut thread_rng());
-
-		let secret_key: Vec<u8> = secret_key.to_string().parse::<Hex>().map_err(|_| "Invalid secret key")?.into();
-
-		let public_key = match compress {
-			true => public_key.serialize().to_vec(),
-			false => public_key.serialize_uncompressed().to_vec(),
-		};
-		Ok((secret_key, public_key))
-	}
-
-	pub(crate) fn ec_sign_secp256k1(secret_key: Vec<u8>, message: Vec<u8>, sig_form: SignatureFormEnum) -> Result<Vec<u8>, String> {
-		let secret_key = SecretKey::from_bytes(secret_key).map_err(|e| format!("Invalid secret key: {}", e))?;
-		let signer = EcdsaSigner::from(&secret_key);
-
-		let signature = match sig_form {
-			SignatureFormEnum::Fixed => {
-				let signature: FixedSignature = signer.sign(&message);
-				signature.as_ref().to_vec()
-			}
-			SignatureFormEnum::Der => {
-				let signature: Asn1Signature = signer.sign(&message);
-				signature.as_ref().to_vec()
-			}
-		};
-
-		Ok(signature)
-	}
-
-	pub(crate) fn ec_verify_secp256k1(public_key: Vec<u8>, sig: Vec<u8>, message: Vec<u8>, sig_form: SignatureFormEnum) -> Result<(), String> {
-		let public_key = PublicKey::from_bytes(public_key).ok_or("Invalid public key")?;
-		let verifier = EcdsaVerifier::from(&public_key);
-
-		let result = match sig_form {
-			SignatureFormEnum::Fixed => {
-				let sig = FixedSignature::from_bytes(sig).map_err(|e| format!("Invalid signature: {}", e))?;
-				verifier.verify(&message, &sig).map_err(|e| format!("{}", e))
-			}
-			SignatureFormEnum::Der => {
-				let sig = Asn1Signature::from_bytes(sig).map_err(|e| format!("Invalid signature: {}", e))?;
-				verifier.verify(&message, &sig).map_err(|e| format!("{}", e))
-			}
-		};
-		result
-	}
-
-	pub(crate) fn ec_pk_secp256k1(secret_key: Vec<u8>, compress: bool) -> Result<Vec<u8>, String> {
-		let secret_key = SecretKey::from_bytes(secret_key).map_err(|e| format!("Invalid secret key: {}", e))?;
-		let signer = EcdsaSigner::from(&secret_key);
-
-		let public_key: PublicKey = signer.public_key().map_err(|_| "Failed")?;
-
-		let public_key = public_key.as_bytes();
-
-		let public_key = match compress {
-			true => public_key.to_vec(),
-			false => {
-				let public_key = secp256k1::PublicKey::from_slice(public_key).expect("Should be valid public key; qed");
-				public_key.serialize_uncompressed().to_vec()
-			}
-		};
-
-		Ok(public_key)
-	}
-}
-
-mod p256 {
-	use crate::modules::ecdsa::SignatureFormEnum;
-	use ring::signature::{EcdsaKeyPair, ECDSA_P256_SHA256_FIXED_SIGNING, ECDSA_P256_SHA256_ASN1_SIGNING, KeyPair, ECDSA_P256_SHA256_FIXED, ECDSA_P256_SHA256_ASN1, VerificationAlgorithm};
-	use ring::rand::SystemRandom;
-	use untrusted::Input;
-
-	pub(crate) fn ec_gk_p256(compress: bool) -> Result<(Vec<u8>, Vec<u8>), String> {
-		if compress == true {
-			return Err("Compress is not supported".to_string());
-		}
-
-		let secret_key = EcdsaKeyPair::generate_private_key(&ECDSA_P256_SHA256_FIXED_SIGNING, &SystemRandom::new()).map_err(|_| "")?;
-		let pair = EcdsaKeyPair::from_private_key(&ECDSA_P256_SHA256_FIXED_SIGNING, secret_key.as_ref()).map_err(|_| "Invalid secret key")?;
-
-		let public_key = pair.public_key();
-		let public_key = public_key.as_ref().to_vec();
-
-		Ok((secret_key, public_key))
-	}
-
-	pub(crate) fn ec_sign_p256(secret_key: Vec<u8>, message: Vec<u8>, sig_form: SignatureFormEnum) -> Result<Vec<u8>, String> {
-
-		let algo = match sig_form{
-			SignatureFormEnum::Fixed => &ECDSA_P256_SHA256_FIXED_SIGNING,
-			SignatureFormEnum::Der => &ECDSA_P256_SHA256_ASN1_SIGNING,
-		};
-
-		let pair = EcdsaKeyPair::from_private_key(&algo, secret_key.as_ref()).map_err(|_| "Invalid secret key")?;
-		let sig = pair.sign(&SystemRandom::new(), &message).map_err(|_|"Failed to sign")?;
-
-		Ok(sig.as_ref().to_vec())
-	}
-
-	pub(crate) fn ec_verify_p256(public_key: Vec<u8>, sig: Vec<u8>, message: Vec<u8>, sig_form: SignatureFormEnum) -> Result<(), String> {
-
-		let algo = match sig_form{
-			SignatureFormEnum::Fixed => &ECDSA_P256_SHA256_FIXED,
-			SignatureFormEnum::Der => &ECDSA_P256_SHA256_ASN1,
-		};
-
-		let result = algo.verify(Input::from(&public_key),
-		                         Input::from(&message), Input::from(&sig))
-			.map_err(|e| format!("Invalid signature: {}", e))?;
-
-		Ok(result)
-	}
-
-	pub(crate) fn ec_pk_p256(secret_key: Vec<u8>, compress: bool) -> Result<Vec<u8>, String> {
-
-		if compress == true {
-			return Err("Compress is not supported".to_string());
-		}
-
-		let pair = EcdsaKeyPair::from_private_key(&ECDSA_P256_SHA256_FIXED_SIGNING, secret_key.as_ref()).map_err(|_| "Invalid secret key")?;
-
-		let public_key = pair.public_key();
-		let public_key = public_key.as_ref().to_vec();
-
-		Ok(public_key)
-	}
 }
 
 #[cfg(test)]
