@@ -1,7 +1,7 @@
 # Usage
 
 ## Table of Contents
-- [Hex / UTF-8 string / binary conversion](#hex--utf-8-string--binary-conversion)
+- [Hex / UTF-8 string / binary / byte array conversion](#hex--utf-8-string--binary--byte-array-conversion)
 - [Timestamp / date conversion](#timestamp--date-conversion)
 - [Number 10/2/8/16 base conversion](#number-102816-base-conversion)
 - [Hex / base58 conversion](#hex--base58-conversion)
@@ -16,14 +16,16 @@
 - [Case conversion (upper, lower, title, camel, pascal, snake, shouty snake, kebab)](#case-conversion-upper-lower-title-camel-pascal-snake-shouty-snake-kebab)
 - [AES encrypt / decrypt](#aes-encrypt--decrypt)
 - [ECDSA (Secp256k1, NIST P-256, NIST P384)](#ecdsa-secp256k1-nist-p-256-nist-p384)
-## Hex / UTF-8 string / binary conversion
+## Hex / UTF-8 string / binary / byte array conversion
 
-|Sub command|                Desc                 |           Example            |
-|-----------|-------------------------------------|------------------------------|
-|    h2s    |Convert hex to UTF-8 string<br>v0.1.0|$ dtool h2s 0x61626364<br>abcd|
-|    s2h    |Convert UTF-8 string to hex<br>v0.1.0|$ dtool s2h abcd<br>0x61626364|
-|    h2b    |   Convert hex to binary<br>v0.1.0   |$ dtool h2b 0x61626364<br>abcd|
-|    b2h    |   Convert binary to hex<br>v0.1.0   |$ dtool b2h abcd<br>0x61626364|
+|Sub command|                Desc                 |                  Example                  |
+|-----------|-------------------------------------|-------------------------------------------|
+|    h2s    |Convert hex to UTF-8 string<br>v0.1.0|      $ dtool h2s 0x61626364<br>abcd       |
+|    s2h    |Convert UTF-8 string to hex<br>v0.1.0|      $ dtool s2h abcd<br>0x61626364       |
+|    h2b    |   Convert hex to binary<br>v0.1.0   |      $ dtool h2b 0x61626364<br>abcd       |
+|    b2h    |   Convert binary to hex<br>v0.1.0   |      $ dtool b2h abcd<br>0x61626364       |
+|    h2a    | Convert hex to byte array<br>v0.7.0 |$ dtool h2a 0x61626364<br>[97, 98, 99, 100]|
+|    a2h    | Convert byte array to hex<br>v0.7.0 |$ dtool a2h [97, 98, 99, 100]<br>0x61626364|
 ## Timestamp / date conversion
 
 |Sub command|                           Desc                            |                               Example                                |
