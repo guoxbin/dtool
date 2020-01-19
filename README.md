@@ -36,39 +36,37 @@ Now `dtool` supports:
 
 `dtool` does different works by different sub commands:
 
-|Sub command|           Desc            |                                                                                      Example                                                                                      |        Remark        |Since |
-|-----------|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------|------|
-|    h2s    |Convert hex to UTF-8 string|                                                                          $ dtool h2s 0x61626364<br>abcd                                                                           |                      |v0.1.0|
-|    s2h    |Convert UTF-8 string to hex|                                                                          $ dtool s2h abcd<br>0x61626364                                                                           |                      |v0.1.0|
-|    ...    |...|                                                                          ...                                                                           |                      |...|
+|Sub command|                Desc                 |           Example            |
+|-----------|-------------------------------------|------------------------------|
+|    h2s    |Convert hex to UTF-8 string<br>v0.1.0|$ dtool h2s 0x61626364<br>abcd|
+|    s2h    |Convert UTF-8 string to hex<br>v0.1.0|$ dtool s2h abcd<br>0x61626364|
+|    h2b    |   Convert hex to binary<br>v0.1.0   |$ dtool h2b 0x61626364<br>abcd|
+|    b2h    |   Convert binary to hex<br>v0.1.0   |$ dtool b2h abcd<br>0x61626364|
+|    ...|
 
 [View full usage document](./docs/Usage.md)
 
-* Besides the sub command `help`, `dtool` provides a new sub command `usage` to show examples:
+* Besides the sub command `help`, `dtool` provides a sub command `usage` to show examples:
 
 ```bash
 $ dtool usage
 Usage
-
-----------------------------------------------------------------------------------
- Sub command  Desc                         Example                 Remark  Since 
-==================================================================================
- h2s          Convert hex to UTF-8 string  $ dtool h2s 0x61626364          v0.1.0 
-                                           abcd                             
-----------------------------------------------------------------------------------
+----------------------------------------------------------
+ h2s  Convert hex to UTF-8 string  $ dtool h2s 0x61626364 
+      v0.1.0                       abcd 
+----------------------------------------------------------
 ...
 ```
 
 * You can search usage with a keyword:
 ```bash
 $ dtool usage -s md5
-------------------------------------------------------------------------------
- Sub command  Desc         Example                             Remark  Since 
-==============================================================================
- hash         Hex to hash  $ dtool hash -a md5 0x616263        MD5     v0.2.0 
-                           0x900150983cd24fb0d6963f7d28e17f72           
-------------------------------------------------------------------------------
-
+Usage
+-------------------------------------------------------
+ hash  Hex to hash  $ dtool hash -a md5 0x616263 
+       MD5          0x900150983cd24fb0d6963f7d28e17f72 
+       v0.2.0        
+-------------------------------------------------------
 ```
 
 ## Tips
