@@ -131,6 +131,7 @@ fn markdown_output(usage_info: Vec<(String, Vec<(String, String, String, String,
 
 	result.push("## Table of Contents".to_string());
 	result.extend(outline);
+	result.push("".to_string());
 
 	// body
 	let blanks_re = regex::Regex::new(" {2,}").expect("qed");
@@ -167,6 +168,8 @@ fn markdown_output(usage_info: Vec<(String, Vec<(String, String, String, String,
 
 		let table = mk_table(&body, &None);
 		result.push(table);
+		result.push("".to_string());
+		result.push("".to_string());
 	}
 
 	Ok(result)

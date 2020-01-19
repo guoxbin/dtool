@@ -187,7 +187,7 @@ mod cases {
 			 vec![
 				 Case {
 					 desc: "".to_string(),
-					 input: vec!["[97, 98, 99, 100]"].into_iter().map(Into::into).collect(),
+					 input: vec!["'[97, 98, 99, 100]'"].into_iter().map(Into::into).collect(),
 					 output: vec!["0x61626364"].into_iter().map(Into::into).collect(),
 					 is_example: true,
 					 is_test: true,

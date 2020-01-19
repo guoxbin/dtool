@@ -16,16 +16,19 @@
 - [Case conversion (upper, lower, title, camel, pascal, snake, shouty snake, kebab)](#case-conversion-upper-lower-title-camel-pascal-snake-shouty-snake-kebab)
 - [AES encrypt / decrypt](#aes-encrypt--decrypt)
 - [ECDSA (Secp256k1, NIST P-256, NIST P384)](#ecdsa-secp256k1-nist-p-256-nist-p384)
+
 ## Hex / UTF-8 string / binary / byte array conversion
 
-|Sub command|                Desc                 |                  Example                  |
-|-----------|-------------------------------------|-------------------------------------------|
-|    h2s    |Convert hex to UTF-8 string<br>v0.1.0|      $ dtool h2s 0x61626364<br>abcd       |
-|    s2h    |Convert UTF-8 string to hex<br>v0.1.0|      $ dtool s2h abcd<br>0x61626364       |
-|    h2b    |   Convert hex to binary<br>v0.1.0   |      $ dtool h2b 0x61626364<br>abcd       |
-|    b2h    |   Convert binary to hex<br>v0.1.0   |      $ dtool b2h abcd<br>0x61626364       |
-|    h2a    | Convert hex to byte array<br>v0.7.0 |$ dtool h2a 0x61626364<br>[97, 98, 99, 100]|
-|    a2h    | Convert byte array to hex<br>v0.7.0 |$ dtool a2h [97, 98, 99, 100]<br>0x61626364|
+|Sub command|                Desc                 |                        Example                        |
+|-----------|-------------------------------------|-------------------------------------------------------|
+|    h2s    |Convert hex to UTF-8 string<br>v0.1.0|            $ dtool h2s 0x61626364<br>abcd             |
+|    s2h    |Convert UTF-8 string to hex<br>v0.1.0|            $ dtool s2h abcd<br>0x61626364             |
+|    h2b    |   Convert hex to binary<br>v0.1.0   |            $ dtool h2b 0x61626364<br>abcd             |
+|    b2h    |   Convert binary to hex<br>v0.1.0   |            $ dtool b2h abcd<br>0x61626364             |
+|    h2a    | Convert hex to byte array<br>v0.7.0 |      $ dtool h2a 0x61626364<br>[97, 98, 99, 100]      |
+|    a2h    | Convert byte array to hex<br>v0.7.0 |$ dtool a2h &#x27;[97, 98, 99, 100]&#x27;<br>0x61626364|
+
+
 ## Timestamp / date conversion
 
 |Sub command|                           Desc                            |                               Example                                |
@@ -34,6 +37,8 @@
 |   d2ts    |            Convert date to timestamp<br>v0.1.0            |        $ dtool d2ts -z 8 &#x27;1970-01-01 08:00:00&#x27;<br>0        |
 |   d2ts    |Convert date to timestamp<br>Input rfc2822 format<br>v0.1.0|$ dtool d2ts &#x27;Mon, 23 Dec 2019 17:41:26 +0800&#x27;<br>1577094086|
 |   d2ts    |Convert date to timestamp<br>Input rfc3339 format<br>v0.1.0|   $ dtool d2ts &#x27;2019-12-23T17:48:54+08:00&#x27;<br>1577094534   |
+
+
 ## Number 10/2/8/16 base conversion
 
 |Sub command|                    Desc                     |                        Example                         |
@@ -44,6 +49,8 @@
 |    ns     |  Number system<br>Output binary<br>v0.1.0   |            $ dtool ns -b 256<br>0b100000000            |
 |    ns     |   Number system<br>Output octal<br>v0.1.0   |               $ dtool ns -o 256<br>0o400               |
 |    ns     |Number system<br>Output hexadecimal<br>v0.1.0|               $ dtool ns -x 256<br>0x100               |
+
+
 ## Hex / base58 conversion
 
 |Sub command|                Desc                 |                                             Example                                             |
@@ -52,18 +59,24 @@
 |  h2b58c   |Convert hex to base58 check<br>v0.1.0|$ dtool h2b58c 0x0075774f5d9963c021009a58d7d2d8e83771dd6c7a<br>1Bi6zFVNtntP5MtDraNrAD7e469ifsQMwF|
 |   b582h   |   Convert base58 to hex<br>v0.1.0   |   $ dtool b582h 12dvBhvPEPniQmBmgvj4qpJEodT7P<br>0x0075774f5d9963c021009a58d7d2d8e83771dd6c7a   |
 |  b58c2h   |Convert base58 check to hex<br>v0.1.0|$ dtool b58c2h 1Bi6zFVNtntP5MtDraNrAD7e469ifsQMwF<br>0x0075774f5d9963c021009a58d7d2d8e83771dd6c7a|
+
+
 ## Hex / base64 conversion
 
 |Sub command|             Desc              |           Example            |
 |-----------|-------------------------------|------------------------------|
 |   h2b64   |Convert hex to base64<br>v0.1.0|$ dtool h2b64 0x616263<br>YWJj|
 |   b642h   |Convert base64 to hex<br>v0.1.0|$ dtool b642h YWJj<br>0x616263|
+
+
 ## URL encode / decode
 
 |Sub command|        Desc        |        Example        |
 |-----------|--------------------|-----------------------|
 |    ue     |URL encode<br>v0.1.0|$ dtool ue a+b<br>a%2Bb|
 |    ud     |URL decode<br>v0.1.0|$ dtool ud a%2Bb<br>a+b|
+
+
 ## Number codec
 
 |Sub command|               Desc               |                         Example                         |
@@ -82,6 +95,8 @@
 |    nd     | Number decode<br>u128<br>v0.1.0  |$ dtool nd -tu128 0x01000000000000000000000000000000<br>1|
 |    nd     |Number decode<br>Compact<br>v0.1.0|                $ dtool nd -tc 0x18<br>6                 |
 |    nd     |Number decode<br>Compact<br>v0.1.0|              $ dtool nd -tc 0xed03<br>251               |
+
+
 ## Hash (MD5, SHA-1, SHA-2, SHA-3, RIPEMD, CRC, Blake2b, SM3)
 
 |Sub command|                     Desc                      |                                                                                       Example                                                                                        |
@@ -109,6 +124,8 @@
 |   hash    |     Hex to hash<br>Blake2b 384<br>v0.5.0      |                   $ dtool hash -a blake2b_384 0x616263<br>0x6f56a82c8e7ef526dfe182eb5212f7db9df1317e57815dbda46083fc30\\<br>f54ee6c66ba83be64b302d7cba6ce15bb556f4                   |
 |   hash    |     Hex to hash<br>Blake2b 512<br>v0.5.0      |$ dtool hash -a blake2b_512 0x616263<br>0xba80a53f981c4d0d6a2797b69f12f6e94c212f14685ac4b74b12bb6fdb\\<br>ffa2d17d87c5392aab792dc252d5de4533cc9518d38aa8dbf1925ab92386\\<br>edd4009923|
 |   hash    |         Hex to hash<br>SM3<br>v0.7.0          |                                       $ dtool hash -a sm3 0x616263<br>0x66c7f0f462eeedd9d1f2d46bdc10e4e24167c4875cf2f7a2297da02b8f\\<br>4ba8e0                                       |
+
+
 ## UTF-8 string / unicode conversion
 
 |Sub command|                          Desc                          |                           Example                           |
@@ -123,22 +140,30 @@
 |    u2s    |Unicode to UTF-8 string<br>HTML decimal format<br>v0.3.0| $ dtool u2s &#x27;&amp;#97;&amp;#98;&amp;#99;&#x27;<br>abc  |
 |    u2s    |    Unicode to UTF-8 string<br>RUST format<br>v0.3.0    |      $ dtool u2s &#x27;\u{61}\u{62}\u{63}&#x27;<br>abc      |
 |    u2s    |       Unicode to UTF-8 string<br>Emoji<br>v0.3.0       |            $ dtool u2s &#x27;\u1f4af&#x27;<br>💯             |
+
+
 ## HTML entity encode / decode
 
 |Sub command|            Desc            |                       Example                       |
 |-----------|----------------------------|-----------------------------------------------------|
 |    he     |HTML entity encode<br>v0.4.0|$ dtool he &#x27;&lt;b&gt;&#x27;<br>&amp;lt;b&amp;gt;|
 |    hd     |HTML entity decode<br>v0.4.0|$ dtool hd &#x27;&amp;lt;b&amp;gt;&#x27;<br>&lt;b&gt;|
+
+
 ## Regex match
 
 |Sub command|        Desc         |                                                            Example                                                             |
 |-----------|---------------------|--------------------------------------------------------------------------------------------------------------------------------|
 |    re     |Regex match<br>v0.4.0|$ dtool re -p &#x27;a(.)c&#x27; abcadc<br>abc<br>&nbsp;&nbsp;&nbsp;&nbsp;group#1: b<br>adc<br>&nbsp;&nbsp;&nbsp;&nbsp;group#1: d|
+
+
 ## Pbkdf2
 
 |Sub command|      Desc      |                                                                Example                                                                |
 |-----------|----------------|---------------------------------------------------------------------------------------------------------------------------------------|
 |  pbkdf2   |Pbkdf2<br>v0.5.0|$ dtool pbkdf2 -a sha2_256 -s 0x646566 -i 2 -l 256 0x616263<br>0x51a30556d0d133d859d3f3da86f861b7b12546c4f9a193ebb374397467\\<br>872514|
+
+
 ## Case conversion (upper, lower, title, camel, pascal, snake, shouty snake, kebab)
 
 |Sub command|                     Desc                     |                        Example                         |
@@ -151,6 +176,8 @@
 |   case    |   Case conversion<br>Snake case<br>v0.5.0    |      $ dtool case -t snake GoodTool<br>good_tool       |
 |   case    |Case conversion<br>Shouty snake case<br>v0.5.0|   $ dtool case -t shouty_snake GoodTool<br>GOOD_TOOL   |
 |   case    |   Case conversion<br>Kebab case<br>v0.5.0    |      $ dtool case -t kebab GoodTool<br>good-tool       |
+
+
 ## AES encrypt / decrypt
 
 |Sub command|                  Desc                  |                                                                                                     Example                                                                                                     |
@@ -173,6 +200,8 @@
 |  aes_dec  |AES decrypt<br>KeySize 128 CTR<br>v0.6.0|                                            $ dtool aes_dec -k 01010101010101010101010101010101 -i 03030\\<br>303030303030303030303030303 -m ctr 0x075e64<br>0x616263                                            |
 |  aes_dec  |AES decrypt<br>KeySize 192 CTR<br>v0.6.0|                                    $ dtool aes_dec -k 01010101010101010101010101010101010101010\\<br>1010101 -i 03030303030303030303030303030303 -m ctr 0xbad37a<br>0x616263                                    |
 |  aes_dec  |AES decrypt<br>KeySize 256 CTR<br>v0.6.0|                         $ dtool aes_dec -k 01010101010101010101010101010101010101010\\<br>10101010101010101010101 -i 03030303030303030303030303030303 \\<br>-m ctr 0x9e5062<br>0x616263                         |
+
+
 ## ECDSA (Secp256k1, NIST P-256, NIST P384)
 
 |Sub command|                                 Desc                                  |                                                                                                                                                                                                                                             Example                                                                                                                                                                                                                                              |
@@ -190,3 +219,5 @@
 |   ec_pk   |Elliptic-curve calculate public key<br>Compressed public key<br>v0.7.0 |                                                                                                                                                     $ dtool ec_pk -c secp256k1 -s 0x9cb4f775e9b67118242cea152855\\<br>55c287a7e3d2f86ba238c1fe87284b898e9a -C<br>0x03391aa7238b79e1aad1e038c95306171a8ac7499357dc99586f96c5f3\\<br>b9618d60                                                                                                                                                      |
 |   ec_pk   |             Elliptic-curve calculate public key<br>v0.7.0             |                                                                                                                      $ dtool ec_pk -c p256 -s 0xf0b3b41add2d79932cdf2a4ba083c16e7\\<br>2647ddcd8718e2187d1567ed5a611c9<br>0x045c79019e39199effa07576de6e3745fa1dba402854314aef05790e9e\\<br>827cf7782ac5feb26e28039f94d73078c57b5f29be14ef9da57cb53e16e2\\<br>839bdbbee630                                                                                                                       |
 |   ec_pk   |             Elliptic-curve calculate public key<br>v0.7.0             |                                                                $ dtool ec_pk -c p384 -s 0xfbc89e8fae9340747f162330345f7cfac\\<br>7387a2049f6bedb55f7a30faf8b1d24da9b1e618db7b215daa1c7b0fd548\\<br>58f<br>0x044978c6c7be1a5c5194983a945d2d8c81ae4b421dd89d12c6dd1756d2\\<br>387fa2601993657eeb93d289a57625a70c2830db5f06f988a3e4549e26e8\\<br>b6d27c7f1e6e8949d6ce5bf3f88a0f5eebaa14499d4379bc81cca6e9ff17\\<br>d18b8efb370fffe3                                                                 |
+
+
