@@ -62,7 +62,7 @@ pub fn cases() -> LinkedHashMap<&'static str, Vec<Case>> {
 		("ec_gk",
 		 vec![
 			 Case {
-				 desc: "".to_string(),
+				 desc: "P-256".to_string(),
 				 input: vec!["-c", "p256"].into_iter().map(Into::into).collect(),
 				 output: vec!["(0xf0b3b41add2d79932cdf2a4ba083c16e72647ddcd8718e2187d1567ed5a611c9, 0x045c79019e39199effa07576de6e3745fa1dba402854314aef05790e9e827cf7782ac5feb26e28039f94d73078c57b5f29be14ef9da57cb53e16e2839bdbbee630)"].into_iter().map(Into::into).collect(),
 				 is_example: true,
@@ -73,7 +73,7 @@ pub fn cases() -> LinkedHashMap<&'static str, Vec<Case>> {
 		("ec_sign",
 		 vec![
 			 Case {
-				 desc: "".to_string(),
+				 desc: "P-256".to_string(),
 				 input: vec!["-c", "p256", "-s", "0xf0b3b41add2d79932cdf2a4ba083c16e72647ddcd8718e2187d1567ed5a611c9", "0x616263"].into_iter().map(Into::into).collect(),
 				 output: vec!["0x495f62f272440bd0621d27e97d60c57a0cdaef1cc2434c454eae833bb2111cabb91a79328ee766f720a888b14e0f6037eb8a397dcd9bc9f4c18b9b923a81cc69"].into_iter().map(Into::into).collect(),
 				 is_example: true,
@@ -81,7 +81,7 @@ pub fn cases() -> LinkedHashMap<&'static str, Vec<Case>> {
 				 since: "0.7.0".to_string(),
 			 },
 			 Case {
-				 desc: "DER signature form".to_string(),
+				 desc: "P-256 DER signature form".to_string(),
 				 input: vec!["-c", "p256", "-s", "0xf0b3b41add2d79932cdf2a4ba083c16e72647ddcd8718e2187d1567ed5a611c9", "-f", "der", "0x616263"].into_iter().map(Into::into).collect(),
 				 output: vec!["0x3045022100ed94d4f7022cc2335ef5e34432fed541932e2c2b0c1430e2d51c06e66320302b022002cc2e13e6f5bde7f079a026399e2a6012c5ce4ad2babbe8e1e3444010b72d78"].into_iter().map(Into::into).collect(),
 				 is_example: false,
@@ -92,7 +92,7 @@ pub fn cases() -> LinkedHashMap<&'static str, Vec<Case>> {
 		("ec_verify",
 		 vec![
 			 Case {
-				 desc: "".to_string(),
+				 desc: "P-256".to_string(),
 				 input: vec!["-c", "p256", "-p", "0x045c79019e39199effa07576de6e3745fa1dba402854314aef05790e9e827cf7782ac5feb26e28039f94d73078c57b5f29be14ef9da57cb53e16e2839bdbbee630", "-S",
 				             "0x495f62f272440bd0621d27e97d60c57a0cdaef1cc2434c454eae833bb2111cabb91a79328ee766f720a888b14e0f6037eb8a397dcd9bc9f4c18b9b923a81cc69",
 				             "0x616263"].into_iter().map(Into::into).collect(),
@@ -102,7 +102,7 @@ pub fn cases() -> LinkedHashMap<&'static str, Vec<Case>> {
 				 since: "0.7.0".to_string(),
 			 },
 			 Case {
-				 desc: "DER signature form".to_string(),
+				 desc: "P-256 DER signature form".to_string(),
 				 input: vec!["-c", "p256", "-p", "0x045c79019e39199effa07576de6e3745fa1dba402854314aef05790e9e827cf7782ac5feb26e28039f94d73078c57b5f29be14ef9da57cb53e16e2839bdbbee630", "-f", "der", "-S",
 				             "0x3045022100ed94d4f7022cc2335ef5e34432fed541932e2c2b0c1430e2d51c06e66320302b022002cc2e13e6f5bde7f079a026399e2a6012c5ce4ad2babbe8e1e3444010b72d78",
 				             "0x616263"].into_iter().map(Into::into).collect(),
@@ -115,7 +115,7 @@ pub fn cases() -> LinkedHashMap<&'static str, Vec<Case>> {
 		("ec_pk",
 		 vec![
 			 Case {
-				 desc: "".to_string(),
+				 desc: "P-256".to_string(),
 				 input: vec!["-c", "p256", "-s", "0xf0b3b41add2d79932cdf2a4ba083c16e72647ddcd8718e2187d1567ed5a611c9"].into_iter().map(Into::into).collect(),
 				 output: vec!["0x045c79019e39199effa07576de6e3745fa1dba402854314aef05790e9e827cf7782ac5feb26e28039f94d73078c57b5f29be14ef9da57cb53e16e2839bdbbee630"].into_iter().map(Into::into).collect(),
 				 is_example: true,

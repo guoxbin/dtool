@@ -7,10 +7,11 @@ use crate::modules::base::Hex;
 mod secp256k1;
 mod p256;
 mod p384;
+mod sm2;
 
 pub fn module<'a, 'b>() -> Module<'a, 'b> {
 	Module {
-		desc: "ECDSA (Secp256k1, NIST P-256, NIST P384)".to_string(),
+		desc: "ECDSA (Secp256k1, NIST P-256, NIST P384, SM2)".to_string(),
 		commands: commands(),
 		get_cases: cases::cases,
 	}
@@ -62,6 +63,14 @@ lazy_static! {
 			sign_f: p384::ec_sign_p384,
 			verify_f: p384::ec_verify_p384,
 			pk_f: p384::ec_pk_p384,
+		},
+		Curve {
+			name: "sm2",
+			help: "Chinese National Standard SM2",
+			gk_f: sm2::ec_gk_sm2,
+			sign_f: sm2::ec_sign_sm2,
+			verify_f: sm2::ec_verify_sm2,
+			pk_f: sm2::ec_pk_sm2,
 		},
 	];
 
@@ -285,12 +294,14 @@ mod cases {
 	use super::secp256k1;
 	use super::p256;
 	use super::p384;
+	use super::sm2;
 
 	pub fn cases() -> LinkedHashMap<&'static str, Vec<Case>> {
 		empty()
 			.chain(secp256k1::cases())
 			.chain(p256::cases())
 			.chain(p384::cases())
+			.chain(sm2::cases())
 			.fold(LinkedHashMap::new(), |mut map, (name, mut cases)| {
 				let list = map.entry(name).or_insert(vec![]);
 				list.append(&mut cases);
