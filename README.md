@@ -16,7 +16,7 @@
 
 Now `dtool` supports: 
 
-- [Hex / UTF-8 string / binary conversion](./docs/Usage.md#hex--utf-8-string--binary-conversion)
+- [Hex / UTF-8 string / binary / byte array conversion](./docs/Usage.md#hex--utf-8-string--binary--byte-array-conversion)
 - [Timestamp / date conversion](./docs/Usage.md#timestamp--date-conversion)
 - [Number 10/2/8/16 base conversion](./docs/Usage.md#number-102816-base-conversion)
 - [Hex / base58 conversion](./docs/Usage.md#hex--base58-conversion)
@@ -30,7 +30,7 @@ Now `dtool` supports:
 - [Pbkdf2](./docs/Usage.md#pbkdf2)
 - [Case conversion (upper, lower, title, camel, pascal, snake, shouty snake, kebab)](./docs/Usage.md#case-conversion-upper-lower-title-camel-pascal-snake-shouty-snake-kebab)
 - [AES encrypt / decrypt](./docs/Usage.md#aes-encrypt--decrypt)
-- [ECDSA (Secp256k1, NIST P-256, NIST P384)](./docs/Usage.md#ecdsa-secp256k1-nist-p-256-nist-p384)
+- [ECDSA (Secp256k1, NIST P-256, NIST P384, SM2)](./docs/Usage.md#ecdsa-secp256k1-nist-p-256-nist-p384-sm2)
 
 ## Usage
 
