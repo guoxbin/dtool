@@ -99,11 +99,11 @@ $ cat pic.jpg | dtool b2h | dtool hash -a md5
 ```
 
 ## Installation
-### Via brew 
+### Homebrew 
 ```bash
 $ brew install guoxbin/guoxbin/dtool
 ```
-Recommend! Brew will install `dtool bash completion` along with `dtool`
+Recommend! Homebrew will install shell completion for bash, fish, and zsh along with `dtool`
 
 ### Arch Linux
 
@@ -115,7 +115,7 @@ cd dtool
 makepkg -si
 ```
 
-### Via cargo
+### Cargo
 ```bash
 $ cargo install dtool
 ```
