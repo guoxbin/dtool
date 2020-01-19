@@ -16,23 +16,21 @@
 
 Now `dtool` supports: 
 
-- Hex / UTF-8 string conversion
-- Hex / binary conversion
-- Timestamp / date conversion
-- Number 2/8/10/16 base conversion
-- Hex / base58 conversion
-- Hex / base58check conversion
-- Hex / base64 conversion
-- URL encode / decode
-- Number codec
-- Hash (MD5, SHA-1, SHA-2, SHA-3, RIPEMD, CRC, Blake2b, SM3)
-- UTF-8 string / unicode conversion
-- HTML entity encode / decode
-- Regex match
-- Pbkdf2
-- Case conversion (upper, lower, title, camel, pascal, snake, shouty snake, kebab)
-- AES encrypt / decrypt
-- ECDSA (Secp256k1, NIST P-256)
+- [Hex / UTF-8 string / binary conversion](./docs/Usage.md#hex--utf-8-string--binary-conversion)
+- [Timestamp / date conversion](./docs/Usage.md#timestamp--date-conversion)
+- [Number 10/2/8/16 base conversion](./docs/Usage.md#number-102816-base-conversion)
+- [Hex / base58 conversion](./docs/Usage.md#hex--base58-conversion)
+- [Hex / base64 conversion](./docs/Usage.md#hex--base64-conversion)
+- [URL encode / decode](./docs/Usage.md#url-encode--decode)
+- [Number codec](./docs/Usage.md#number-codec)
+- [Hash (MD5, SHA-1, SHA-2, SHA-3, RIPEMD, CRC, Blake2b, SM3)](./docs/Usage.md#hash-md5-sha-1-sha-2-sha-3-ripemd-crc-blake2b-sm3)
+- [UTF-8 string / unicode conversion](./docs/Usage.md#utf-8-string--unicode-conversion)
+- [HTML entity encode / decode](./docs/Usage.md#html-entity-encode--decode)
+- [Regex match](./docs/Usage.md#regex-match)
+- [Pbkdf2](./docs/Usage.md#pbkdf2)
+- [Case conversion (upper, lower, title, camel, pascal, snake, shouty snake, kebab)](./docs/Usage.md#case-conversion-upper-lower-title-camel-pascal-snake-shouty-snake-kebab)
+- [AES encrypt / decrypt](./docs/Usage.md#aes-encrypt--decrypt)
+- [ECDSA (Secp256k1, NIST P-256, NIST P384)](./docs/Usage.md#ecdsa-secp256k1-nist-p-256-nist-p384)
 
 ## Usage
 
