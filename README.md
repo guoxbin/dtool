@@ -71,9 +71,6 @@ Usage
 ```
 
 ## Tips
-
-### Hex / UTF-8 string / binary conversion
-
 ### pipe 
 convert a string to base64
 ```
