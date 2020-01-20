@@ -16,6 +16,7 @@
 - [Case conversion (upper, lower, title, camel, pascal, snake, shouty snake, kebab)](#case-conversion-upper-lower-title-camel-pascal-snake-shouty-snake-kebab)
 - [AES encrypt / decrypt](#aes-encrypt--decrypt)
 - [ECDSA (Secp256k1, NIST P-256, NIST P384, SM2)](#ecdsa-secp256k1-nist-p-256-nist-p384-sm2)
+- [SM4 encrypt / decrypt](#sm4-encrypt--decrypt)
 
 ## Hex / UTF-8 string / binary / byte array conversion
 
@@ -223,5 +224,13 @@
 |   ec_pk   |               Elliptic-curve calculate public key<br>P-256<br>v0.7.0               |                                                                                                                      $ dtool ec_pk -c p256 -s 0xf0b3b41add2d79932cdf2a4ba083c16e7\\<br>2647ddcd8718e2187d1567ed5a611c9<br>0x045c79019e39199effa07576de6e3745fa1dba402854314aef05790e9e\\<br>827cf7782ac5feb26e28039f94d73078c57b5f29be14ef9da57cb53e16e2\\<br>839bdbbee630                                                                                                                       |
 |   ec_pk   |               Elliptic-curve calculate public key<br>P-384<br>v0.7.0               |                                                                $ dtool ec_pk -c p384 -s 0xfbc89e8fae9340747f162330345f7cfac\\<br>7387a2049f6bedb55f7a30faf8b1d24da9b1e618db7b215daa1c7b0fd548\\<br>58f<br>0x044978c6c7be1a5c5194983a945d2d8c81ae4b421dd89d12c6dd1756d2\\<br>387fa2601993657eeb93d289a57625a70c2830db5f06f988a3e4549e26e8\\<br>b6d27c7f1e6e8949d6ce5bf3f88a0f5eebaa14499d4379bc81cca6e9ff17\\<br>d18b8efb370fffe3                                                                 |
 |   ec_pk   |                Elliptic-curve calculate public key<br>SM2<br>v0.7.0                |                                                                                                                       $ dtool ec_pk -c sm2 -s 0x80a61373e34f7215feceb8dd06bb3731ea\\<br>362ff5355a7226d4e12d076a7eb588<br>0x044b2dd8bf6dbbfb14db3e4d17bd7a3e8758eb4232049bec931d1038f4\\<br>afaae46ac3c771f929bbf35a28b0363789fb19127cea3318f4c8902a0034\\<br>ca5f1b7667d1                                                                                                                       |
+
+
+## SM4 encrypt / decrypt
+
+|Sub command|            Desc            |                                                         Example                                                         |
+|-----------|----------------------------|-------------------------------------------------------------------------------------------------------------------------|
+|  sm4_enc  |SM4 encrypt<br>CTR<br>v0.6.0|$ dtool sm4_enc -k 01010101010101010101010101010101 -i 03030\\<br>303030303030303030303030303 -m ctr 0x616263<br>0x8cd7ea|
+|  sm4_dec  |SM4 decrypt<br>CTR<br>v0.7.0|$ dtool sm4_dec -k 01010101010101010101010101010101 -i 03030\\<br>303030303030303030303030303 -m ctr 0x8cd7ea<br>0x616263|
 
 

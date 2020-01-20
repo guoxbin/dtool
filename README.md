@@ -31,6 +31,7 @@ Now `dtool` supports:
 - [Case conversion (upper, lower, title, camel, pascal, snake, shouty snake, kebab)](./docs/Usage.md#case-conversion-upper-lower-title-camel-pascal-snake-shouty-snake-kebab)
 - [AES encrypt / decrypt](./docs/Usage.md#aes-encrypt--decrypt)
 - [ECDSA (Secp256k1, NIST P-256, NIST P384, SM2)](./docs/Usage.md#ecdsa-secp256k1-nist-p-256-nist-p384-sm2)
+- [SM4 encrypt / decrypt](./docs/Usage.md#sm4-encrypt--decrypt)
 
 ## Usage
 

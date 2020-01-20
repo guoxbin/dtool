@@ -17,6 +17,7 @@ mod usage;
 mod pbkdf2;
 mod aes;
 mod ecdsa;
+mod sm4;
 mod case;
 mod completion;
 
@@ -70,6 +71,7 @@ impl<'a, 'b> ModuleManager<'a, 'b> {
 		mm.register(case::module());
 		mm.register(aes::module());
 		mm.register(ecdsa::module());
+		mm.register(sm4::module());
 		mm
 	}
 
