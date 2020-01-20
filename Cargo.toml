@@ -23,7 +23,7 @@ urlencoding = "1.0.0"
 parity-codec = "3.2"
 md5 = "0.7.0"
 lazy_static = "1.4.0"
-ring = { git = "https://github.com/guoxbin/ring", rev = "8f42387f33a6c3227dbd97c8d5946ebb6ddf6e41" }
+ring = { package = "ring-fork-dtool", version = "0.16.10" }
 sha2 = "0.8.0"
 sha3 = "0.8.2"
 ripemd160 = "0.8.0"
