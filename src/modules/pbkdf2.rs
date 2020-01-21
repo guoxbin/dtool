@@ -41,6 +41,7 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					Arg::with_name("KEY_LENGTH")
 						.long("key-length")
 						.short("l").help("Key length")
+						.help("Key length: must be a multiple of 8")
 						.takes_value(true)
 						.default_value("128")
 						.required(false))
@@ -93,7 +94,7 @@ fn pbkdf2(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	let key_byte_length = if key_length % 8==0 {
 		Ok(key_length / 8)
 	}else{
-		Err("Invalid key length".to_string())
+		Err("Invalid key length (must be a multiple of 8)".to_string())
 	}?;
 
 	let secret = base::input_string(matches)?;
