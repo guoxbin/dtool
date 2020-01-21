@@ -89,7 +89,7 @@ impl<'a, 'b> ModuleManager<'a, 'b> {
 		let result = match name{
 			"usage" => usage::run(matches, &self.modules),
 			"completion" => completion::run(matches),
-			_ => (self.commands.get(name).expect("subcommand must exit").f)(matches),
+			_ => (self.commands.get(name).expect("subcommand must exist").f)(matches),
 		};
 
 		match result{
