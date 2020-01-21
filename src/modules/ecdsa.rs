@@ -11,7 +11,7 @@ mod sm2;
 
 pub fn module<'a, 'b>() -> Module<'a, 'b> {
 	Module {
-		desc: "ECDSA (Secp256k1, NIST P-256, NIST P384, SM2)".to_string(),
+		desc: "ECDSA (Secp256k1, NIST P-256, NIST P-384, SM2)".to_string(),
 		commands: commands(),
 		get_cases: cases::cases,
 	}
