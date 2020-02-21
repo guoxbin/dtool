@@ -3,6 +3,7 @@ use crate::modules::Case;
 use linked_hash_map::LinkedHashMap;
 use ring::signature::{Ed25519KeyPair, KeyPair, ED25519, VerificationAlgorithm};
 use untrusted::Input;
+use crate::modules::eddsa::AltSecretKey;
 
 pub fn ed_gk_ed25519() -> Result<(Vec<u8>, Vec<u8>), String> {
 
@@ -17,9 +18,9 @@ pub fn ed_gk_ed25519() -> Result<(Vec<u8>, Vec<u8>), String> {
     Ok((secret_key, public_key))
 }
 
-pub fn ed_sign_ed25519(secret_key: Vec<u8>, message: Vec<u8>) -> Result<Vec<u8>, String> {
+pub fn ed_sign_ed25519(secret_key: AltSecretKey, message: Vec<u8>) -> Result<Vec<u8>, String> {
 
-    let key_pair = Ed25519KeyPair::from_seed_unchecked(&secret_key).map_err(|_| "Invalid secret key")?;
+    let key_pair = get_key_pair(secret_key)?;
 
     let signature =  key_pair.sign(&message);
 
@@ -37,9 +38,18 @@ pub fn ed_verify_ed25519(public_key: Vec<u8>, sig: Vec<u8>, message: Vec<u8>) ->
     Ok(result)
 }
 
-pub fn ed_pk_ed25519(secret_key: Vec<u8>) -> Result<Vec<u8>, String> {
+pub fn ed_sk_ed25519(mini_secret_key: Vec<u8>) -> Result<Vec<u8>, String> {
 
-    let key_pair = Ed25519KeyPair::from_seed_unchecked(&secret_key).map_err(|_| "Invalid secret key")?;
+    let key_pair = Ed25519KeyPair::from_seed_unchecked(&mini_secret_key).map_err(|_| "Invalid mini secret key")?;
+
+    let secret_key = key_pair.private_key().to_vec();
+
+    Ok(secret_key)
+}
+
+pub fn ed_pk_ed25519(secret_key: AltSecretKey) -> Result<Vec<u8>, String> {
+
+    let key_pair = get_key_pair(secret_key)?;
 
     let public_key = key_pair.public_key();
     let public_key = public_key.as_ref().to_vec();
@@ -51,6 +61,20 @@ fn random_32_bytes<R: Rng + ?Sized>(rng: &mut R) -> [u8; 32] {
     let mut ret = [0u8; 32];
     rng.fill_bytes(&mut ret);
     ret
+}
+
+fn get_key_pair(secret_key: AltSecretKey) -> Result<Ed25519KeyPair, String> {
+    let key_pair = match secret_key{
+        AltSecretKey::MiniSecretKey(key) => {
+            let key_pair = Ed25519KeyPair::from_seed_unchecked(&key).map_err(|_| "Invalid mini secret key")?;
+            key_pair
+        },
+        AltSecretKey::SecretKey(key) => {
+            let key_pair = Ed25519KeyPair::from_private_key_unchecked(&key).map_err(|_| "Invalid secret key")?;
+            key_pair
+        }
+    };
+    Ok(key_pair)
 }
 
 pub fn cases() -> LinkedHashMap<&'static str, Vec<Case>> {
@@ -70,7 +94,15 @@ pub fn cases() -> LinkedHashMap<&'static str, Vec<Case>> {
          vec![
              Case {
                  desc: "".to_string(),
-                 input: vec!["-s", "0xb850164d1feec8698acca329947c9885bd1d94034d2fbbe6080598adbe15b298", "0x616263"].into_iter().map(Into::into).collect(),
+                 input: vec!["-m", "0xb850164d1feec8698acca329947c9885bd1d94034d2fbbe6080598adbe15b298", "0x616263"].into_iter().map(Into::into).collect(),
+                 output: vec!["0x52131a69ebb236703de0c3589689202eebd1d16c40990c3ad8b3582631a7a267db745dbb9156d8626187e40f42f6cfe884b6d3ce0cdc04603afeed089703ac0e"].into_iter().map(Into::into).collect(),
+                 is_example: true,
+                 is_test: true,
+                 since: "0.8.0".to_string(),
+             },
+             Case {
+                 desc: "".to_string(),
+                 input: vec!["-s", "0xa03792968c7197a4bbc7f6e9880073c133c0557ab91b93e7e772bfa0cb136173ca6c22eccbd8b859e71e0dc00f1ceea30292ee09473210c3ef442fa02d9ccdf0", "0x616263"].into_iter().map(Into::into).collect(),
                  output: vec!["0x52131a69ebb236703de0c3589689202eebd1d16c40990c3ad8b3582631a7a267db745dbb9156d8626187e40f42f6cfe884b6d3ce0cdc04603afeed089703ac0e"].into_iter().map(Into::into).collect(),
                  is_example: true,
                  is_test: true,
@@ -90,11 +122,30 @@ pub fn cases() -> LinkedHashMap<&'static str, Vec<Case>> {
                  since: "0.8.0".to_string(),
              },
          ]),
-        ("ed_pk",
+        ("ed_sk",
          vec![
              Case {
                  desc: "".to_string(),
-                 input: vec!["-s", "0xb850164d1feec8698acca329947c9885bd1d94034d2fbbe6080598adbe15b298"].into_iter().map(Into::into).collect(),
+                 input: vec!["-m", "0xb850164d1feec8698acca329947c9885bd1d94034d2fbbe6080598adbe15b298"].into_iter().map(Into::into).collect(),
+                 output: vec!["0xa03792968c7197a4bbc7f6e9880073c133c0557ab91b93e7e772bfa0cb136173ca6c22eccbd8b859e71e0dc00f1ceea30292ee09473210c3ef442fa02d9ccdf0"].into_iter().map(Into::into).collect(),
+                 is_example: true,
+                 is_test: true,
+                 since: "0.8.0".to_string(),
+             },
+         ]),
+        ("ed_pk",
+         vec![
+             Case {
+                 desc: "Use mini secret key".to_string(),
+                 input: vec!["-m", "0xb850164d1feec8698acca329947c9885bd1d94034d2fbbe6080598adbe15b298"].into_iter().map(Into::into).collect(),
+                 output: vec!["0x892c89a4cd631d08da314607223814775604535a05f50e959d21209d01740eba"].into_iter().map(Into::into).collect(),
+                 is_example: true,
+                 is_test: true,
+                 since: "0.8.0".to_string(),
+             },
+             Case {
+                 desc: "Use secret key".to_string(),
+                 input: vec!["-s", "0xa03792968c7197a4bbc7f6e9880073c133c0557ab91b93e7e772bfa0cb136173ca6c22eccbd8b859e71e0dc00f1ceea30292ee09473210c3ef442fa02d9ccdf0"].into_iter().map(Into::into).collect(),
                  output: vec!["0x892c89a4cd631d08da314607223814775604535a05f50e959d21209d01740eba"].into_iter().map(Into::into).collect(),
                  is_example: true,
                  is_test: true,
