@@ -93,7 +93,7 @@ pub fn cases() -> LinkedHashMap<&'static str, Vec<Case>> {
         ("ed_sign",
          vec![
              Case {
-                 desc: "".to_string(),
+                 desc: "Use mini secret key".to_string(),
                  input: vec!["-m", "0xb850164d1feec8698acca329947c9885bd1d94034d2fbbe6080598adbe15b298", "0x616263"].into_iter().map(Into::into).collect(),
                  output: vec!["0x52131a69ebb236703de0c3589689202eebd1d16c40990c3ad8b3582631a7a267db745dbb9156d8626187e40f42f6cfe884b6d3ce0cdc04603afeed089703ac0e"].into_iter().map(Into::into).collect(),
                  is_example: true,
@@ -101,7 +101,7 @@ pub fn cases() -> LinkedHashMap<&'static str, Vec<Case>> {
                  since: "0.8.0".to_string(),
              },
              Case {
-                 desc: "".to_string(),
+                 desc: "Use secret key".to_string(),
                  input: vec!["-s", "0xa03792968c7197a4bbc7f6e9880073c133c0557ab91b93e7e772bfa0cb136173ca6c22eccbd8b859e71e0dc00f1ceea30292ee09473210c3ef442fa02d9ccdf0", "0x616263"].into_iter().map(Into::into).collect(),
                  output: vec!["0x52131a69ebb236703de0c3589689202eebd1d16c40990c3ad8b3582631a7a267db745dbb9156d8626187e40f42f6cfe884b6d3ce0cdc04603afeed089703ac0e"].into_iter().map(Into::into).collect(),
                  is_example: true,
