@@ -15,8 +15,10 @@
 - [Pbkdf2](#pbkdf2)
 - [Case conversion (upper, lower, title, camel, pascal, snake, shouty snake, kebab)](#case-conversion-upper-lower-title-camel-pascal-snake-shouty-snake-kebab)
 - [AES encrypt / decrypt](#aes-encrypt--decrypt)
-- [ECDSA (Secp256k1, NIST P-256, NIST P384, SM2)](#ecdsa-secp256k1-nist-p-256-nist-p384-sm2)
+- [ECDSA (Secp256k1, NIST P-256, NIST P-384, SM2)](#ecdsa-secp256k1-nist-p-256-nist-p-384-sm2)
 - [SM4 encrypt / decrypt](#sm4-encrypt--decrypt)
+- [EdDSA (Ed25519)](#eddsa-ed25519)
+- [sr25519 signature](#sr25519-signature)
 
 ## Hex / UTF-8 string / binary / byte array conversion
 
@@ -203,7 +205,7 @@
 |  aes_dec  |AES decrypt<br>KeySize 256 CTR<br>v0.6.0|                         $ dtool aes_dec -k 01010101010101010101010101010101010101010\\<br>10101010101010101010101 -i 03030303030303030303030303030303 \\<br>-m ctr 0x9e5062<br>0x616263                         |
 
 
-## ECDSA (Secp256k1, NIST P-256, NIST P384, SM2)
+## ECDSA (Secp256k1, NIST P-256, NIST P-384, SM2)
 
 |Sub command|                                        Desc                                        |                                                                                                                                                                                                                                             Example                                                                                                                                                                                                                                              |
 |-----------|------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -232,5 +234,25 @@
 |-----------|----------------------------|-------------------------------------------------------------------------------------------------------------------------|
 |  sm4_enc  |SM4 encrypt<br>CTR<br>v0.6.0|$ dtool sm4_enc -k 01010101010101010101010101010101 -i 03030\\<br>303030303030303030303030303 -m ctr 0x616263<br>0x8cd7ea|
 |  sm4_dec  |SM4 decrypt<br>CTR<br>v0.7.0|$ dtool sm4_dec -k 01010101010101010101010101010101 -i 03030\\<br>303030303030303030303030303 -m ctr 0x8cd7ea<br>0x616263|
+
+
+## EdDSA (Ed25519)
+
+|Sub command|                             Desc                             |                                                                                                                            Example                                                                                                                             |
+|-----------|--------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|   ed_gk   |EdDSA generate key pair (Secret key, Pub<br>lic key)<br>v0.8.0|                                             $ dtool ed_gk<br>(0xb850164d1feec8698acca329947c9885bd1d94034d2fbbe6080598adb\\<br>e15b298, 0x892c89a4cd631d08da314607223814775604535a05f50e959\\<br>d21209d01740eba)                                              |
+|  ed_sign  |                     EdDSA sign<br>v0.8.0                     |     $ dtool ed_sign -s 0xb850164d1feec8698acca329947c9885bd1d940\\<br>34d2fbbe6080598adbe15b298 0x616263<br>0x52131a69ebb236703de0c3589689202eebd1d16c40990c3ad8b3582631\\<br>a7a267db745dbb9156d8626187e40f42f6cfe884b6d3ce0cdc04603afeed\\<br>089703ac0e     |
+| ed_verify |                    EdDSA verify<br>v0.8.0                    |$ dtool ed_verify -p 0x892c89a4cd631d08da3146072238147756045\\<br>35a05f50e959d21209d01740eba -S 0x52131a69ebb236703de0c358968\\<br>9202eebd1d16c40990c3ad8b3582631a7a267db745dbb9156d8626187e40\\<br>f42f6cfe884b6d3ce0cdc04603afeed089703ac0e 0x616263<br>true|
+|   ed_pk   |             EdDSA calculate public key<br>v0.8.0             |                                             $ dtool ed_pk -s 0xb850164d1feec8698acca329947c9885bd1d94034\\<br>d2fbbe6080598adbe15b298<br>0x892c89a4cd631d08da314607223814775604535a05f50e959d21209d01\\<br>740eba                                              |
+
+
+## sr25519 signature
+
+|Sub command|                              Desc                              |                                                                                                                            Example                                                                                                                             |
+|-----------|----------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|   sr_gk   |sr25519 generate key pair (Secret key, P<br>ublic key)<br>v0.8.0|                                             $ dtool sr_gk<br>(0xc243239f434f7a4b0ab8d4600537001e6479c807c3d3623f99c8ad9f2\\<br>a588837, 0x6a8ee649b31efe7aabd8d5af58f85c60f12c48f8aa880cb50\\<br>ae4cd57109e9d6c)                                              |
+|  sr_sign  |                     sr25519 sign<br>v0.8.0                     |     $ dtool sr_sign -s 0xc243239f434f7a4b0ab8d4600537001e6479c80\\<br>7c3d3623f99c8ad9f2a588837 0x616263<br>0xced639526bb840107f33b7e6588219bae8657707f0537dce9969338748\\<br>673d54b92e0efba5477a1494696e5cf3f5e7a40f03271b1ef2e2030ef60d\\<br>6be1caa784     |
+| sr_verify |                    sr25519 verify<br>v0.8.0                    |$ dtool sr_verify -p 0x6a8ee649b31efe7aabd8d5af58f85c60f12c4\\<br>8f8aa880cb50ae4cd57109e9d6c -S 0xced639526bb840107f33b7e6588\\<br>219bae8657707f0537dce9969338748673d54b92e0efba5477a1494696e5\\<br>cf3f5e7a40f03271b1ef2e2030ef60d6be1caa784 0x616263<br>true|
+|   sr_pk   |             sr25519 calculate public key<br>v0.8.0             |                                             $ dtool sr_pk -s 0xc243239f434f7a4b0ab8d4600537001e6479c807c\\<br>3d3623f99c8ad9f2a588837<br>0x6a8ee649b31efe7aabd8d5af58f85c60f12c48f8aa880cb50ae4cd5710\\<br>9e9d6c                                              |
 
 

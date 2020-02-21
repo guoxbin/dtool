@@ -21,6 +21,7 @@ mod sm4;
 mod case;
 mod completion;
 mod eddsa;
+mod srdsa;
 
 #[derive(Clone)]
 pub struct Module<'a, 'b> {
@@ -74,6 +75,7 @@ impl<'a, 'b> ModuleManager<'a, 'b> {
 		mm.register(ecdsa::module());
 		mm.register(sm4::module());
 		mm.register(eddsa::module());
+		mm.register(srdsa::module());
 		mm
 	}
 
