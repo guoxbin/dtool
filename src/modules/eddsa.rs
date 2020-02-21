@@ -15,7 +15,7 @@ pub fn module<'a, 'b>() -> Module<'a, 'b> {
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
     vec![
         Command {
-            app: SubCommand::with_name("ed_gk").about("EdDSA generate key pair (Secret key, Public key)"),
+            app: SubCommand::with_name("ed_gk").about("EdDSA generate key pair (Mini secret key, Public key)"),
             f: ed_gk,
         },
         Command {
