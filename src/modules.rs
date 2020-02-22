@@ -20,6 +20,8 @@ mod ecdsa;
 mod sm4;
 mod case;
 mod completion;
+mod eddsa;
+mod srdsa;
 
 #[derive(Clone)]
 pub struct Module<'a, 'b> {
@@ -72,6 +74,8 @@ impl<'a, 'b> ModuleManager<'a, 'b> {
 		mm.register(aes::module());
 		mm.register(ecdsa::module());
 		mm.register(sm4::module());
+		mm.register(eddsa::module());
+		mm.register(srdsa::module());
 		mm
 	}
 
@@ -89,7 +93,7 @@ impl<'a, 'b> ModuleManager<'a, 'b> {
 		let result = match name{
 			"usage" => usage::run(matches, &self.modules),
 			"completion" => completion::run(matches),
-			_ => (self.commands.get(name).expect("subcommand must exit").f)(matches),
+			_ => (self.commands.get(name).expect("subcommand must exist").f)(matches),
 		};
 
 		match result{
