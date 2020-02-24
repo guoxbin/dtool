@@ -1,27 +1,27 @@
 use clap::{App, ArgMatches};
-use std::iter;
 use linked_hash_map::LinkedHashMap;
-mod hex;
+use std::iter;
+mod aes;
 mod base;
-mod time;
-mod number_system;
 mod base58;
 mod base64;
-mod url;
-mod number_codec;
-mod hash;
-mod unicode;
-mod html;
-mod re;
-mod usage;
-mod pbkdf2;
-mod aes;
-mod ecdsa;
-mod sm4;
 mod case;
 mod completion;
+mod ecdsa;
 mod eddsa;
+mod hash;
+mod hex;
+mod html;
+mod number_codec;
+mod number_system;
+mod pbkdf2;
+mod re;
+mod sm4;
 mod srdsa;
+mod time;
+mod unicode;
+mod url;
+mod usage;
 
 #[derive(Clone)]
 pub struct Module<'a, 'b> {
@@ -46,13 +46,12 @@ pub struct Case {
 	pub since: String,
 }
 
-pub struct ModuleManager<'a, 'b>{
+pub struct ModuleManager<'a, 'b> {
 	modules: Vec<Module<'a, 'b>>,
 	commands: LinkedHashMap<String, Command<'a, 'b>>,
 }
 
 impl<'a, 'b> ModuleManager<'a, 'b> {
-
 	pub fn new() -> Self {
 		let mut mm = Self {
 			modules: Vec::new(),
@@ -80,35 +79,32 @@ impl<'a, 'b> ModuleManager<'a, 'b> {
 	}
 
 	pub fn apps(&self) -> Vec<App<'a, 'b>> {
-
-		self.commands.iter().map(|(_, command)| command.app.to_owned())
-			.chain( iter::once(usage::app()) )
+		self.commands
+			.iter()
+			.map(|(_, command)| command.app.to_owned())
+			.chain(iter::once(usage::app()))
 			.chain(iter::once(completion::app()))
 			.collect()
-
 	}
 
 	pub fn run(&self, name: &str, matches: &ArgMatches<'a>) {
-
-		let result = match name{
+		let result = match name {
 			"usage" => usage::run(matches, &self.modules),
 			"completion" => completion::run(matches),
 			_ => (self.commands.get(name).expect("subcommand must exist").f)(matches),
 		};
 
-		match result{
-			Ok(result) => result.iter().for_each(|x|println!("{}", x)),
+		match result {
+			Ok(result) => result.iter().for_each(|x| println!("{}", x)),
 			Err(e) => eprintln!("{}", e),
 		}
-
 	}
 
 	fn register(&mut self, module: Module<'a, 'b>) {
 		self.modules.push(module.clone());
 		for command in module.commands {
-			self.commands.insert(command.app.get_name().to_string(), command);
+			self.commands
+				.insert(command.app.get_name().to_string(), command);
 		}
-
 	}
-
 }

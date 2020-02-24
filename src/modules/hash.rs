@@ -1,13 +1,13 @@
-use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::{Command, base, Module};
-use lazy_static::lazy_static;
-use std::collections::HashMap;
-use ring::digest::{Context, SHA1_FOR_LEGACY_USE_ONLY};
-use sha2::{Digest, Sha224, Sha256, Sha384, Sha512, Sha512Trunc224, Sha512Trunc256};
+use crate::modules::base::Hex;
+use crate::modules::{base, Command, Module};
+use clap::{Arg, ArgMatches, SubCommand};
 use crc::crc32;
 use crypto::blake2b::Blake2b;
+use lazy_static::lazy_static;
+use ring::digest::{Context, SHA1_FOR_LEGACY_USE_ONLY};
+use sha2::{Digest, Sha224, Sha256, Sha384, Sha512, Sha512Trunc224, Sha512Trunc256};
+use std::collections::HashMap;
 use yogcrypt::sm3::sm3_enc;
-use crate::modules::base::Hex;
 
 pub fn module<'a, 'b>() -> Module<'a, 'b> {
 	Module {
@@ -29,154 +29,156 @@ enum AlgorithmF {
 }
 
 lazy_static! {
-	static ref RAW_ALGORITHMS : Vec<Algorithm> = vec![
+	static ref RAW_ALGORITHMS: Vec<Algorithm> = vec![
 		Algorithm {
-			name : "md5",
-			help : "MD5",
+			name: "md5",
+			help: "MD5",
 			f: AlgorithmF::Normal(md5),
 		},
 		Algorithm {
-			name : "sha1",
-			help : "SHA-1",
+			name: "sha1",
+			help: "SHA-1",
 			f: AlgorithmF::Normal(sha1),
 		},
 		Algorithm {
-			name : "sha2_224",
-			help : "SHA-2 224",
+			name: "sha2_224",
+			help: "SHA-2 224",
 			f: AlgorithmF::Normal(sha2_224),
 		},
 		Algorithm {
-			name : "sha2_256",
-			help : "SHA-2 256",
+			name: "sha2_256",
+			help: "SHA-2 256",
 			f: AlgorithmF::Normal(sha2_256),
 		},
 		Algorithm {
-			name : "sha2_384",
-			help : "SHA-2 384",
+			name: "sha2_384",
+			help: "SHA-2 384",
 			f: AlgorithmF::Normal(sha2_384),
 		},
 		Algorithm {
-			name : "sha2_512",
-			help : "SHA-2 512",
+			name: "sha2_512",
+			help: "SHA-2 512",
 			f: AlgorithmF::Normal(sha2_512),
 		},
 		Algorithm {
-			name : "sha2_512_224",
-			help : "SHA-2 512 truncate 224",
+			name: "sha2_512_224",
+			help: "SHA-2 512 truncate 224",
 			f: AlgorithmF::Normal(sha2_512_224),
 		},
 		Algorithm {
-			name : "sha2_512_256",
-			help : "SHA-2 512 truncate 256",
+			name: "sha2_512_256",
+			help: "SHA-2 512 truncate 256",
 			f: AlgorithmF::Normal(sha2_512_256),
 		},
 		Algorithm {
-			name : "sha3_224",
-			help : "SHA-3 224",
+			name: "sha3_224",
+			help: "SHA-3 224",
 			f: AlgorithmF::Normal(sha3_224),
 		},
 		Algorithm {
-			name : "sha3_256",
-			help : "SHA-3 256",
+			name: "sha3_256",
+			help: "SHA-3 256",
 			f: AlgorithmF::Normal(sha3_256),
 		},
 		Algorithm {
-			name : "sha3_384",
-			help : "SHA-3 384",
+			name: "sha3_384",
+			help: "SHA-3 384",
 			f: AlgorithmF::Normal(sha3_384),
 		},
 		Algorithm {
-			name : "sha3_512",
-			help : "SHA-3 512",
+			name: "sha3_512",
+			help: "SHA-3 512",
 			f: AlgorithmF::Normal(sha3_512),
 		},
 		Algorithm {
-			name : "sha3_k_224",
-			help : "SHA-3 keccak 224",
+			name: "sha3_k_224",
+			help: "SHA-3 keccak 224",
 			f: AlgorithmF::Normal(sha3_k_224),
 		},
 		Algorithm {
-			name : "sha3_k_256",
-			help : "SHA-3 keccak 256",
+			name: "sha3_k_256",
+			help: "SHA-3 keccak 256",
 			f: AlgorithmF::Normal(sha3_k_256),
 		},
 		Algorithm {
-			name : "sha3_k_384",
-			help : "SHA-3 keccak 384",
+			name: "sha3_k_384",
+			help: "SHA-3 keccak 384",
 			f: AlgorithmF::Normal(sha3_k_384),
 		},
 		Algorithm {
-			name : "sha3_k_512",
-			help : "SHA-3 keccak 512",
+			name: "sha3_k_512",
+			help: "SHA-3 keccak 512",
 			f: AlgorithmF::Normal(sha3_k_512),
 		},
 		Algorithm {
-			name : "ripemd_160",
-			help : "RIPEMD-160",
+			name: "ripemd_160",
+			help: "RIPEMD-160",
 			f: AlgorithmF::Normal(ripemd_160),
 		},
 		Algorithm {
-			name : "crc_32",
-			help : "CRC32",
+			name: "crc_32",
+			help: "CRC32",
 			f: AlgorithmF::Normal(crc_32),
 		},
 		Algorithm {
-			name : "blake2b_160",
-			help : "Blake2b 160",
+			name: "blake2b_160",
+			help: "Blake2b 160",
 			f: AlgorithmF::WithKey(blake2b_160),
 		},
 		Algorithm {
-			name : "blake2b_256",
-			help : "Blake2b 256",
+			name: "blake2b_256",
+			help: "Blake2b 256",
 			f: AlgorithmF::WithKey(blake2b_256),
 		},
 		Algorithm {
-			name : "blake2b_384",
-			help : "Blake2b 384",
+			name: "blake2b_384",
+			help: "Blake2b 384",
 			f: AlgorithmF::WithKey(blake2b_384),
 		},
 		Algorithm {
-			name : "blake2b_512",
-			help : "Blake2b 512",
+			name: "blake2b_512",
+			help: "Blake2b 512",
 			f: AlgorithmF::WithKey(blake2b_512),
 		},
 		Algorithm {
-			name : "sm3",
-			help : "Chinese National Standard SM3",
+			name: "sm3",
+			help: "Chinese National Standard SM3",
 			f: AlgorithmF::Normal(sm3),
 		},
 	];
-
-	static ref ALGORITHMS : HashMap<&'static str, &'static Algorithm> = RAW_ALGORITHMS.iter().map(|x|(x.name, x)).collect();
-
-	static ref ALGORITHM_HELP : String = "Hash algorithm\n".to_string() + &RAW_ALGORITHMS.iter().map(|a|{
-		format!("{}: {}", a.name, a.help)
-	}).collect::<Vec<String>>().join("\n");
+	static ref ALGORITHMS: HashMap<&'static str, &'static Algorithm> =
+		RAW_ALGORITHMS.iter().map(|x| (x.name, x)).collect();
+	static ref ALGORITHM_HELP: String = "Hash algorithm\n".to_string()
+		+ &RAW_ALGORITHMS
+			.iter()
+			.map(|a| { format!("{}: {}", a.name, a.help) })
+			.collect::<Vec<String>>()
+			.join("\n");
 }
 
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
-	vec![
-		Command {
-			app: SubCommand::with_name("hash").about("Hex to hash")
-				.arg(
-					Arg::with_name("ALGORITHM")
-						.long("algo")
-						.short("a").help(&ALGORITHM_HELP)
-						.takes_value(true)
-						.required(true))
-				.arg(
-					Arg::with_name("KEY")
-						.long("key")
-						.short("k").help("Key for Blake2b")
-						.takes_value(true)
-						.required(false))
-				.arg(
-					Arg::with_name("INPUT")
-						.required(false)
-						.index(1)),
-			f: hash,
-		},
-	]
+	vec![Command {
+		app: SubCommand::with_name("hash")
+			.about("Hex to hash")
+			.arg(
+				Arg::with_name("ALGORITHM")
+					.long("algo")
+					.short("a")
+					.help(&ALGORITHM_HELP)
+					.takes_value(true)
+					.required(true),
+			)
+			.arg(
+				Arg::with_name("KEY")
+					.long("key")
+					.short("k")
+					.help("Key for Blake2b")
+					.takes_value(true)
+					.required(false),
+			)
+			.arg(Arg::with_name("INPUT").required(false).index(1)),
+		f: hash,
+	}]
 }
 
 fn hash(matches: &ArgMatches) -> Result<Vec<String>, String> {
@@ -187,20 +189,16 @@ fn hash(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	let a_name = matches.value_of("ALGORITHM").ok_or("Invalid algorithm")?;
 
 	let result = match ALGORITHMS.get(a_name) {
-		Some(a) => {
-			match a.f {
-				AlgorithmF::Normal(f) => (f)(input)?,
-				AlgorithmF::WithKey(f) => {
-					let key = match matches.value_of("KEY") {
-						Some(key) => {
-							key.parse::<Hex>().map_err(|_| "Invalid key")?.into()
-						}
-						None => vec![],
-					};
-					(f)(input, key)?
-				}
+		Some(a) => match a.f {
+			AlgorithmF::Normal(f) => (f)(input)?,
+			AlgorithmF::WithKey(f) => {
+				let key = match matches.value_of("KEY") {
+					Some(key) => key.parse::<Hex>().map_err(|_| "Invalid key")?.into(),
+					None => vec![],
+				};
+				(f)(input, key)?
 			}
-		}
+		},
 		None => return Err("Invalid algorithm".to_string()),
 	};
 
@@ -359,9 +357,11 @@ fn blake2b(data: Vec<u8>, size: usize, key: Vec<u8>) -> Result<Vec<u8>, String> 
 fn sm3(data: Vec<u8>) -> Result<Vec<u8>, String> {
 	let result = sm3_enc(&data);
 
-	let result: Vec<u8> = result.iter().map(|x| {
-		x.to_be_bytes().to_vec()
-	}).flatten().collect();
+	let result: Vec<u8> = result
+		.iter()
+		.map(|x| x.to_be_bytes().to_vec())
+		.flatten()
+		.collect();
 
 	Ok(result)
 }

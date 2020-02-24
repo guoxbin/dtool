@@ -1,84 +1,90 @@
-use secp256k1::rand::{thread_rng, Rng};
+use crate::modules::eddsa::AltSecretKey;
 use crate::modules::Case;
 use linked_hash_map::LinkedHashMap;
-use ring::signature::{Ed25519KeyPair, KeyPair, ED25519, VerificationAlgorithm};
+use ring::signature::{Ed25519KeyPair, KeyPair, VerificationAlgorithm, ED25519};
+use secp256k1::rand::{thread_rng, Rng};
 use untrusted::Input;
-use crate::modules::eddsa::AltSecretKey;
 
 pub fn ed_gk_ed25519() -> Result<(Vec<u8>, Vec<u8>), String> {
+	let seed = random_32_bytes(&mut thread_rng());
 
-    let seed = random_32_bytes(&mut thread_rng());
+	let key_pair = Ed25519KeyPair::from_seed_unchecked(&seed).map_err(|_| "Invalid secret key")?;
 
-    let key_pair = Ed25519KeyPair::from_seed_unchecked(&seed).map_err(|_| "Invalid secret key")?;
+	let secret_key = seed.to_vec();
 
-    let secret_key = seed.to_vec();
+	let public_key = key_pair.public_key().as_ref().to_vec();
 
-    let public_key = key_pair.public_key().as_ref().to_vec();
-
-    Ok((secret_key, public_key))
+	Ok((secret_key, public_key))
 }
 
 pub fn ed_sign_ed25519(secret_key: AltSecretKey, message: Vec<u8>) -> Result<Vec<u8>, String> {
+	let key_pair = get_key_pair(secret_key)?;
 
-    let key_pair = get_key_pair(secret_key)?;
+	let signature = key_pair.sign(&message);
 
-    let signature =  key_pair.sign(&message);
+	let signature = signature.as_ref().to_vec();
 
-    let signature = signature.as_ref().to_vec();
-
-    Ok(signature)
+	Ok(signature)
 }
 
-pub fn ed_verify_ed25519(public_key: Vec<u8>, sig: Vec<u8>, message: Vec<u8>) -> Result<(), String> {
+pub fn ed_verify_ed25519(
+	public_key: Vec<u8>,
+	sig: Vec<u8>,
+	message: Vec<u8>,
+) -> Result<(), String> {
+	let result = ED25519
+		.verify(
+			Input::from(&public_key),
+			Input::from(&message),
+			Input::from(&sig),
+		)
+		.map_err(|e| format!("Invalid signature: {}", e))?;
 
-    let result = ED25519.verify(Input::from(&public_key),
-                             Input::from(&message), Input::from(&sig))
-        .map_err(|e| format!("Invalid signature: {}", e))?;
-
-    Ok(result)
+	Ok(result)
 }
 
 pub fn ed_sk_ed25519(mini_secret_key: Vec<u8>) -> Result<Vec<u8>, String> {
+	let key_pair = Ed25519KeyPair::from_seed_unchecked(&mini_secret_key)
+		.map_err(|_| "Invalid mini secret key")?;
 
-    let key_pair = Ed25519KeyPair::from_seed_unchecked(&mini_secret_key).map_err(|_| "Invalid mini secret key")?;
+	let secret_key = key_pair.private_key().to_vec();
 
-    let secret_key = key_pair.private_key().to_vec();
-
-    Ok(secret_key)
+	Ok(secret_key)
 }
 
 pub fn ed_pk_ed25519(secret_key: AltSecretKey) -> Result<Vec<u8>, String> {
+	let key_pair = get_key_pair(secret_key)?;
 
-    let key_pair = get_key_pair(secret_key)?;
+	let public_key = key_pair.public_key();
+	let public_key = public_key.as_ref().to_vec();
 
-    let public_key = key_pair.public_key();
-    let public_key = public_key.as_ref().to_vec();
-
-    Ok(public_key)
+	Ok(public_key)
 }
 
 fn random_32_bytes<R: Rng + ?Sized>(rng: &mut R) -> [u8; 32] {
-    let mut ret = [0u8; 32];
-    rng.fill_bytes(&mut ret);
-    ret
+	let mut ret = [0u8; 32];
+	rng.fill_bytes(&mut ret);
+	ret
 }
 
 fn get_key_pair(secret_key: AltSecretKey) -> Result<Ed25519KeyPair, String> {
-    let key_pair = match secret_key{
-        AltSecretKey::MiniSecretKey(key) => {
-            let key_pair = Ed25519KeyPair::from_seed_unchecked(&key).map_err(|_| "Invalid mini secret key")?;
-            key_pair
-        },
-        AltSecretKey::SecretKey(key) => {
-            let key_pair = Ed25519KeyPair::from_private_key_unchecked(&key).map_err(|_| "Invalid secret key")?;
-            key_pair
-        }
-    };
-    Ok(key_pair)
+	let key_pair = match secret_key {
+		AltSecretKey::MiniSecretKey(key) => {
+			let key_pair =
+				Ed25519KeyPair::from_seed_unchecked(&key).map_err(|_| "Invalid mini secret key")?;
+			key_pair
+		}
+		AltSecretKey::SecretKey(key) => {
+			let key_pair = Ed25519KeyPair::from_private_key_unchecked(&key)
+				.map_err(|_| "Invalid secret key")?;
+			key_pair
+		}
+	};
+	Ok(key_pair)
 }
 
 pub fn cases() -> LinkedHashMap<&'static str, Vec<Case>> {
-    vec![
+	vec![
         ("ed_gk",
          vec![
              Case {

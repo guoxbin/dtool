@@ -1,8 +1,7 @@
-use clap::App;
 use crate::modules::ModuleManager;
+use clap::App;
 
-pub fn build_app<'a, 'b>() -> (App<'a, 'b>, ModuleManager<'a, 'b>){
-
+pub fn build_app<'a, 'b>() -> (App<'a, 'b>, ModuleManager<'a, 'b>) {
 	let mut app = App::new(env!("CARGO_PKG_NAME"))
 		.version(env!("CARGO_PKG_VERSION"))
 		.author(env!("CARGO_PKG_AUTHORS"))

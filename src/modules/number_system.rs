@@ -1,5 +1,5 @@
-use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::{Command, base, Module};
+use crate::modules::{base, Command, Module};
+use clap::{Arg, ArgMatches, SubCommand};
 
 pub fn module<'a, 'b>() -> Module<'a, 'b> {
 	Module {
@@ -10,36 +10,40 @@ pub fn module<'a, 'b>() -> Module<'a, 'b> {
 }
 
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
-	vec![
-		Command {
-			app: SubCommand::with_name("ns").about("Number system")
-				.arg(
-					Arg::with_name("DECIMAL")
-						.long("decimal")
-						.short("d").help("Output decimal result")
-						.required(false))
-				.arg(
-					Arg::with_name("BINARY")
-						.long("binary")
-						.short("b").help("Output binary result")
-						.required(false))
-				.arg(
-					Arg::with_name("OCTAL")
-						.long("octal")
-						.short("o").help("Output octal result")
-						.required(false))
-				.arg(
-					Arg::with_name("HEXADECIMAL")
-						.long("hexadecimal")
-						.short("x").help("Output hexadecimal result")
-						.required(false))
-				.arg(
-					Arg::with_name("INPUT")
-						.required(false)
-						.index(1)),
-			f: ns,
-		},
-	]
+	vec![Command {
+		app: SubCommand::with_name("ns")
+			.about("Number system")
+			.arg(
+				Arg::with_name("DECIMAL")
+					.long("decimal")
+					.short("d")
+					.help("Output decimal result")
+					.required(false),
+			)
+			.arg(
+				Arg::with_name("BINARY")
+					.long("binary")
+					.short("b")
+					.help("Output binary result")
+					.required(false),
+			)
+			.arg(
+				Arg::with_name("OCTAL")
+					.long("octal")
+					.short("o")
+					.help("Output octal result")
+					.required(false),
+			)
+			.arg(
+				Arg::with_name("HEXADECIMAL")
+					.long("hexadecimal")
+					.short("x")
+					.help("Output hexadecimal result")
+					.required(false),
+			)
+			.arg(Arg::with_name("INPUT").required(false).index(1)),
+		f: ns,
+	}]
 }
 
 fn ns(matches: &ArgMatches) -> Result<Vec<String>, String> {
@@ -85,59 +89,67 @@ mod cases {
 	use linked_hash_map::LinkedHashMap;
 
 	pub fn cases() -> LinkedHashMap<&'static str, Vec<Case>> {
-		vec![
-			("ns",
-			 vec![
-				 Case {
-					 desc: "Input decimal".to_string(),
-					 input: vec!["256"].into_iter().map(Into::into).collect(),
-					 output: vec!["256", "0b100000000", "0o400", "0x100"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.1.0".to_string(),
-				 },
-				 Case {
-					 desc: "Input octal".to_string(),
-					 input: vec!["0o400"].into_iter().map(Into::into).collect(),
-					 output: vec!["256", "0b100000000", "0o400", "0x100"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.1.0".to_string(),
-				 },
-				 Case {
-					 desc: "Output decimal".to_string(),
-					 input: vec!["-d", "256"].into_iter().map(Into::into).collect(),
-					 output: vec!["256"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.1.0".to_string(),
-				 },
-				 Case {
-					 desc: "Output binary".to_string(),
-					 input: vec!["-b", "256"].into_iter().map(Into::into).collect(),
-					 output: vec!["0b100000000"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.1.0".to_string(),
-				 },
-				 Case {
-					 desc: "Output octal".to_string(),
-					 input: vec!["-o", "256"].into_iter().map(Into::into).collect(),
-					 output: vec!["0o400"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.1.0".to_string(),
-				 },
-				 Case {
-					 desc: "Output hexadecimal".to_string(),
-					 input: vec!["-x", "256"].into_iter().map(Into::into).collect(),
-					 output: vec!["0x100"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.1.0".to_string(),
-				 },
-			 ]),
-		].into_iter().collect()
+		vec![(
+			"ns",
+			vec![
+				Case {
+					desc: "Input decimal".to_string(),
+					input: vec!["256"].into_iter().map(Into::into).collect(),
+					output: vec!["256", "0b100000000", "0o400", "0x100"]
+						.into_iter()
+						.map(Into::into)
+						.collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+				Case {
+					desc: "Input octal".to_string(),
+					input: vec!["0o400"].into_iter().map(Into::into).collect(),
+					output: vec!["256", "0b100000000", "0o400", "0x100"]
+						.into_iter()
+						.map(Into::into)
+						.collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+				Case {
+					desc: "Output decimal".to_string(),
+					input: vec!["-d", "256"].into_iter().map(Into::into).collect(),
+					output: vec!["256"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+				Case {
+					desc: "Output binary".to_string(),
+					input: vec!["-b", "256"].into_iter().map(Into::into).collect(),
+					output: vec!["0b100000000"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+				Case {
+					desc: "Output octal".to_string(),
+					input: vec!["-o", "256"].into_iter().map(Into::into).collect(),
+					output: vec!["0o400"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+				Case {
+					desc: "Output hexadecimal".to_string(),
+					input: vec!["-x", "256"].into_iter().map(Into::into).collect(),
+					output: vec!["0x100"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				},
+			],
+		)]
+		.into_iter()
+		.collect()
 	}
 }
 
@@ -151,5 +163,4 @@ mod tests {
 	fn test_cases() {
 		test_module(module());
 	}
-
 }

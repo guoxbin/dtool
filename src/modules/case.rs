@@ -1,35 +1,35 @@
-use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::{Command, base, Module};
-use heck::{TitleCase, SnakeCase, CamelCase, MixedCase, ShoutySnakeCase, KebabCase};
+use crate::modules::{base, Command, Module};
+use clap::{Arg, ArgMatches, SubCommand};
+use heck::{CamelCase, KebabCase, MixedCase, ShoutySnakeCase, SnakeCase, TitleCase};
 
 pub fn module<'a, 'b>() -> Module<'a, 'b> {
 	Module {
-		desc: "Case conversion (upper, lower, title, camel, pascal, snake, shouty snake, kebab)".to_string(),
+		desc: "Case conversion (upper, lower, title, camel, pascal, snake, shouty snake, kebab)"
+			.to_string(),
 		commands: commands(),
 		get_cases: cases::cases,
 	}
 }
 
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
-	vec![
-		Command {
-			app: SubCommand::with_name("case").about("Case conversion")
-				.arg(
-					Arg::with_name("TYPE")
-						.long("type")
-						.short("t")
-						.help("Case type\nupper: GOOD TOOL\nlower: good tool\ntitle: Good Tool\n\
+	vec![Command {
+		app: SubCommand::with_name("case")
+			.about("Case conversion")
+			.arg(
+				Arg::with_name("TYPE")
+					.long("type")
+					.short("t")
+					.help(
+						"Case type\nupper: GOOD TOOL\nlower: good tool\ntitle: Good Tool\n\
 					camel: goodTool\npascal: GoodTool\nsnake: good_tool\nshouty_snake: GOOD_TOOL\n\
-					kebab: good-tool")
-						.takes_value(true)
-						.required(true))
-				.arg(
-					Arg::with_name("INPUT")
-						.required(false)
-						.index(1)),
-			f: case,
-		},
-	]
+					kebab: good-tool",
+					)
+					.takes_value(true)
+					.required(true),
+			)
+			.arg(Arg::with_name("INPUT").required(false).index(1)),
+		f: case,
+	}]
 }
 
 fn case(matches: &ArgMatches) -> Result<Vec<String>, String> {
@@ -57,75 +57,101 @@ mod cases {
 	use linked_hash_map::LinkedHashMap;
 
 	pub fn cases() -> LinkedHashMap<&'static str, Vec<Case>> {
-		vec![
-			("case",
-			 vec![
-				 Case {
-					 desc: "Upper case".to_string(),
-					 input: vec!["-t", "upper", "'good tool'"].into_iter().map(Into::into).collect(),
-					 output: vec!["GOOD TOOL"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.5.0".to_string(),
-				 },
-				 Case {
-					 desc: "Lower case".to_string(),
-					 input: vec!["-t", "lower", "'GOOD TOOL'"].into_iter().map(Into::into).collect(),
-					 output: vec!["good tool"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.5.0".to_string(),
-				 },
-				 Case {
-					 desc: "Title case".to_string(),
-					 input: vec!["-t", "title", "'GOOD TOOL'"].into_iter().map(Into::into).collect(),
-					 output: vec!["Good Tool"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.5.0".to_string(),
-				 },
-				 Case {
-					 desc: "Camel case".to_string(),
-					 input: vec!["-t", "camel", "'GOOD TOOL'"].into_iter().map(Into::into).collect(),
-					 output: vec!["goodTool"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.5.0".to_string(),
-				 },
-				 Case {
-					 desc: "Pascal case".to_string(),
-					 input: vec!["-t", "pascal", "'GOOD TOOL'"].into_iter().map(Into::into).collect(),
-					 output: vec!["GoodTool"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.5.0".to_string(),
-				 },
-				 Case {
-					 desc: "Snake case".to_string(),
-					 input: vec!["-t", "snake", "GoodTool"].into_iter().map(Into::into).collect(),
-					 output: vec!["good_tool"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.5.0".to_string(),
-				 },
-				 Case {
-					 desc: "Shouty snake case".to_string(),
-					 input: vec!["-t", "shouty_snake", "GoodTool"].into_iter().map(Into::into).collect(),
-					 output: vec!["GOOD_TOOL"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.5.0".to_string(),
-				 },
-				 Case {
-					 desc: "Kebab case".to_string(),
-					 input: vec!["-t", "kebab", "GoodTool"].into_iter().map(Into::into).collect(),
-					 output: vec!["good-tool"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.5.0".to_string(),
-				 },
-			 ]),
-		].into_iter().collect()
+		vec![(
+			"case",
+			vec![
+				Case {
+					desc: "Upper case".to_string(),
+					input: vec!["-t", "upper", "'good tool'"]
+						.into_iter()
+						.map(Into::into)
+						.collect(),
+					output: vec!["GOOD TOOL"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.5.0".to_string(),
+				},
+				Case {
+					desc: "Lower case".to_string(),
+					input: vec!["-t", "lower", "'GOOD TOOL'"]
+						.into_iter()
+						.map(Into::into)
+						.collect(),
+					output: vec!["good tool"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.5.0".to_string(),
+				},
+				Case {
+					desc: "Title case".to_string(),
+					input: vec!["-t", "title", "'GOOD TOOL'"]
+						.into_iter()
+						.map(Into::into)
+						.collect(),
+					output: vec!["Good Tool"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.5.0".to_string(),
+				},
+				Case {
+					desc: "Camel case".to_string(),
+					input: vec!["-t", "camel", "'GOOD TOOL'"]
+						.into_iter()
+						.map(Into::into)
+						.collect(),
+					output: vec!["goodTool"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.5.0".to_string(),
+				},
+				Case {
+					desc: "Pascal case".to_string(),
+					input: vec!["-t", "pascal", "'GOOD TOOL'"]
+						.into_iter()
+						.map(Into::into)
+						.collect(),
+					output: vec!["GoodTool"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.5.0".to_string(),
+				},
+				Case {
+					desc: "Snake case".to_string(),
+					input: vec!["-t", "snake", "GoodTool"]
+						.into_iter()
+						.map(Into::into)
+						.collect(),
+					output: vec!["good_tool"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.5.0".to_string(),
+				},
+				Case {
+					desc: "Shouty snake case".to_string(),
+					input: vec!["-t", "shouty_snake", "GoodTool"]
+						.into_iter()
+						.map(Into::into)
+						.collect(),
+					output: vec!["GOOD_TOOL"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.5.0".to_string(),
+				},
+				Case {
+					desc: "Kebab case".to_string(),
+					input: vec!["-t", "kebab", "GoodTool"]
+						.into_iter()
+						.map(Into::into)
+						.collect(),
+					output: vec!["good-tool"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.5.0".to_string(),
+				},
+			],
+		)]
+		.into_iter()
+		.collect()
 	}
 }
 

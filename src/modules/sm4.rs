@@ -1,7 +1,7 @@
-use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::{Command, base, Module};
 use self::Mode::CTR;
 use crate::modules::base::Hex;
+use crate::modules::{base, Command, Module};
+use clap::{Arg, ArgMatches, SubCommand};
 use yogcrypt::sm4;
 
 pub fn module<'a, 'b>() -> Module<'a, 'b> {
@@ -15,61 +15,77 @@ pub fn module<'a, 'b>() -> Module<'a, 'b> {
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 	vec![
 		Command {
-			app: SubCommand::with_name("sm4_enc").about("SM4 encrypt")
+			app: SubCommand::with_name("sm4_enc")
+				.about("SM4 encrypt")
 				.arg(
 					Arg::with_name("INPUT")
 						.help("Plain (Hex)")
 						.required(false)
-						.index(1))
+						.index(1),
+				)
 				.arg(
 					Arg::with_name("MODE")
 						.long("mode")
-						.short("m").help("Mode\nctr: CTR\n")
+						.short("m")
+						.help("Mode\nctr: CTR\n")
 						.takes_value(true)
 						.possible_values(&["ctr"])
-						.required(true))
+						.required(true),
+				)
 				.arg(
 					Arg::with_name("KEY")
 						.long("key")
-						.short("k").help("Key (Hex)")
+						.short("k")
+						.help("Key (Hex)")
 						.takes_value(true)
-						.required(true))
+						.required(true),
+				)
 				.arg(
 					Arg::with_name("IV")
 						.long("iv")
-						.short("i").help("IV (Hex)")
+						.short("i")
+						.help("IV (Hex)")
 						.takes_value(true)
-						.required(false)),
+						.required(false),
+				),
 			f: sm4_enc,
 		},
 		Command {
-			app: SubCommand::with_name("sm4_dec").about("SM4 decrypt")
+			app: SubCommand::with_name("sm4_dec")
+				.about("SM4 decrypt")
 				.arg(
 					Arg::with_name("INPUT")
 						.help("Cipher (Hex)")
 						.required(false)
-						.index(1))
+						.index(1),
+				)
 				.arg(
 					Arg::with_name("MODE")
 						.long("mode")
-						.short("m").help("Mode\nctr: CTR\n")
+						.short("m")
+						.help("Mode\nctr: CTR\n")
 						.takes_value(true)
 						.possible_values(&["ctr"])
-						.required(true))
+						.required(true),
+				)
 				.arg(
 					Arg::with_name("KEY")
 						.long("key")
-						.short("k").help("Key (Hex)")
+						.short("k")
+						.help("Key (Hex)")
 						.takes_value(true)
-						.required(true))
+						.required(true),
+				)
 				.arg(
 					Arg::with_name("IV")
 						.long("iv")
-						.short("i").help("IV (Hex)")
+						.short("i")
+						.help("IV (Hex)")
 						.takes_value(true)
-						.required(false)),
+						.required(false),
+				),
 			f: sm4_dec,
-		}
+		},
 	]
 }
 
@@ -78,7 +94,7 @@ enum Mode {
 }
 
 enum KeySize {
-	KeySize128
+	KeySize128,
 }
 
 fn sm4_enc(matches: &ArgMatches) -> Result<Vec<String>, String> {
@@ -86,9 +102,7 @@ fn sm4_enc(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	// cipher
 	let result = match mode {
-		CTR { iv } => {
-			sm4_enc_ctr(key_size, &key, &input, &iv)
-		}
+		CTR { iv } => sm4_enc_ctr(key_size, &key, &input, &iv),
 	}?;
 	let result = Hex::from(result).into();
 
@@ -100,9 +114,7 @@ fn sm4_dec(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	// plain
 	let result = match mode {
-		CTR { iv } => {
-			sm4_dec_ctr(key_size, &key, &input, &iv)
-		}
+		CTR { iv } => sm4_dec_ctr(key_size, &key, &input, &iv),
 	}?;
 	let result = Hex::from(result).into();
 
@@ -142,7 +154,6 @@ fn get_common_arg(matches: &ArgMatches) -> Result<(KeySize, Vec<u8>, Mode, Vec<u
 const BLOCK_SIZE: usize = 16;
 
 fn sm4_enc_ctr(key_size: KeySize, key: &[u8], input: &[u8], iv: &[u8]) -> Result<Vec<u8>, String> {
-
 	sm4_ctr_process(key_size, key, input, iv)
 }
 
@@ -150,7 +161,12 @@ fn sm4_dec_ctr(key_size: KeySize, key: &[u8], input: &[u8], iv: &[u8]) -> Result
 	sm4_ctr_process(key_size, key, input, iv)
 }
 
-fn sm4_ctr_process(_key_size: KeySize, key: &[u8], input: &[u8], iv: &[u8]) -> Result<Vec<u8>, String> {
+fn sm4_ctr_process(
+	_key_size: KeySize,
+	key: &[u8],
+	input: &[u8],
+	iv: &[u8],
+) -> Result<Vec<u8>, String> {
 	let mut buff = [0u8; BLOCK_SIZE];
 	buff.copy_from_slice(iv);
 
@@ -178,7 +194,7 @@ fn sm4_ctr_process(_key_size: KeySize, key: &[u8], input: &[u8], iv: &[u8]) -> R
 	for i in 0..tail_len {
 		let ii = block_count * 16 + i;
 		let b = input[ii] ^ enc[i];
-		result[ii]  = b;
+		result[ii] = b;
 	}
 
 	let result = result.to_vec();
@@ -216,29 +232,53 @@ mod cases {
 
 	pub fn cases() -> LinkedHashMap<&'static str, Vec<Case>> {
 		vec![
-			("sm4_enc",
-			 vec![
-				 Case {
-					 desc: "CTR".to_string(),
-					 input: vec!["-k", "01010101010101010101010101010101", "-i", "03030303030303030303030303030303", "-m", "ctr", "0x616263"].into_iter().map(Into::into).collect(),
-					 output: vec!["0x8cd7ea"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.6.0".to_string(),
-				 },
-			 ]),
-			("sm4_dec",
-			 vec![
-				 Case {
-					 desc: "CTR".to_string(),
-					 input: vec!["-k", "01010101010101010101010101010101", "-i", "03030303030303030303030303030303", "-m", "ctr", "0x8cd7ea"].into_iter().map(Into::into).collect(),
-					 output: vec!["0x616263"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.7.0".to_string(),
-				 },
-			 ]),
-		].into_iter().collect()
+			(
+				"sm4_enc",
+				vec![Case {
+					desc: "CTR".to_string(),
+					input: vec![
+						"-k",
+						"01010101010101010101010101010101",
+						"-i",
+						"03030303030303030303030303030303",
+						"-m",
+						"ctr",
+						"0x616263",
+					]
+					.into_iter()
+					.map(Into::into)
+					.collect(),
+					output: vec!["0x8cd7ea"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.6.0".to_string(),
+				}],
+			),
+			(
+				"sm4_dec",
+				vec![Case {
+					desc: "CTR".to_string(),
+					input: vec![
+						"-k",
+						"01010101010101010101010101010101",
+						"-i",
+						"03030303030303030303030303030303",
+						"-m",
+						"ctr",
+						"0x8cd7ea",
+					]
+					.into_iter()
+					.map(Into::into)
+					.collect(),
+					output: vec!["0x616263"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.7.0".to_string(),
+				}],
+			),
+		]
+		.into_iter()
+		.collect()
 	}
 }
 
