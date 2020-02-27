@@ -1,12 +1,12 @@
 use crate::modules::ecdsa::SignatureFormEnum;
 use crate::modules::Case;
 use linked_hash_map::LinkedHashMap;
-use yogcrypt::sm2;
-use yogcrypt::sm2::{SecKey, PubKey, Signature};
-use std::iter::once;
 use std::iter::empty;
-use yogcrypt::basic::field::field_p::FieldElement;
+use std::iter::once;
 use yogcrypt::basic::cell::u64x4::U64x4;
+use yogcrypt::basic::field::field_p::FieldElement;
+use yogcrypt::sm2;
+use yogcrypt::sm2::{PubKey, SecKey, Signature};
 
 pub fn ec_gk_sm2(compress: bool) -> Result<(Vec<u8>, Vec<u8>), String> {
 	if compress == true {
@@ -22,7 +22,11 @@ pub fn ec_gk_sm2(compress: bool) -> Result<(Vec<u8>, Vec<u8>), String> {
 	Ok((secret_key, public_key))
 }
 
-pub fn ec_sign_sm2(secret_key: Vec<u8>, message: Vec<u8>, sig_form: SignatureFormEnum) -> Result<Vec<u8>, String> {
+pub fn ec_sign_sm2(
+	secret_key: Vec<u8>,
+	message: Vec<u8>,
+	sig_form: SignatureFormEnum,
+) -> Result<Vec<u8>, String> {
 	if let SignatureFormEnum::Der = sig_form {
 		return Err("DER form is not supported".to_string());
 	}
@@ -37,7 +41,12 @@ pub fn ec_sign_sm2(secret_key: Vec<u8>, message: Vec<u8>, sig_form: SignatureFor
 	Ok(signature)
 }
 
-pub fn ec_verify_sm2(public_key: Vec<u8>, sig: Vec<u8>, message: Vec<u8>, sig_form: SignatureFormEnum) -> Result<(), String> {
+pub fn ec_verify_sm2(
+	public_key: Vec<u8>,
+	sig: Vec<u8>,
+	message: Vec<u8>,
+	sig_form: SignatureFormEnum,
+) -> Result<(), String> {
 	if let SignatureFormEnum::Der = sig_form {
 		return Err("DER form is not supported".to_string());
 	}
@@ -66,20 +75,39 @@ pub fn ec_pk_sm2(secret_key: Vec<u8>, compress: bool) -> Result<Vec<u8>, String>
 
 // Referece: http://www.jonllen.com/upload/jonllen/case/jsrsasign-master/sample-sm2_crypt.html
 fn secret_key_to_vec(secret_key: SecKey) -> Vec<u8> {
-	let result: Vec<u8> = secret_key.value.iter().rev().map(|x| {
-		x.to_be_bytes().to_vec()
-	}).flatten().collect();
+	let result: Vec<u8> = secret_key
+		.value
+		.iter()
+		.rev()
+		.map(|x| x.to_be_bytes().to_vec())
+		.flatten()
+		.collect();
 	result
 }
 
 fn public_key_to_vec(public_key: PubKey) -> Vec<u8> {
 	let result = once(4u8) // uncompressed
-		.chain(public_key.x.num.value.iter().rev().map(|i| {
-			i.to_be_bytes().to_vec()
-		}).flatten())
-		.chain(public_key.y.num.value.iter().rev().map(|i| {
-			i.to_be_bytes().to_vec()
-		}).flatten()).collect::<Vec<_>>();
+		.chain(
+			public_key
+				.x
+				.num
+				.value
+				.iter()
+				.rev()
+				.map(|i| i.to_be_bytes().to_vec())
+				.flatten(),
+		)
+		.chain(
+			public_key
+				.y
+				.num
+				.value
+				.iter()
+				.rev()
+				.map(|i| i.to_be_bytes().to_vec())
+				.flatten(),
+		)
+		.collect::<Vec<_>>();
 	result
 }
 
@@ -102,10 +130,10 @@ fn vec_to_public_key(vec: Vec<u8>) -> Result<PubKey, String> {
 	let y_slice = &vec[33..65];
 	let public_key = PubKey {
 		x: FieldElement {
-			num: slice_to_u64x4(x_slice)
+			num: slice_to_u64x4(x_slice),
 		},
 		y: FieldElement {
-			num: slice_to_u64x4(y_slice)
+			num: slice_to_u64x4(y_slice),
 		},
 	};
 
@@ -114,12 +142,23 @@ fn vec_to_public_key(vec: Vec<u8>) -> Result<PubKey, String> {
 
 fn signature_to_vec(sig: Signature) -> Vec<u8> {
 	let result = empty()
-		.chain(sig.r.value.iter().rev().map(|i| {
-			i.to_be_bytes().to_vec()
-		}).flatten())
-		.chain(sig.s.value.iter().rev().map(|i| {
-			i.to_be_bytes().to_vec()
-		}).flatten()).collect::<Vec<_>>();
+		.chain(
+			sig.r
+				.value
+				.iter()
+				.rev()
+				.map(|i| i.to_be_bytes().to_vec())
+				.flatten(),
+		)
+		.chain(
+			sig.s
+				.value
+				.iter()
+				.rev()
+				.map(|i| i.to_be_bytes().to_vec())
+				.flatten(),
+		)
+		.collect::<Vec<_>>();
 	result
 }
 
@@ -140,11 +179,12 @@ fn vec_to_signature(vec: Vec<u8>) -> Result<Signature, String> {
 
 fn slice_to_u64x4(slice: &[u8]) -> U64x4 {
 	U64x4 {
-		value: [u64::from_be_bytes({ slice_to_arr(&slice[24..32]) }),
+		value: [
+			u64::from_be_bytes({ slice_to_arr(&slice[24..32]) }),
 			u64::from_be_bytes(slice_to_arr(&slice[16..24])),
 			u64::from_be_bytes(slice_to_arr(&slice[8..16])),
-			u64::from_be_bytes(slice_to_arr(&slice[0..8]))
-		]
+			u64::from_be_bytes(slice_to_arr(&slice[0..8])),
+		],
 	}
 }
 

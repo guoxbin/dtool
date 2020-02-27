@@ -1,7 +1,7 @@
-use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::{Command, base, Module};
-use base64;
 use crate::modules::base::Hex;
+use crate::modules::{base, Command, Module};
+use base64;
+use clap::{Arg, ArgMatches, SubCommand};
 
 pub fn module<'a, 'b>() -> Module<'a, 'b> {
 	Module {
@@ -14,17 +14,15 @@ pub fn module<'a, 'b>() -> Module<'a, 'b> {
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 	vec![
 		Command {
-			app: SubCommand::with_name("h2b64").about("Convert hex to base64").arg(
-				Arg::with_name("INPUT")
-					.required(false)
-					.index(1)),
+			app: SubCommand::with_name("h2b64")
+				.about("Convert hex to base64")
+				.arg(Arg::with_name("INPUT").required(false).index(1)),
 			f: h2b64,
 		},
 		Command {
-			app: SubCommand::with_name("b642h").about("Convert base64 to hex").arg(
-				Arg::with_name("INPUT")
-					.required(false)
-					.index(1)),
+			app: SubCommand::with_name("b642h")
+				.about("Convert base64 to hex")
+				.arg(Arg::with_name("INPUT").required(false).index(1)),
 			f: b642h,
 		},
 	]
@@ -55,29 +53,31 @@ mod cases {
 
 	pub fn cases() -> LinkedHashMap<&'static str, Vec<Case>> {
 		vec![
-			("h2b64",
-			 vec![
-				 Case {
-					 desc: "".to_string(),
-					 input: vec!["0x616263"].into_iter().map(Into::into).collect(),
-					 output: vec!["YWJj"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.1.0".to_string(),
-				 },
-			 ]),
-			("b642h",
-			 vec![
-				 Case {
-					 desc: "".to_string(),
-					 input: vec!["YWJj"].into_iter().map(Into::into).collect(),
-					 output: vec!["0x616263"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.1.0".to_string(),
-				 },
-			 ]),
-		].into_iter().collect()
+			(
+				"h2b64",
+				vec![Case {
+					desc: "".to_string(),
+					input: vec!["0x616263"].into_iter().map(Into::into).collect(),
+					output: vec!["YWJj"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				}],
+			),
+			(
+				"b642h",
+				vec![Case {
+					desc: "".to_string(),
+					input: vec!["YWJj"].into_iter().map(Into::into).collect(),
+					output: vec!["0x616263"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				}],
+			),
+		]
+		.into_iter()
+		.collect()
 	}
 }
 

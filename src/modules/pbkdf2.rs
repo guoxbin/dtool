@@ -1,8 +1,10 @@
-use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::{Command, base, Module};
-use ring::pbkdf2::{PBKDF2_HMAC_SHA1, PBKDF2_HMAC_SHA256, PBKDF2_HMAC_SHA384, PBKDF2_HMAC_SHA512, derive};
-use std::num::NonZeroU32;
 use crate::modules::base::Hex;
+use crate::modules::{base, Command, Module};
+use clap::{Arg, ArgMatches, SubCommand};
+use ring::pbkdf2::{
+	derive, PBKDF2_HMAC_SHA1, PBKDF2_HMAC_SHA256, PBKDF2_HMAC_SHA384, PBKDF2_HMAC_SHA512,
+};
+use std::num::NonZeroU32;
 
 pub fn module<'a, 'b>() -> Module<'a, 'b> {
 	Module {
@@ -57,7 +59,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 }
 
 fn pbkdf2(matches: &ArgMatches) -> Result<Vec<String>, String> {
-	
 	let algo = match matches.value_of("ALGORITHM") {
 		Some("sha1") => PBKDF2_HMAC_SHA1,
 		Some("sha2_256") => PBKDF2_HMAC_SHA256,
@@ -67,38 +68,47 @@ fn pbkdf2(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	};
 
 	let iterations = match matches.value_of("ITERATIONS") {
-		Some(iterations) => iterations.parse::<u32>().map_err(|_|"Invalid Iterations".to_string()),
+		Some(iterations) => iterations
+			.parse::<u32>()
+			.map_err(|_| "Invalid Iterations".to_string()),
 		_ => Err("Invalid Iterations".to_string()),
-	}.and_then(|x| if x>0 {
-		NonZeroU32::new(x).ok_or("Invalid Iterations".to_string())
-	}else{
-		Err("Invalid Iterations".to_string())
+	}
+	.and_then(|x| {
+		if x > 0 {
+			NonZeroU32::new(x).ok_or("Invalid Iterations".to_string())
+		} else {
+			Err("Invalid Iterations".to_string())
+		}
 	})?;
 
-	let salt : Vec<u8> = match matches.value_of("SALT") {
-		Some(salt) => {
-			salt.parse::<Hex>().map_err(|_|"Invalid salt".to_string())
-		},
+	let salt: Vec<u8> = match matches.value_of("SALT") {
+		Some(salt) => salt.parse::<Hex>().map_err(|_| "Invalid salt".to_string()),
 		_ => Err("Invalid salt".to_string()),
-	}?.into();
+	}?
+	.into();
 
 	let key_length = match matches.value_of("KEY_LENGTH") {
-		Some(key_length) => key_length.parse::<u32>().map_err(|_|"Invalid key length".to_string()),
+		Some(key_length) => key_length
+			.parse::<u32>()
+			.map_err(|_| "Invalid key length".to_string()),
 		_ => Err("Invalid key length".to_string()),
-	}.and_then(|x| if x>0 {
-		Ok(x)
-	}else{
-		Err("Invalid key length".to_string())
+	}
+	.and_then(|x| {
+		if x > 0 {
+			Ok(x)
+		} else {
+			Err("Invalid key length".to_string())
+		}
 	})?;
 
-	let key_byte_length = if key_length % 8==0 {
+	let key_byte_length = if key_length % 8 == 0 {
 		Ok(key_length / 8)
-	}else{
+	} else {
 		Err("Invalid key length (must be a multiple of 8)".to_string())
 	}?;
 
 	let secret = base::input_string(matches)?;
-	let secret : Vec<u8> = secret.parse::<Hex>().map_err(|_| "Invalid secret")?.into();
+	let secret: Vec<u8> = secret.parse::<Hex>().map_err(|_| "Invalid secret")?.into();
 
 	let mut result = vec![0u8; key_byte_length as usize];
 
@@ -114,19 +124,27 @@ mod cases {
 	use linked_hash_map::LinkedHashMap;
 
 	pub fn cases() -> LinkedHashMap<&'static str, Vec<Case>> {
-		vec![
-			("pbkdf2",
-			 vec![
-				 Case {
-					 desc: "".to_string(),
-					 input: vec!["-a", "sha2_256", "-s", "0x646566", "-i", "2", "-l", "256", "0x616263"].into_iter().map(Into::into).collect(),
-					 output: vec!["0x51a30556d0d133d859d3f3da86f861b7b12546c4f9a193ebb374397467872514"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.5.0".to_string(),
-				 },
-			 ]),
-		].into_iter().collect()
+		vec![(
+			"pbkdf2",
+			vec![Case {
+				desc: "".to_string(),
+				input: vec![
+					"-a", "sha2_256", "-s", "0x646566", "-i", "2", "-l", "256", "0x616263",
+				]
+				.into_iter()
+				.map(Into::into)
+				.collect(),
+				output: vec!["0x51a30556d0d133d859d3f3da86f861b7b12546c4f9a193ebb374397467872514"]
+					.into_iter()
+					.map(Into::into)
+					.collect(),
+				is_example: true,
+				is_test: true,
+				since: "0.5.0".to_string(),
+			}],
+		)]
+		.into_iter()
+		.collect()
 	}
 }
 

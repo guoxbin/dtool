@@ -1,5 +1,5 @@
-use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::{Command, base, Module};
+use crate::modules::{base, Command, Module};
+use clap::{Arg, ArgMatches, SubCommand};
 use urlencoding;
 
 pub fn module<'a, 'b>() -> Module<'a, 'b> {
@@ -13,19 +13,17 @@ pub fn module<'a, 'b>() -> Module<'a, 'b> {
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 	vec![
 		Command {
-			app: SubCommand::with_name("ue").about("URL encode").arg(
-				Arg::with_name("INPUT")
-					.required(false)
-					.index(1)),
+			app: SubCommand::with_name("ue")
+				.about("URL encode")
+				.arg(Arg::with_name("INPUT").required(false).index(1)),
 			f: ue,
 		},
 		Command {
-			app: SubCommand::with_name("ud").about("URL decode").arg(
-				Arg::with_name("INPUT")
-					.required(false)
-					.index(1)),
+			app: SubCommand::with_name("ud")
+				.about("URL decode")
+				.arg(Arg::with_name("INPUT").required(false).index(1)),
 			f: ud,
-		}
+		},
 	]
 }
 
@@ -51,29 +49,31 @@ mod cases {
 
 	pub fn cases() -> LinkedHashMap<&'static str, Vec<Case>> {
 		vec![
-			("ue",
-			 vec![
-				 Case {
-					 desc: "".to_string(),
-					 input: vec!["a+b"].into_iter().map(Into::into).collect(),
-					 output: vec!["a%2Bb"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.1.0".to_string(),
-				 },
-			 ]),
-			("ud",
-			 vec![
-				 Case {
-					 desc: "".to_string(),
-					 input: vec!["a%2Bb"].into_iter().map(Into::into).collect(),
-					 output: vec!["a+b"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.1.0".to_string(),
-				 },
-			 ]),
-		].into_iter().collect()
+			(
+				"ue",
+				vec![Case {
+					desc: "".to_string(),
+					input: vec!["a+b"].into_iter().map(Into::into).collect(),
+					output: vec!["a%2Bb"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				}],
+			),
+			(
+				"ud",
+				vec![Case {
+					desc: "".to_string(),
+					input: vec!["a%2Bb"].into_iter().map(Into::into).collect(),
+					output: vec!["a+b"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.1.0".to_string(),
+				}],
+			),
+		]
+		.into_iter()
+		.collect()
 	}
 }
 

@@ -6,14 +6,22 @@ use std::str::FromStr;
 pub fn input_string(matches: &ArgMatches) -> Result<String, String> {
 	match matches.value_of("INPUT") {
 		Some(input) => Ok(input.to_string()),
-		None => io::stdin().lock().lines().collect::<Result<Vec<String>, io::Error>>().map(|x| x.join("\n")).map_err(|_| "Invalid input".to_string()),
+		None => io::stdin()
+			.lock()
+			.lines()
+			.collect::<Result<Vec<String>, io::Error>>()
+			.map(|x| x.join("\n"))
+			.map_err(|_| "Invalid input".to_string()),
 	}
 }
 
 pub fn input_bytes(matches: &ArgMatches) -> Result<Vec<u8>, String> {
 	match matches.value_of("INPUT") {
 		Some(input) => Ok(input.bytes().collect::<Vec<u8>>()),
-		None => io::stdin().bytes().collect::<Result<Vec<u8>, io::Error>>().map_err(|_| "Invalid input".to_string()),
+		None => io::stdin()
+			.bytes()
+			.collect::<Result<Vec<u8>, io::Error>>()
+			.map_err(|_| "Invalid input".to_string()),
 	}
 }
 
@@ -47,7 +55,7 @@ impl Into<Vec<u8>> for Hex {
 
 #[cfg(test)]
 pub mod test {
-	use crate::modules::{Module};
+	use crate::modules::Module;
 
 	pub fn test_module(module: Module) {
 		let commands = module.commands;
@@ -63,11 +71,16 @@ pub mod test {
 				let f = &command.f.clone();
 				for case in cases {
 					if case.is_test {
-						let mut ori_input = case.input.clone().into_iter().map(|x| {
-							let x = x.trim_start_matches("'");
-							let x = x.trim_end_matches("'");
-							x.to_string()
-						}).collect();
+						let mut ori_input = case
+							.input
+							.clone()
+							.into_iter()
+							.map(|x| {
+								let x = x.trim_start_matches("'");
+								let x = x.trim_end_matches("'");
+								x.to_string()
+							})
+							.collect();
 						let mut input = vec![app.get_name().to_string()];
 						input.append(&mut ori_input);
 						let expected_output = Ok((&case.output).clone());

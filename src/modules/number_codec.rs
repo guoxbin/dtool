@@ -1,7 +1,7 @@
-use clap::{SubCommand, Arg, ArgMatches};
-use crate::modules::{Command, base, Module};
-use parity_codec::{Compact, Encode, Decode};
 use crate::modules::base::Hex;
+use crate::modules::{base, Command, Module};
+use clap::{Arg, ArgMatches, SubCommand};
+use parity_codec::{Compact, Decode, Encode};
 
 pub fn module<'a, 'b>() -> Module<'a, 'b> {
 	Module {
@@ -14,32 +14,31 @@ pub fn module<'a, 'b>() -> Module<'a, 'b> {
 pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 	vec![
 		Command {
-			app: SubCommand::with_name("ne").about("Number encode")
+			app: SubCommand::with_name("ne")
+				.about("Number encode")
 				.arg(
 					Arg::with_name("TYPE")
 						.long("type")
 						.short("t")
 						.help("Number type\nu8\nu16\nu32\nu64\nu128\nc: Compact")
 						.takes_value(true)
-						.required(true))
-				.arg(
-					Arg::with_name("INPUT")
-						.required(false)
-						.index(1)),
+						.required(true),
+				)
+				.arg(Arg::with_name("INPUT").required(false).index(1)),
 			f: ne,
 		},
 		Command {
-			app: SubCommand::with_name("nd").about("Number decode")
+			app: SubCommand::with_name("nd")
+				.about("Number decode")
 				.arg(
 					Arg::with_name("TYPE")
 						.long("type")
-						.short("t").help("Number type: u8, u16, u32, u64, u128, c(Compact)")
+						.short("t")
+						.help("Number type: u8, u16, u32, u64, u128, c(Compact)")
 						.takes_value(true)
-						.required(true))
-				.arg(
-					Arg::with_name("INPUT")
-						.required(false)
-						.index(1)),
+						.required(true),
+				)
+				.arg(Arg::with_name("INPUT").required(false).index(1)),
 			f: nd,
 		},
 	]
@@ -94,7 +93,11 @@ fn nd(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	let result = match t {
 		"u8" => {
-			let input: u8 = if input.len() > 0 { input[0] } else { return Err("Invalid input".to_string()); };
+			let input: u8 = if input.len() > 0 {
+				input[0]
+			} else {
+				return Err("Invalid input".to_string());
+			};
 			format!("{}", input)
 		}
 		"u16" => {
@@ -129,125 +132,149 @@ mod cases {
 
 	pub fn cases() -> LinkedHashMap<&'static str, Vec<Case>> {
 		vec![
-			("ne",
-			 vec![
-				 Case {
-					 desc: "u8".to_string(),
-					 input: vec!["-tu8", "1"].into_iter().map(Into::into).collect(),
-					 output: vec!["0x01"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.1.0".to_string(),
-				 },
-				 Case {
-					 desc: "u16".to_string(),
-					 input: vec!["-tu16", "1"].into_iter().map(Into::into).collect(),
-					 output: vec!["0x0100"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.1.0".to_string(),
-				 },
-				 Case {
-					 desc: "u32".to_string(),
-					 input: vec!["-tu32", "1"].into_iter().map(Into::into).collect(),
-					 output: vec!["0x01000000"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.1.0".to_string(),
-				 },
-				 Case {
-					 desc: "u64".to_string(),
-					 input: vec!["-tu64", "1"].into_iter().map(Into::into).collect(),
-					 output: vec!["0x0100000000000000"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.1.0".to_string(),
-				 },
-				 Case {
-					 desc: "u128".to_string(),
-					 input: vec!["-tu128", "1"].into_iter().map(Into::into).collect(),
-					 output: vec!["0x01000000000000000000000000000000"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.1.0".to_string(),
-				 },
-				 Case {
-					 desc: "Compact".to_string(),
-					 input: vec!["-tc", "6"].into_iter().map(Into::into).collect(),
-					 output: vec!["0x18"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.1.0".to_string(),
-				 },
-				 Case {
-					 desc: "Compact".to_string(),
-					 input: vec!["-tc", "251"].into_iter().map(Into::into).collect(),
-					 output: vec!["0xed03"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.1.0".to_string(),
-				 },
-			 ]),
-			("nd",
-			 vec![
-				 Case {
-					 desc: "u8".to_string(),
-					 input: vec!["-tu8", "0x01"].into_iter().map(Into::into).collect(),
-					 output: vec!["1"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.1.0".to_string(),
-				 },
-				 Case {
-					 desc: "u16".to_string(),
-					 input: vec!["-tu16", "0x0100"].into_iter().map(Into::into).collect(),
-					 output: vec!["1"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.1.0".to_string(),
-				 },
-				 Case {
-					 desc: "u32".to_string(),
-					 input: vec!["-tu32", "0x01000000"].into_iter().map(Into::into).collect(),
-					 output: vec!["1"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.1.0".to_string(),
-				 },
-				 Case {
-					 desc: "u64".to_string(),
-					 input: vec!["-tu64", "0x0100000000000000"].into_iter().map(Into::into).collect(),
-					 output: vec!["1"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.1.0".to_string(),
-				 },
-				 Case {
-					 desc: "u128".to_string(),
-					 input: vec!["-tu128", "0x01000000000000000000000000000000"].into_iter().map(Into::into).collect(),
-					 output: vec!["1"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.1.0".to_string(),
-				 },
-				 Case {
-					 desc: "Compact".to_string(),
-					 input: vec!["-tc", "0x18"].into_iter().map(Into::into).collect(),
-					 output: vec!["6"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.1.0".to_string(),
-				 },
-				 Case {
-					 desc: "Compact".to_string(),
-					 input: vec!["-tc", "0xed03"].into_iter().map(Into::into).collect(),
-					 output: vec!["251"].into_iter().map(Into::into).collect(),
-					 is_example: true,
-					 is_test: true,
-					 since: "0.1.0".to_string(),
-				 },
-			 ]),
-		].into_iter().collect()
+			(
+				"ne",
+				vec![
+					Case {
+						desc: "u8".to_string(),
+						input: vec!["-tu8", "1"].into_iter().map(Into::into).collect(),
+						output: vec!["0x01"].into_iter().map(Into::into).collect(),
+						is_example: true,
+						is_test: true,
+						since: "0.1.0".to_string(),
+					},
+					Case {
+						desc: "u16".to_string(),
+						input: vec!["-tu16", "1"].into_iter().map(Into::into).collect(),
+						output: vec!["0x0100"].into_iter().map(Into::into).collect(),
+						is_example: true,
+						is_test: true,
+						since: "0.1.0".to_string(),
+					},
+					Case {
+						desc: "u32".to_string(),
+						input: vec!["-tu32", "1"].into_iter().map(Into::into).collect(),
+						output: vec!["0x01000000"].into_iter().map(Into::into).collect(),
+						is_example: true,
+						is_test: true,
+						since: "0.1.0".to_string(),
+					},
+					Case {
+						desc: "u64".to_string(),
+						input: vec!["-tu64", "1"].into_iter().map(Into::into).collect(),
+						output: vec!["0x0100000000000000"]
+							.into_iter()
+							.map(Into::into)
+							.collect(),
+						is_example: true,
+						is_test: true,
+						since: "0.1.0".to_string(),
+					},
+					Case {
+						desc: "u128".to_string(),
+						input: vec!["-tu128", "1"].into_iter().map(Into::into).collect(),
+						output: vec!["0x01000000000000000000000000000000"]
+							.into_iter()
+							.map(Into::into)
+							.collect(),
+						is_example: true,
+						is_test: true,
+						since: "0.1.0".to_string(),
+					},
+					Case {
+						desc: "Compact".to_string(),
+						input: vec!["-tc", "6"].into_iter().map(Into::into).collect(),
+						output: vec!["0x18"].into_iter().map(Into::into).collect(),
+						is_example: true,
+						is_test: true,
+						since: "0.1.0".to_string(),
+					},
+					Case {
+						desc: "Compact".to_string(),
+						input: vec!["-tc", "251"].into_iter().map(Into::into).collect(),
+						output: vec!["0xed03"].into_iter().map(Into::into).collect(),
+						is_example: true,
+						is_test: true,
+						since: "0.1.0".to_string(),
+					},
+				],
+			),
+			(
+				"nd",
+				vec![
+					Case {
+						desc: "u8".to_string(),
+						input: vec!["-tu8", "0x01"].into_iter().map(Into::into).collect(),
+						output: vec!["1"].into_iter().map(Into::into).collect(),
+						is_example: true,
+						is_test: true,
+						since: "0.1.0".to_string(),
+					},
+					Case {
+						desc: "u16".to_string(),
+						input: vec!["-tu16", "0x0100"]
+							.into_iter()
+							.map(Into::into)
+							.collect(),
+						output: vec!["1"].into_iter().map(Into::into).collect(),
+						is_example: true,
+						is_test: true,
+						since: "0.1.0".to_string(),
+					},
+					Case {
+						desc: "u32".to_string(),
+						input: vec!["-tu32", "0x01000000"]
+							.into_iter()
+							.map(Into::into)
+							.collect(),
+						output: vec!["1"].into_iter().map(Into::into).collect(),
+						is_example: true,
+						is_test: true,
+						since: "0.1.0".to_string(),
+					},
+					Case {
+						desc: "u64".to_string(),
+						input: vec!["-tu64", "0x0100000000000000"]
+							.into_iter()
+							.map(Into::into)
+							.collect(),
+						output: vec!["1"].into_iter().map(Into::into).collect(),
+						is_example: true,
+						is_test: true,
+						since: "0.1.0".to_string(),
+					},
+					Case {
+						desc: "u128".to_string(),
+						input: vec!["-tu128", "0x01000000000000000000000000000000"]
+							.into_iter()
+							.map(Into::into)
+							.collect(),
+						output: vec!["1"].into_iter().map(Into::into).collect(),
+						is_example: true,
+						is_test: true,
+						since: "0.1.0".to_string(),
+					},
+					Case {
+						desc: "Compact".to_string(),
+						input: vec!["-tc", "0x18"].into_iter().map(Into::into).collect(),
+						output: vec!["6"].into_iter().map(Into::into).collect(),
+						is_example: true,
+						is_test: true,
+						since: "0.1.0".to_string(),
+					},
+					Case {
+						desc: "Compact".to_string(),
+						input: vec!["-tc", "0xed03"].into_iter().map(Into::into).collect(),
+						output: vec!["251"].into_iter().map(Into::into).collect(),
+						is_example: true,
+						is_test: true,
+						since: "0.1.0".to_string(),
+					},
+				],
+			),
+		]
+		.into_iter()
+		.collect()
 	}
 }
 

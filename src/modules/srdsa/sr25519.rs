@@ -1,84 +1,88 @@
-use secp256k1::rand::{thread_rng};
+use crate::modules::srdsa::AltSecretKey;
 use crate::modules::Case;
 use linked_hash_map::LinkedHashMap;
 use schnorrkel::{ExpansionMode, Keypair};
-use crate::modules::srdsa::AltSecretKey;
+use secp256k1::rand::thread_rng;
 
 pub fn sr_gk_sr25519() -> Result<(Vec<u8>, Vec<u8>), String> {
+	let mini_secret_key = schnorrkel::MiniSecretKey::generate_with(&mut thread_rng());
 
-    let mini_secret_key = schnorrkel::MiniSecretKey::generate_with(&mut thread_rng());
+	let secret_key = mini_secret_key.expand(ExpansionMode::Ed25519);
 
-    let secret_key = mini_secret_key.expand(ExpansionMode::Ed25519);
+	let public_key = secret_key.to_public().as_ref().to_vec();
 
-    let public_key = secret_key.to_public().as_ref().to_vec();
+	let secret_key = mini_secret_key.as_bytes().to_vec();
 
-    let secret_key = mini_secret_key.as_bytes().to_vec();
-
-    Ok((secret_key, public_key))
+	Ok((secret_key, public_key))
 }
 
 pub fn sr_sign_sr25519(secret_key: AltSecretKey, message: Vec<u8>) -> Result<Vec<u8>, String> {
+	let key_pair = get_key_pair(secret_key)?;
 
-    let key_pair = get_key_pair(secret_key)?;
+	let signature = key_pair.sign_simple(&[], &message);
 
-    let signature = key_pair.sign_simple(&[], &message);
+	let signature = signature.to_bytes().to_vec();
 
-    let signature = signature.to_bytes().to_vec();
-
-    Ok(signature)
+	Ok(signature)
 }
 
-pub fn sr_verify_sr25519(public_key: Vec<u8>, sig: Vec<u8>, message: Vec<u8>) -> Result<(), String> {
+pub fn sr_verify_sr25519(
+	public_key: Vec<u8>,
+	sig: Vec<u8>,
+	message: Vec<u8>,
+) -> Result<(), String> {
+	let public_key =
+		schnorrkel::PublicKey::from_bytes(&public_key).map_err(|_| "Invalid public key")?;
 
-    let public_key = schnorrkel::PublicKey::from_bytes(&public_key).map_err(|_| "Invalid public key")?;
+	let signature = schnorrkel::Signature::from_bytes(&sig).map_err(|_| "Invalid signature")?;
 
-    let signature = schnorrkel::Signature::from_bytes(&sig).map_err(|_| "Invalid signature")?;
+	let result = public_key
+		.verify_simple(&[], &message, &signature)
+		.map_err(|e| format!("Invalid signature: {}", e))?;
 
-    let result = public_key.verify_simple(&[], &message, &signature)
-        .map_err(|e| format!("Invalid signature: {}", e))?;
-
-    Ok(result)
+	Ok(result)
 }
 
 pub fn sr_sk_sr25519(mini_secret_key: Vec<u8>) -> Result<Vec<u8>, String> {
+	let mini_secret_key = schnorrkel::MiniSecretKey::from_bytes(&mini_secret_key)
+		.map_err(|_| "Invalid mini secret key")?;
+	let key_pair = mini_secret_key.expand_to_keypair(ExpansionMode::Ed25519);
 
-    let mini_secret_key = schnorrkel::MiniSecretKey::from_bytes(&mini_secret_key).map_err(|_| "Invalid mini secret key")?;
-    let key_pair = mini_secret_key.expand_to_keypair(ExpansionMode::Ed25519);
+	let secret_key = &key_pair.secret;
+	let secret_key = secret_key.to_bytes().to_vec();
 
-    let secret_key = &key_pair.secret;
-    let secret_key = secret_key.to_bytes().to_vec();
-
-    Ok(secret_key)
+	Ok(secret_key)
 }
 
 pub fn sr_pk_sr25519(secret_key: AltSecretKey) -> Result<Vec<u8>, String> {
+	let key_pair = get_key_pair(secret_key)?;
 
-    let key_pair = get_key_pair(secret_key)?;
+	let public_key = key_pair.public;
+	let public_key = public_key.as_ref().to_vec();
 
-    let public_key = key_pair.public;
-    let public_key = public_key.as_ref().to_vec();
-
-    Ok(public_key)
+	Ok(public_key)
 }
 
 fn get_key_pair(secret_key: AltSecretKey) -> Result<Keypair, String> {
-    let key_pair = match secret_key{
-        AltSecretKey::MiniSecretKey(key) => {
-            let mini_secret_key = schnorrkel::MiniSecretKey::from_bytes(&key).map_err(|_| "Invalid mini secret key")?;
-            let key_pair = mini_secret_key.expand_to_keypair(ExpansionMode::Ed25519);
-            key_pair
-        },
-        AltSecretKey::SecretKey(key) => {
-            let secret_key = schnorrkel::SecretKey::from_bytes(&key).map_err(|_| "Invalid secret key")?;
-            let key_pair = secret_key.to_keypair();
-            key_pair
-        }
-    };
-    Ok(key_pair)
+	let key_pair = match secret_key {
+		AltSecretKey::MiniSecretKey(key) => {
+			let mini_secret_key = schnorrkel::MiniSecretKey::from_bytes(&key)
+				.map_err(|_| "Invalid mini secret key")?;
+			let key_pair = mini_secret_key.expand_to_keypair(ExpansionMode::Ed25519);
+			key_pair
+		}
+		AltSecretKey::SecretKey(key) => {
+			let secret_key =
+				schnorrkel::SecretKey::from_bytes(&key).map_err(|_| "Invalid secret key")?;
+			let key_pair = secret_key.to_keypair();
+			key_pair
+		}
+	};
+	Ok(key_pair)
 }
 
 pub fn cases() -> LinkedHashMap<&'static str, Vec<Case>> {
-    vec![
+	vec![
         ("sr_gk",
          vec![
              Case {
