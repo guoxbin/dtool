@@ -21,8 +21,8 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.short("t")
 					.help(
 						"Case type\nupper: GOOD TOOL\nlower: good tool\ntitle: Good Tool\n\
-					camel: goodTool\npascal: GoodTool\nsnake: good_tool\nshouty_snake: GOOD_TOOL\n\
-					kebab: good-tool",
+						 camel: goodTool\npascal: GoodTool\nsnake: good_tool\nshouty_snake: GOOD_TOOL\n\
+						 kebab: good-tool",
 					)
 					.takes_value(true)
 					.required(true),
