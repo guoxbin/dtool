@@ -57,26 +57,29 @@ fn to_sarcasm_case(input: &str) -> String {
 	let lowercased = input.to_lowercase();
 
 	#[derive(PartialEq)]
-	enum Case{
+	enum Case {
 		Upper,
 		Lower,
 	};
 	let mut case = Case::Lower;
-	let result = lowercased.chars().map(|c| {
-		let result = {
-			if c == ' ' {
-				case = Case::Lower;
-				" ".to_string()
-			}else if case == Case::Upper {
-				case = Case::Lower;
-				c.to_uppercase().to_string()
-			}else{
-				case = Case::Upper;
-				c.to_lowercase().to_string()
-			}
-		};
-		result
-	}).collect();
+	let result = lowercased
+		.chars()
+		.map(|c| {
+			let result = {
+				if c == ' ' {
+					case = Case::Lower;
+					" ".to_string()
+				} else if case == Case::Upper {
+					case = Case::Lower;
+					c.to_uppercase().to_string()
+				} else {
+					case = Case::Upper;
+					c.to_lowercase().to_string()
+				}
+			};
+			result
+		})
+		.collect();
 	result
 }
 
