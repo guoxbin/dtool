@@ -28,7 +28,7 @@ Now `dtool` supports:
 - [HTML entity encode / decode](./docs/Usage.md#html-entity-encode--decode)
 - [Regex match](./docs/Usage.md#regex-match)
 - [Pbkdf2](./docs/Usage.md#pbkdf2)
-- [Case conversion (upper, lower, title, camel, pascal, snake, shouty snake, kebab)](./docs/Usage.md#case-conversion-upper-lower-title-camel-pascal-snake-shouty-snake-kebab)
+- [Case conversion (upper, lower, title, camel, pascal, snake, shouty snake, kebab, sarcasm)](./docs/Usage.md#case-conversion-upper-lower-title-camel-pascal-snake-shouty-snake-kebab-sarcasm)
 - [AES encrypt / decrypt](./docs/Usage.md#aes-encrypt--decrypt)
 - [ECDSA (Secp256k1, NIST P-256, NIST P-384, SM2)](./docs/Usage.md#ecdsa-secp256k1-nist-p-256-nist-p-384-sm2)
 - [SM4 encrypt / decrypt](./docs/Usage.md#sm4-encrypt--decrypt)

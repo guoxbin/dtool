@@ -13,7 +13,7 @@
 - [HTML entity encode / decode](#html-entity-encode--decode)
 - [Regex match](#regex-match)
 - [Pbkdf2](#pbkdf2)
-- [Case conversion (upper, lower, title, camel, pascal, snake, shouty snake, kebab)](#case-conversion-upper-lower-title-camel-pascal-snake-shouty-snake-kebab)
+- [Case conversion (upper, lower, title, camel, pascal, snake, shouty snake, kebab, sarcasm)](#case-conversion-upper-lower-title-camel-pascal-snake-shouty-snake-kebab-sarcasm)
 - [AES encrypt / decrypt](#aes-encrypt--decrypt)
 - [ECDSA (Secp256k1, NIST P-256, NIST P-384, SM2)](#ecdsa-secp256k1-nist-p-256-nist-p-384-sm2)
 - [SM4 encrypt / decrypt](#sm4-encrypt--decrypt)
@@ -167,7 +167,7 @@
 |  pbkdf2   |Pbkdf2<br>v0.5.0|$ dtool pbkdf2 -a sha2_256 -s 0x646566 -i 2 -l 256 0x616263<br>0x51a30556d0d133d859d3f3da86f861b7b12546c4f9a193ebb374397467\\<br>872514|
 
 
-## Case conversion (upper, lower, title, camel, pascal, snake, shouty snake, kebab)
+## Case conversion (upper, lower, title, camel, pascal, snake, shouty snake, kebab, sarcasm)
 
 |Sub command|                     Desc                     |                        Example                         |
 |-----------|----------------------------------------------|--------------------------------------------------------|
@@ -179,6 +179,7 @@
 |   case    |   Case conversion<br>Snake case<br>v0.5.0    |      $ dtool case -t snake GoodTool<br>good_tool       |
 |   case    |Case conversion<br>Shouty snake case<br>v0.5.0|   $ dtool case -t shouty_snake GoodTool<br>GOOD_TOOL   |
 |   case    |   Case conversion<br>Kebab case<br>v0.5.0    |      $ dtool case -t kebab GoodTool<br>good-tool       |
+|   case    |  Case conversion<br>Sarcasm case<br>v0.9.0   |     $ dtool case -t sarcasm good tool<br>gOoD tOoL     |
 
 
 ## AES encrypt / decrypt
