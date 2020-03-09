@@ -4,7 +4,7 @@ use heck::{CamelCase, KebabCase, MixedCase, ShoutySnakeCase, SnakeCase, TitleCas
 
 pub fn module<'a, 'b>() -> Module<'a, 'b> {
 	Module {
-		desc: "Case conversion (upper, lower, title, camel, pascal, snake, shouty snake, kebab)"
+		desc: "Case conversion (upper, lower, title, camel, pascal, snake, shouty snake, kebab, sarcasm)"
 			.to_string(),
 		commands: commands(),
 		get_cases: cases::cases,
@@ -22,7 +22,7 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.help(
 						"Case type\nupper: GOOD TOOL\nlower: good tool\ntitle: Good Tool\n\
 						 camel: goodTool\npascal: GoodTool\nsnake: good_tool\nshouty_snake: GOOD_TOOL\n\
-						 kebab: good-tool",
+						 kebab: good-tool\nsarcasm: gOoD tOoL",
 					)
 					.takes_value(true)
 					.required(true),
@@ -46,10 +46,38 @@ fn case(matches: &ArgMatches) -> Result<Vec<String>, String> {
 		"snake" => input.to_snake_case(),
 		"shouty_snake" => input.to_shouty_snake_case(),
 		"kebab" => input.to_kebab_case(),
+		"sarcasm" => to_sarcasm_case(&input),
 		_ => return Err("Invalid type".to_string()),
 	};
 
 	Ok(vec![result])
+}
+
+fn to_sarcasm_case(input: &str) -> String {
+	let lowercased = input.to_lowercase();
+
+	#[derive(PartialEq)]
+	enum Case{
+		Upper,
+		Lower,
+	};
+	let mut case = Case::Lower;
+	let result = lowercased.chars().map(|c| {
+		let result = {
+			if c == ' ' {
+				case = Case::Lower;
+				" ".to_string()
+			}else if case == Case::Upper {
+				case = Case::Lower;
+				c.to_uppercase().to_string()
+			}else{
+				case = Case::Upper;
+				c.to_lowercase().to_string()
+			}
+		};
+		result
+	}).collect();
+	result
 }
 
 mod cases {
@@ -147,6 +175,17 @@ mod cases {
 					is_example: true,
 					is_test: true,
 					since: "0.5.0".to_string(),
+				},
+				Case {
+					desc: "Sarcasm case".to_string(),
+					input: vec!["-t", "sarcasm", "good tool"]
+						.into_iter()
+						.map(Into::into)
+						.collect(),
+					output: vec!["gOoD tOoL"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.9.0".to_string(),
 				},
 			],
 		)]
