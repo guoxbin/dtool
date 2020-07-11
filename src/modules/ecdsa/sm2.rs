@@ -180,7 +180,7 @@ fn vec_to_signature(vec: Vec<u8>) -> Result<Signature, String> {
 fn slice_to_u64x4(slice: &[u8]) -> U64x4 {
 	U64x4 {
 		value: [
-			u64::from_be_bytes({ slice_to_arr(&slice[24..32]) }),
+			u64::from_be_bytes(slice_to_arr(&slice[24..32])),
 			u64::from_be_bytes(slice_to_arr(&slice[16..24])),
 			u64::from_be_bytes(slice_to_arr(&slice[8..16])),
 			u64::from_be_bytes(slice_to_arr(&slice[0..8])),
@@ -223,8 +223,8 @@ pub fn cases() -> LinkedHashMap<&'static str, Vec<Case>> {
 			 Case {
 				 desc: "SM2".to_string(),
 				 input: vec!["-c", "sm2", "-p", "0x044b2dd8bf6dbbfb14db3e4d17bd7a3e8758eb4232049bec931d1038f4afaae46ac3c771f929bbf35a28b0363789fb19127cea3318f4c8902a0034ca5f1b7667d1", "-S",
-				             "0x0a4d089d3177234ed34aa7f30c6a7a7954539f68825bedbe82be65aefdb733c921207be31b8071bbfd5c99044ebde49d3c38e9972063b844f65f4acfc7d6dff2",
-				             "0x616263"].into_iter().map(Into::into).collect(),
+							 "0x0a4d089d3177234ed34aa7f30c6a7a7954539f68825bedbe82be65aefdb733c921207be31b8071bbfd5c99044ebde49d3c38e9972063b844f65f4acfc7d6dff2",
+							 "0x616263"].into_iter().map(Into::into).collect(),
 				 output: vec!["true"].into_iter().map(Into::into).collect(),
 				 is_example: true,
 				 is_test: true,

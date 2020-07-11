@@ -1,6 +1,6 @@
 [package]
 name = "dtool"
-version = "0.9.0"
+version = "0.10.0"
 authors = ["GB <guoxbin@gmail.com>"]
 description = "A command-line tool collection to assist development"
 categories = ["command-line-utilities"]
@@ -41,3 +41,5 @@ signatory-secp256k1 = "0.17.0"
 secp256k1 = "0.15"
 untrusted = "0.7.0"
 schnorrkel = "0.8.5"
+twox-hash = "1.5.0"
+byteorder = "1.3.1"

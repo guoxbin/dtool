@@ -8,7 +8,7 @@
 - [Hex / base64 conversion](#hex--base64-conversion)
 - [URL encode / decode](#url-encode--decode)
 - [Number codec](#number-codec)
-- [Hash (MD5, SHA-1, SHA-2, SHA-3, RIPEMD, CRC, Blake2b, SM3)](#hash-md5-sha-1-sha-2-sha-3-ripemd-crc-blake2b-sm3)
+- [Hash (MD5, SHA-1, SHA-2, SHA-3, RIPEMD, CRC, Blake2b, SM3, Twox)](#hash-md5-sha-1-sha-2-sha-3-ripemd-crc-blake2b-sm3-twox)
 - [UTF-8 string / unicode conversion](#utf-8-string--unicode-conversion)
 - [HTML entity encode / decode](#html-entity-encode--decode)
 - [Regex match](#regex-match)
@@ -100,7 +100,7 @@
 |    nd     |Number decode<br>Compact<br>v0.1.0|              $ dtool nd -tc 0xed03<br>251               |
 
 
-## Hash (MD5, SHA-1, SHA-2, SHA-3, RIPEMD, CRC, Blake2b, SM3)
+## Hash (MD5, SHA-1, SHA-2, SHA-3, RIPEMD, CRC, Blake2b, SM3, Twox)
 
 |Sub command|                     Desc                      |                                                                                       Example                                                                                        |
 |-----------|-----------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -127,6 +127,7 @@
 |   hash    |     Hex to hash<br>Blake2b 384<br>v0.5.0      |                   $ dtool hash -a blake2b_384 0x616263<br>0x6f56a82c8e7ef526dfe182eb5212f7db9df1317e57815dbda46083fc30\\<br>f54ee6c66ba83be64b302d7cba6ce15bb556f4                   |
 |   hash    |     Hex to hash<br>Blake2b 512<br>v0.5.0      |$ dtool hash -a blake2b_512 0x616263<br>0xba80a53f981c4d0d6a2797b69f12f6e94c212f14685ac4b74b12bb6fdb\\<br>ffa2d17d87c5392aab792dc252d5de4533cc9518d38aa8dbf1925ab92386\\<br>edd4009923|
 |   hash    |         Hex to hash<br>SM3<br>v0.7.0          |                                       $ dtool hash -a sm3 0x616263<br>0x66c7f0f462eeedd9d1f2d46bdc10e4e24167c4875cf2f7a2297da02b8f\\<br>4ba8e0                                       |
+|   hash    |        Hex to hash<br>TwoX<br>v0.10.0         |                                                               $ dtool hash -a twox -s 1 0x616263<br>0x0889329981caa9be                                                               |
 
 
 ## UTF-8 string / unicode conversion
