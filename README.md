@@ -23,7 +23,7 @@ Now `dtool` supports:
 - [Hex / base64 conversion](./docs/Usage.md#hex--base64-conversion)
 - [URL encode / decode](./docs/Usage.md#url-encode--decode)
 - [Number codec](./docs/Usage.md#number-codec)
-- [Hash (MD5, SHA-1, SHA-2, SHA-3, RIPEMD, CRC, Blake2b, SM3)](./docs/Usage.md#hash-md5-sha-1-sha-2-sha-3-ripemd-crc-blake2b-sm3)
+- [Hash (MD5, SHA-1, SHA-2, SHA-3, RIPEMD, CRC, Blake2b, SM3, Twox)](./docs/Usage.md#hash-md5-sha-1-sha-2-sha-3-ripemd-crc-blake2b-sm3-twox)
 - [UTF-8 string / unicode conversion](./docs/Usage.md#utf-8-string--unicode-conversion)
 - [HTML entity encode / decode](./docs/Usage.md#html-entity-encode--decode)
 - [Regex match](./docs/Usage.md#regex-match)

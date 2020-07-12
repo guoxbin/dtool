@@ -11,7 +11,7 @@ use yogcrypt::sm3::sm3_enc;
 
 pub fn module<'a, 'b>() -> Module<'a, 'b> {
 	Module {
-		desc: "Hash (MD5, SHA-1, SHA-2, SHA-3, RIPEMD, CRC, Blake2b, SM3)".to_string(),
+		desc: "Hash (MD5, SHA-1, SHA-2, SHA-3, RIPEMD, CRC, Blake2b, SM3, Twox)".to_string(),
 		commands: commands(),
 		get_cases: cases::cases,
 	}
@@ -26,6 +26,7 @@ struct Algorithm {
 enum AlgorithmF {
 	Normal(fn(data: Vec<u8>) -> Result<Vec<u8>, String>),
 	WithKey(fn(data: Vec<u8>, key: Vec<u8>) -> Result<Vec<u8>, String>),
+	WithSeed(fn(data: Vec<u8>, seed: u64) -> Result<Vec<u8>, String>),
 }
 
 lazy_static! {
@@ -145,6 +146,11 @@ lazy_static! {
 			help: "Chinese National Standard SM3",
 			f: AlgorithmF::Normal(sm3),
 		},
+		Algorithm {
+			name: "twox",
+			help: "TwoX",
+			f: AlgorithmF::WithSeed(twox),
+		},
 	];
 	static ref ALGORITHMS: HashMap<&'static str, &'static Algorithm> =
 		RAW_ALGORITHMS.iter().map(|x| (x.name, x)).collect();
@@ -176,6 +182,14 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 					.takes_value(true)
 					.required(false),
 			)
+			.arg(
+				Arg::with_name("SEED")
+					.long("seed")
+					.short("s")
+					.help("Seed for twox")
+					.takes_value(true)
+					.required(false),
+			)
 			.arg(Arg::with_name("INPUT").required(false).index(1)),
 		f: hash,
 	}]
@@ -197,6 +211,13 @@ fn hash(matches: &ArgMatches) -> Result<Vec<String>, String> {
 					None => vec![],
 				};
 				(f)(input, key)?
+			},
+			AlgorithmF::WithSeed(f) => {
+				let seed = match matches.value_of("SEED") {
+					Some(seed) => seed.parse::<u64>().map_err(|_| "Invalid seed")?.into(),
+					None => 0,
+				};
+				(f)(input, seed)?
 			}
 		},
 		None => return Err("Invalid algorithm".to_string()),
@@ -364,6 +385,17 @@ fn sm3(data: Vec<u8>) -> Result<Vec<u8>, String> {
 		.collect();
 
 	Ok(result)
+}
+
+fn twox(data: Vec<u8>, seed: u64) -> Result<Vec<u8>, String> {
+	use ::core::hash::Hasher;
+	let mut h = twox_hash::XxHash::with_seed(seed);
+	h.write(&data);
+	let r = h.finish();
+	use byteorder::{ByteOrder, LittleEndian};
+	let mut dest = vec![0u8; 8];
+	LittleEndian::write_u64(&mut dest[0..8], r);
+	Ok(dest)
 }
 
 mod cases {
@@ -589,6 +621,14 @@ mod cases {
 					 is_example: true,
 					 is_test: true,
 					 since: "0.7.0".to_string(),
+				 },
+				 Case {
+					 desc: "TwoX".to_string(),
+					 input: vec!["-a", "twox", "-s", "1", "0x616263"].into_iter().map(Into::into).collect(),
+					 output: vec!["0x0889329981caa9be"].into_iter().map(Into::into).collect(),
+					 is_example: true,
+					 is_test: true,
+					 since: "0.10.0".to_string(),
 				 },
 			 ]),
 		].into_iter().collect()
