@@ -1,6 +1,6 @@
 [package]
 name = "dtool"
-version = "0.10.0"
+version = "0.10.1"
 authors = ["GB <guoxbin@gmail.com>"]
 description = "A command-line tool collection to assist development"
 categories = ["command-line-utilities"]
@@ -36,8 +36,9 @@ crc = "1.8.1"
 heck = "0.3.1"
 rust-crypto = "0.2.36"
 yogcrypt = "0.0.0"
-signatory = "0.17"
-signatory-secp256k1 = "0.17.0"
+signatory = "0.21"
+signatory-secp256k1 = "0.21"
+k256 = "0.4"
 secp256k1 = "0.15"
 untrusted = "0.7.0"
 schnorrkel = "0.8.5"

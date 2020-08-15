@@ -211,7 +211,7 @@ fn hash(matches: &ArgMatches) -> Result<Vec<String>, String> {
 					None => vec![],
 				};
 				(f)(input, key)?
-			},
+			}
 			AlgorithmF::WithSeed(f) => {
 				let seed = match matches.value_of("SEED") {
 					Some(seed) => seed.parse::<u64>().map_err(|_| "Invalid seed")?.into(),
