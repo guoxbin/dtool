@@ -60,7 +60,7 @@ fn to_sarcasm_case(input: &str) -> String {
 	enum Case {
 		Upper,
 		Lower,
-	};
+	}
 	let mut case = Case::Lower;
 	let result = lowercased
 		.chars()
