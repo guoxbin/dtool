@@ -9,7 +9,7 @@ use yogcrypt::sm2;
 use yogcrypt::sm2::{PubKey, SecKey, Signature};
 
 pub fn ec_gk_sm2(compress: bool) -> Result<(Vec<u8>, Vec<u8>), String> {
-	if compress == true {
+	if compress {
 		return Err("Compress is not supported".to_string());
 	}
 
@@ -63,7 +63,7 @@ pub fn ec_verify_sm2(
 }
 
 pub fn ec_pk_sm2(secret_key: Vec<u8>, compress: bool) -> Result<Vec<u8>, String> {
-	if compress == true {
+	if compress {
 		return Err("Compress is not supported".to_string());
 	}
 

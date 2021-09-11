@@ -1,6 +1,5 @@
 use crate::modules::base::Hex;
 use crate::modules::{base, Command, Module};
-use bs58;
 use clap::{Arg, ArgMatches, SubCommand};
 
 pub fn module<'a, 'b>() -> Module<'a, 'b> {

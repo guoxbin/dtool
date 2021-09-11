@@ -1,10 +1,7 @@
-use k256::Secp256k1;
 use linked_hash_map::LinkedHashMap;
+use secp256k1::bitcoin_hashes::sha256;
 use secp256k1::rand::thread_rng;
-use signatory::ecdsa::{Asn1Signature, FixedSignature};
-use signatory::public_key::PublicKeyed;
-use signatory::signature::{Signature, Signer, Verifier};
-use signatory_secp256k1::{EcdsaSigner, EcdsaVerifier, PublicKey, SecretKey};
+use secp256k1::{Message, PublicKey, SecretKey, Signature};
 
 use crate::modules::base::Hex;
 use crate::modules::ecdsa::SignatureFormEnum;
@@ -31,19 +28,14 @@ pub fn ec_sign_secp256k1(
 	message: Vec<u8>,
 	sig_form: SignatureFormEnum,
 ) -> Result<Vec<u8>, String> {
+	let message = Message::from_hashed_data::<sha256::Hash>(&message);
 	let secret_key =
-		SecretKey::from_bytes(secret_key).map_err(|e| format!("Invalid secret key: {}", e))?;
-	let signer = EcdsaSigner::from(&secret_key);
+		SecretKey::from_slice(&secret_key).map_err(|e| format!("Invalid secret key: {}", e))?;
+	let signature = secp256k1::Secp256k1::signing_only().sign(&message, &secret_key);
 
 	let signature = match sig_form {
-		SignatureFormEnum::Fixed => {
-			let signature: FixedSignature<Secp256k1> = signer.sign(&message);
-			signature.as_ref().to_vec()
-		}
-		SignatureFormEnum::Der => {
-			let signature: Asn1Signature<Secp256k1> = signer.sign(&message);
-			signature.as_ref().to_vec()
-		}
+		SignatureFormEnum::Fixed => signature.serialize_compact().to_vec(),
+		SignatureFormEnum::Der => signature.serialize_der().as_ref().to_vec(),
 	};
 
 	Ok(signature)
@@ -55,44 +47,31 @@ pub fn ec_verify_secp256k1(
 	message: Vec<u8>,
 	sig_form: SignatureFormEnum,
 ) -> Result<(), String> {
-	let public_key = PublicKey::from_bytes(public_key).ok_or("Invalid public key")?;
-	let verifier = EcdsaVerifier::from(&public_key);
+	let message = Message::from_hashed_data::<sha256::Hash>(&message);
+	let sig = match sig_form {
+		SignatureFormEnum::Fixed => Signature::from_compact(&sig),
+		SignatureFormEnum::Der => Signature::from_der(&sig),
+	}
+	.map_err(|e| format!("Invalid signature: {}", e))?;
 
-	let result = match sig_form {
-		SignatureFormEnum::Fixed => {
-			let sig = FixedSignature::from_bytes(&sig)
-				.map_err(|e| format!("Invalid signature: {}", e))?;
-			verifier
-				.verify(&message, &sig)
-				.map_err(|e| format!("{}", e))
-		}
-		SignatureFormEnum::Der => {
-			let sig =
-				Asn1Signature::from_bytes(&sig).map_err(|e| format!("Invalid signature: {}", e))?;
-			verifier
-				.verify(&message, &sig)
-				.map_err(|e| format!("{}", e))
-		}
-	};
+	let public_key =
+		PublicKey::from_slice(&public_key).map_err(|e| format!("Invalid secret key: {}", e))?;
+	let result = secp256k1::Secp256k1::verification_only()
+		.verify(&message, &sig, &public_key)
+		.map_err(|e| format!("{}", e));
 	result
 }
 
 pub fn ec_pk_secp256k1(secret_key: Vec<u8>, compress: bool) -> Result<Vec<u8>, String> {
 	let secret_key =
-		SecretKey::from_bytes(secret_key).map_err(|e| format!("Invalid secret key: {}", e))?;
-	let signer = EcdsaSigner::from(&secret_key);
+		SecretKey::from_slice(&secret_key).map_err(|e| format!("Invalid secret key: {}", e))?;
 
-	let public_key: PublicKey = signer.public_key().map_err(|_| "Failed")?;
-
-	let public_key = public_key.as_bytes();
+	let secp = secp256k1::Secp256k1::new();
+	let public_key = PublicKey::from_secret_key(&secp, &secret_key);
 
 	let public_key = match compress {
-		true => public_key.to_vec(),
-		false => {
-			let public_key = secp256k1::PublicKey::from_slice(public_key)
-				.expect("Should be valid public key; qed");
-			public_key.serialize_uncompressed().to_vec()
-		}
+		true => public_key.serialize().to_vec(),
+		false => public_key.serialize_uncompressed().to_vec(),
 	};
 
 	Ok(public_key)

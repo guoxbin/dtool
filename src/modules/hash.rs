@@ -214,7 +214,7 @@ fn hash(matches: &ArgMatches) -> Result<Vec<String>, String> {
 			}
 			AlgorithmF::WithSeed(f) => {
 				let seed = match matches.value_of("SEED") {
-					Some(seed) => seed.parse::<u64>().map_err(|_| "Invalid seed")?.into(),
+					Some(seed) => seed.parse::<u64>().map_err(|_| "Invalid seed")?,
 					None => 0,
 				};
 				(f)(input, seed)?

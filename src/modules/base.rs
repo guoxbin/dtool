@@ -41,15 +41,15 @@ impl From<Vec<u8>> for Hex {
 	}
 }
 
-impl Into<String> for Hex {
-	fn into(self) -> String {
-		format!("0x{}", hex::encode(self.0))
+impl From<Hex> for String {
+	fn from(v: Hex) -> Self {
+		format!("0x{}", hex::encode(v.0))
 	}
 }
 
-impl Into<Vec<u8>> for Hex {
-	fn into(self) -> Vec<u8> {
-		self.0
+impl From<Hex> for Vec<u8> {
+	fn from(v: Hex) -> Self {
+		v.0
 	}
 }
 

@@ -1,6 +1,5 @@
 use crate::modules::{base, Command, Module};
 use clap::{Arg, ArgMatches, SubCommand};
-use escaper;
 
 pub fn module<'a, 'b>() -> Module<'a, 'b> {
 	Module {

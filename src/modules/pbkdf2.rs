@@ -75,7 +75,7 @@ fn pbkdf2(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	}
 	.and_then(|x| {
 		if x > 0 {
-			NonZeroU32::new(x).ok_or("Invalid Iterations".to_string())
+			NonZeroU32::new(x).ok_or_else(||"Invalid Iterations".to_string())
 		} else {
 			Err("Invalid Iterations".to_string())
 		}

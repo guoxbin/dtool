@@ -74,15 +74,15 @@ fn u2s(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	let result = match format {
 		"html" => input
-			.split(";")
+			.split(';')
 			.filter_map(from_html)
 			.collect::<Result<String, String>>(),
 		"html_d" => input
-			.split(";")
+			.split(';')
 			.filter_map(from_html_d)
 			.collect::<Result<String, String>>(),
 		"rust" => input
-			.split("}")
+			.split('}')
 			.filter_map(from_rust)
 			.collect::<Result<String, String>>(),
 		_ => input
@@ -110,7 +110,7 @@ fn from_html(data: &str) -> Option<Result<char, String>> {
 	if data.len() > 3 {
 		let r = u32::from_str_radix(&data[3..], 16)
 			.map_err(|_| "Convert failed".to_string())
-			.and_then(|x| std::char::from_u32(x).ok_or("Convert failed".to_string()));
+			.and_then(|x| std::char::from_u32(x).ok_or_else(||"Convert failed".to_string()));
 		Some(r)
 	} else {
 		None
@@ -119,9 +119,9 @@ fn from_html(data: &str) -> Option<Result<char, String>> {
 
 fn format_html_d(data: EscapeUnicode) -> Result<String, String> {
 	let number = data
-		.filter_map(|x| match x {
-			'\\' | 'u' | '{' | '}' => None,
-			_ => Some(x),
+		.filter(|x| match x {
+			'\\' | 'u' | '{' | '}' => false,
+			_ => true,
 		})
 		.collect::<String>();
 	let number = u64::from_str_radix(&number, 16).map_err(|_| "Convert failed")?;
@@ -133,7 +133,7 @@ fn from_html_d(data: &str) -> Option<Result<char, String>> {
 	if data.len() > 2 {
 		let r = u32::from_str_radix(&data[2..], 10)
 			.map_err(|_| "Convert failed".to_string())
-			.and_then(|x| std::char::from_u32(x).ok_or("Convert failed".to_string()));
+			.and_then(|x| std::char::from_u32(x).ok_or_else(||"Convert failed".to_string()));
 		Some(r)
 	} else {
 		None
@@ -148,7 +148,7 @@ fn from_rust(data: &str) -> Option<Result<char, String>> {
 	if data.len() > 3 {
 		let r = u32::from_str_radix(&data[3..], 16)
 			.map_err(|_| "Convert failed".to_string())
-			.and_then(|x| std::char::from_u32(x).ok_or("Convert failed".to_string()));
+			.and_then(|x| std::char::from_u32(x).ok_or_else(||"Convert failed".to_string()));
 		Some(r)
 	} else {
 		None
@@ -163,7 +163,7 @@ fn from_default(data: &str) -> Option<Result<char, String>> {
 	if data.len() > 0 {
 		let r = u32::from_str_radix(&data, 16)
 			.map_err(|_| "Convert failed".to_string())
-			.and_then(|x| std::char::from_u32(x).ok_or("Convert failed".to_string()));
+			.and_then(|x| std::char::from_u32(x).ok_or_else(||"Convert failed".to_string()));
 		Some(r)
 	} else {
 		None
