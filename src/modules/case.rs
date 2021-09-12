@@ -25,7 +25,7 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						 kebab: good-tool\nsarcasm: gOoD tOoL",
 					)
 					.takes_value(true)
-					.required(true),
+					.required(false),
 			)
 			.arg(Arg::with_name("INPUT").required(false).index(1)),
 		f: case,
@@ -35,7 +35,7 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 fn case(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	let input = base::input_string(matches)?;
 
-	let t = matches.value_of("TYPE").ok_or("Invalid type")?;
+	let t = matches.value_of("TYPE").unwrap_or_default();
 
 	let result = match t {
 		"upper" => input.to_uppercase(),
@@ -47,7 +47,13 @@ fn case(matches: &ArgMatches) -> Result<Vec<String>, String> {
 		"shouty_snake" => input.to_shouty_snake_case(),
 		"kebab" => input.to_kebab_case(),
 		"sarcasm" => to_sarcasm_case(&input),
-		_ => return Err("Invalid type".to_string()),
+		_ => {
+			format!("{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n", 
+				input.to_uppercase(),input.to_lowercase(),input.to_title_case(),
+				input.to_mixed_case(),input.to_camel_case(),input.to_snake_case(),
+				input.to_shouty_snake_case(),input.to_kebab_case(), to_sarcasm_case(&input),
+			)
+		},
 	};
 
 	Ok(vec![result])
@@ -60,7 +66,7 @@ fn to_sarcasm_case(input: &str) -> String {
 	enum Case {
 		Upper,
 		Lower,
-	};
+	}
 	let mut case = Case::Lower;
 	let result = lowercased
 		.chars()
@@ -189,6 +195,17 @@ mod cases {
 					is_example: true,
 					is_test: true,
 					since: "0.9.0".to_string(),
+				},
+				Case {
+					desc: "All cases".to_string(),
+					input: vec!["good tool"]
+						.into_iter()
+						.map(Into::into)
+						.collect(),
+					output: vec!["GOOD TOOL\ngood tool\nGood Tool\ngoodTool\nGoodTool\ngood_tool\nGOOD_TOOL\ngood-tool\ngOoD tOoL\n"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: true,
+					since: "0.11.0".to_string(),
 				},
 			],
 		)]

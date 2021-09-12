@@ -1,3 +1,13 @@
+#![allow(clippy::let_and_return)]
+#![allow(clippy::unit_arg)]
+#![allow(clippy::type_complexity)]
+#![allow(clippy::len_zero)]
+#![allow(clippy::unnecessary_wraps)]
+#![allow(clippy::match_like_matches_macro)]
+#![allow(clippy::needless_range_loop)]
+#![allow(clippy::useless_format)]
+#![allow(clippy::upper_case_acronyms)]
+
 use clap::{App, ArgMatches};
 use linked_hash_map::LinkedHashMap;
 use std::iter;
@@ -22,6 +32,7 @@ mod time;
 mod unicode;
 mod url;
 mod usage;
+
 
 #[derive(Clone)]
 pub struct Module<'a, 'b> {

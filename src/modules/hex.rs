@@ -114,7 +114,7 @@ fn h2a(matches: &ArgMatches) -> Result<Vec<String>, String> {
 fn a2h(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	let input = base::input_string(matches).map_err(|_| "Not UTF-8")?;
 
-	let input = input.trim_start_matches("[").trim_end_matches("]");
+	let input = input.trim_start_matches('[').trim_end_matches(']');
 	let input = Regex::new(", *")
 		.expect("qed")
 		.split(input)

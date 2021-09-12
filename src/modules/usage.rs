@@ -1,6 +1,5 @@
 use crate::modules::Module;
 use clap::{App, Arg, ArgMatches, SubCommand};
-use escaper;
 use linked_hash_map::LinkedHashMap;
 use madato::mk_table;
 use prettytable::{format, Cell, Row, Table};
@@ -23,7 +22,7 @@ pub fn app<'a, 'b>() -> App<'a, 'b> {
 				.required(false))
 }
 
-pub fn run<'a, 'b>(matches: &ArgMatches, modules: &Vec<Module>) -> Result<Vec<String>, String> {
+pub fn run(matches: &ArgMatches, modules: &[Module]) -> Result<Vec<String>, String> {
 	let usage_info = get_usage_info(modules);
 
 	let search = matches.value_of("SEARCH");
@@ -115,13 +114,13 @@ fn term_table_output(
 				let desc = vec![item.1, item.2, item.3]
 					.into_iter()
 					.filter(|x| x.len() > 0)
-					.map(|x| add_enter(x.to_owned(), DESC_WIDTH, false))
+					.map(|x| add_enter(x, DESC_WIDTH, false))
 					.collect::<Vec<String>>()
 					.join("\n");
 				let example = item
 					.4
 					.into_iter()
-					.map(|x| add_enter(x.to_string(), EXAMPLE_WIDTH, true))
+					.map(|x| add_enter(x, EXAMPLE_WIDTH, true))
 					.collect::<Vec<String>>()
 					.join("\n");
 				Row::new(vec![
@@ -182,13 +181,13 @@ fn markdown_output(
 				let desc = vec![item.1, item.2, item.3]
 					.into_iter()
 					.filter(|x| x.len() > 0)
-					.map(|x| add_enter(x.to_owned(), DESC_WIDTH, false))
+					.map(|x| add_enter(x, DESC_WIDTH, false))
 					.collect::<Vec<String>>()
 					.join("\n");
 				let example = item
 					.4
 					.into_iter()
-					.map(|x| add_enter(x.to_string(), EXAMPLE_WIDTH, true))
+					.map(|x| add_enter(x, EXAMPLE_WIDTH, true))
 					.collect::<Vec<String>>()
 					.join("\n");
 				vec![sub_command, desc, example]
@@ -217,7 +216,7 @@ fn markdown_output(
 /// Get usage info
 /// Sub command, Sub command desc, Case desc, Since, Example
 fn get_usage_info(
-	modules: &Vec<Module>,
+	modules: &[Module],
 ) -> Vec<(String, Vec<(String, String, String, String, Vec<String>)>)> {
 	let mut result = vec![];
 	for module in modules {
@@ -265,7 +264,7 @@ fn get_about(app: &App) -> String {
 	let mut help = Vec::new();
 	let _ = app.write_help(&mut help);
 
-	let about = String::from_utf8(help).map(|x| x.split("\n").skip(1).take(1).collect::<String>()); //about is the second line
+	let about = String::from_utf8(help).map(|x| x.split('\n').skip(1).take(1).collect::<String>()); //about is the second line
 
 	about.ok().unwrap_or_default()
 }
@@ -289,7 +288,7 @@ fn anchor(title: &str) -> String {
 			if x.is_whitespace() || x == '-' {
 				Some('-')
 			} else if x.is_alphanumeric() {
-				Some(x.to_lowercase().nth(0).expect("qed"))
+				Some(x.to_lowercase().next().expect("qed"))
 			} else {
 				None
 			}

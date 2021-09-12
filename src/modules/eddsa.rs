@@ -6,7 +6,6 @@ mod ed25519;
 
 pub enum AltSecretKey {
 	MiniSecretKey(Vec<u8>),
-	SecretKey(Vec<u8>),
 }
 
 pub fn module<'a, 'b>() -> Module<'a, 'b> {
@@ -40,14 +39,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.help("Mini secret key (Mini private key, Hex)")
 						.takes_value(true)
 						.required(false),
-				)
-				.arg(
-					Arg::with_name("SECRET_KEY")
-						.long("secret-key")
-						.short("s")
-						.help("Secret key (Private key, Hex)")
-						.takes_value(true)
-						.required(false),
 				),
 			f: ed_sign,
 		},
@@ -79,20 +70,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 			f: ed_verify,
 		},
 		Command {
-			app: SubCommand::with_name("ed_sk")
-				.about("EdDSA calculate secret key from mini secret key")
-				.arg(
-					Arg::with_name("MINI_SECRET_KEY")
-						.long("mini-secret-key")
-						.short("m")
-						.help("Mini secret key (Mini private key, Hex)")
-						.takes_value(true)
-						.required(true),
-				),
-
-			f: ed_sk,
-		},
-		Command {
 			app: SubCommand::with_name("ed_pk")
 				.about("EdDSA calculate public key")
 				.arg(
@@ -100,14 +77,6 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.long("mini-secret-key")
 						.short("m")
 						.help("Mini secret key (Mini private key, Hex)")
-						.takes_value(true)
-						.required(false),
-				)
-				.arg(
-					Arg::with_name("SECRET_KEY")
-						.long("secret-key")
-						.short("s")
-						.help("Secret key (Private key, Hex)")
 						.takes_value(true)
 						.required(false),
 				),
@@ -160,22 +129,6 @@ fn ed_verify(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	Ok(vec![result])
 }
 
-fn ed_sk(matches: &ArgMatches) -> Result<Vec<String>, String> {
-	let mini_secret_key = matches
-		.value_of("MINI_SECRET_KEY")
-		.ok_or("Invalid mini secret key")?;
-	let mini_secret_key: Vec<u8> = mini_secret_key
-		.parse::<Hex>()
-		.map_err(|_| "Invalid mini secret key")?
-		.into();
-
-	let secret_key = ed25519::ed_sk_ed25519(mini_secret_key)?;
-
-	let result = Hex::from(secret_key).into();
-
-	Ok(vec![result])
-}
-
 fn ed_pk(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	let secret_key = get_alt_secret_key(matches)?;
 
@@ -196,15 +149,8 @@ fn get_alt_secret_key(matches: &ArgMatches) -> Result<AltSecretKey, String> {
 			.map_err(|_| "Invalid mini secret key")?
 			.into();
 		Ok(AltSecretKey::MiniSecretKey(secret_key))
-	} else if matches.is_present("SECRET_KEY") {
-		let secret_key = matches.value_of("SECRET_KEY").ok_or("Invalid secret key")?;
-		let secret_key: Vec<u8> = secret_key
-			.parse::<Hex>()
-			.map_err(|_| "Invalid secret key")?
-			.into();
-		Ok(AltSecretKey::SecretKey(secret_key))
 	} else {
-		Err("Mini secret key or secret key should be provided".to_string())
+		Err("Mini secret key should be provided".to_string())
 	}
 }
 

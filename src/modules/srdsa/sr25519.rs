@@ -1,8 +1,8 @@
 use crate::modules::srdsa::AltSecretKey;
 use crate::modules::Case;
 use linked_hash_map::LinkedHashMap;
+use rand::thread_rng;
 use schnorrkel::{ExpansionMode, Keypair};
-use secp256k1::rand::thread_rng;
 
 pub fn sr_gk_sr25519() -> Result<(Vec<u8>, Vec<u8>), String> {
 	let mini_secret_key = schnorrkel::MiniSecretKey::generate_with(&mut thread_rng());

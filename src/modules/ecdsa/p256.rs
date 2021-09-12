@@ -1,27 +1,23 @@
 use crate::modules::ecdsa::SignatureFormEnum;
 use crate::modules::Case;
 use linked_hash_map::LinkedHashMap;
-use ring::rand::SystemRandom;
-use ring::signature::{
-	EcdsaKeyPair, KeyPair, VerificationAlgorithm, ECDSA_P256_SHA256_ASN1,
-	ECDSA_P256_SHA256_ASN1_SIGNING, ECDSA_P256_SHA256_FIXED, ECDSA_P256_SHA256_FIXED_SIGNING,
+use p256::{elliptic_curve::sec1::ToEncodedPoint, SecretKey};
+use rand::thread_rng;
+use ring::{
+	rand::SystemRandom,
+	signature::{
+		EcdsaKeyPair, VerificationAlgorithm, ECDSA_P256_SHA256_ASN1,
+		ECDSA_P256_SHA256_ASN1_SIGNING, ECDSA_P256_SHA256_FIXED, ECDSA_P256_SHA256_FIXED_SIGNING,
+	},
 };
 use untrusted::Input;
 
 pub fn ec_gk_p256(compress: bool) -> Result<(Vec<u8>, Vec<u8>), String> {
-	if compress == true {
-		return Err("Compress is not supported".to_string());
-	}
+	let secret_key = SecretKey::random(&mut thread_rng());
+	let public_key = secret_key.public_key();
 
-	let secret_key =
-		EcdsaKeyPair::generate_private_key(&ECDSA_P256_SHA256_FIXED_SIGNING, &SystemRandom::new())
-			.map_err(|_| "")?;
-	let pair =
-		EcdsaKeyPair::from_private_key(&ECDSA_P256_SHA256_FIXED_SIGNING, secret_key.as_ref())
-			.map_err(|_| "Invalid secret key")?;
-
-	let public_key = pair.public_key();
-	let public_key = public_key.as_ref().to_vec();
+	let secret_key = secret_key.as_scalar_bytes().as_bytes().as_slice().to_vec();
+	let public_key = public_key.to_encoded_point(compress).as_bytes().to_vec();
 
 	Ok((secret_key, public_key))
 }
@@ -31,12 +27,17 @@ pub fn ec_sign_p256(
 	message: Vec<u8>,
 	sig_form: SignatureFormEnum,
 ) -> Result<Vec<u8>, String> {
+	let secret_key_obj = SecretKey::from_bytes(&secret_key).map_err(|_| "Invalid secret key")?;
+	let public_key = secret_key_obj.public_key();
+	let public_key = public_key.to_encoded_point(false);
+	let public_key = public_key.as_bytes();
+
 	let algo = match sig_form {
 		SignatureFormEnum::Fixed => &ECDSA_P256_SHA256_FIXED_SIGNING,
 		SignatureFormEnum::Der => &ECDSA_P256_SHA256_ASN1_SIGNING,
 	};
 
-	let pair = EcdsaKeyPair::from_private_key(&algo, secret_key.as_ref())
+	let pair = EcdsaKeyPair::from_private_key_and_public_key(&algo, &secret_key, public_key)
 		.map_err(|_| "Invalid secret key")?;
 	let sig = pair
 		.sign(&SystemRandom::new(), &message)
@@ -68,17 +69,10 @@ pub fn ec_verify_p256(
 }
 
 pub fn ec_pk_p256(secret_key: Vec<u8>, compress: bool) -> Result<Vec<u8>, String> {
-	if compress == true {
-		return Err("Compress is not supported".to_string());
-	}
-
-	let pair =
-		EcdsaKeyPair::from_private_key(&ECDSA_P256_SHA256_FIXED_SIGNING, secret_key.as_ref())
-			.map_err(|_| "Invalid secret key")?;
-
-	let public_key = pair.public_key();
-	let public_key = public_key.as_ref().to_vec();
-
+	let secret_key_obj = SecretKey::from_bytes(&secret_key).map_err(|_| "Invalid secret key")?;
+	let public_key = secret_key_obj.public_key();
+	let public_key = public_key.to_encoded_point(compress);
+	let public_key = public_key.as_bytes().to_vec();
 	Ok(public_key)
 }
 
