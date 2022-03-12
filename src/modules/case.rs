@@ -48,12 +48,19 @@ fn case(matches: &ArgMatches) -> Result<Vec<String>, String> {
 		"kebab" => input.to_kebab_case(),
 		"sarcasm" => to_sarcasm_case(&input),
 		_ => {
-			format!("{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n", 
-				input.to_uppercase(),input.to_lowercase(),input.to_title_case(),
-				input.to_mixed_case(),input.to_camel_case(),input.to_snake_case(),
-				input.to_shouty_snake_case(),input.to_kebab_case(), to_sarcasm_case(&input),
+			format!(
+				"{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n",
+				input.to_uppercase(),
+				input.to_lowercase(),
+				input.to_title_case(),
+				input.to_mixed_case(),
+				input.to_camel_case(),
+				input.to_snake_case(),
+				input.to_shouty_snake_case(),
+				input.to_kebab_case(),
+				to_sarcasm_case(&input),
 			)
-		},
+		}
 	};
 
 	Ok(vec![result])

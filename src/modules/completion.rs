@@ -20,7 +20,7 @@ pub fn app<'a, 'b>() -> App<'a, 'b> {
 pub fn run(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	let shell = matches
 		.value_of("SHELL")
-		.ok_or_else(||"Invalid shell".to_string())?;
+		.ok_or_else(|| "Invalid shell".to_string())?;
 	let shell = Shell::from_str(shell)?;
 
 	let (mut app, _) = app::build_app();

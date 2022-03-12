@@ -33,7 +33,6 @@ mod unicode;
 mod url;
 mod usage;
 
-
 #[derive(Clone)]
 pub struct Module<'a, 'b> {
 	pub desc: String,

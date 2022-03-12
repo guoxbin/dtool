@@ -110,7 +110,7 @@ fn from_html(data: &str) -> Option<Result<char, String>> {
 	if data.len() > 3 {
 		let r = u32::from_str_radix(&data[3..], 16)
 			.map_err(|_| "Convert failed".to_string())
-			.and_then(|x| std::char::from_u32(x).ok_or_else(||"Convert failed".to_string()));
+			.and_then(|x| std::char::from_u32(x).ok_or_else(|| "Convert failed".to_string()));
 		Some(r)
 	} else {
 		None
@@ -133,7 +133,7 @@ fn from_html_d(data: &str) -> Option<Result<char, String>> {
 	if data.len() > 2 {
 		let r = u32::from_str_radix(&data[2..], 10)
 			.map_err(|_| "Convert failed".to_string())
-			.and_then(|x| std::char::from_u32(x).ok_or_else(||"Convert failed".to_string()));
+			.and_then(|x| std::char::from_u32(x).ok_or_else(|| "Convert failed".to_string()));
 		Some(r)
 	} else {
 		None
@@ -148,7 +148,7 @@ fn from_rust(data: &str) -> Option<Result<char, String>> {
 	if data.len() > 3 {
 		let r = u32::from_str_radix(&data[3..], 16)
 			.map_err(|_| "Convert failed".to_string())
-			.and_then(|x| std::char::from_u32(x).ok_or_else(||"Convert failed".to_string()));
+			.and_then(|x| std::char::from_u32(x).ok_or_else(|| "Convert failed".to_string()));
 		Some(r)
 	} else {
 		None
@@ -163,7 +163,7 @@ fn from_default(data: &str) -> Option<Result<char, String>> {
 	if data.len() > 0 {
 		let r = u32::from_str_radix(&data, 16)
 			.map_err(|_| "Convert failed".to_string())
-			.and_then(|x| std::char::from_u32(x).ok_or_else(||"Convert failed".to_string()));
+			.and_then(|x| std::char::from_u32(x).ok_or_else(|| "Convert failed".to_string()));
 		Some(r)
 	} else {
 		None

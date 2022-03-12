@@ -46,6 +46,10 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 				.arg(Arg::with_name("INPUT").required(false).index(1)),
 			f: d2ts,
 		},
+		Command {
+			app: SubCommand::with_name("ts").about("Current timestamp"),
+			f: ts,
+		},
 	]
 }
 
@@ -89,6 +93,15 @@ fn d2ts(matches: &ArgMatches) -> Result<Vec<String>, String> {
 		Time::FixedOffset(time) => time.timestamp(),
 		Time::Local(time) => time.timestamp(),
 	};
+
+	let result = format!("{}", result);
+
+	Ok(vec![result])
+}
+
+fn ts(_matches: &ArgMatches) -> Result<Vec<String>, String> {
+	let now = Local::now();
+	let result = now.timestamp();
 
 	let result = format!("{}", result);
 
@@ -213,6 +226,17 @@ mod cases {
 						since: "0.1.0".to_string(),
 					},
 				],
+			),
+			(
+				"ts",
+				vec![Case {
+					desc: "".to_string(),
+					input: vec![""].into_iter().map(Into::into).collect(),
+					output: vec!["1647064300"].into_iter().map(Into::into).collect(),
+					is_example: true,
+					is_test: false,
+					since: "0.12.0".to_string(),
+				}],
 			),
 		]
 		.into_iter()
