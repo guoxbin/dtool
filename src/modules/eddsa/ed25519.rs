@@ -1,8 +1,8 @@
 use crate::modules::eddsa::AltSecretKey;
 use crate::modules::Case;
 use linked_hash_map::LinkedHashMap;
-use ring::signature::{Ed25519KeyPair, KeyPair, VerificationAlgorithm, ED25519};
 use rand::{thread_rng, Rng};
+use ring::signature::{Ed25519KeyPair, KeyPair, VerificationAlgorithm, ED25519};
 use untrusted::Input;
 
 pub fn ed_gk_ed25519() -> Result<(Vec<u8>, Vec<u8>), String> {

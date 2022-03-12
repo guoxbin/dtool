@@ -125,7 +125,9 @@ fn get_common_arg(matches: &ArgMatches) -> Result<(KeySize, Vec<u8>, Mode, Vec<u
 	let input = base::input_string(matches)?;
 
 	// key and key_size
-	let key = matches.value_of("KEY").ok_or_else(||"Invalid key".to_string())?;
+	let key = matches
+		.value_of("KEY")
+		.ok_or_else(|| "Invalid key".to_string())?;
 	let key: Vec<u8> = key.parse::<Hex>().map_err(|_| "Invalid key")?.into();
 	let key_size = match key.len() {
 		16 => KeySize::KeySize128,
@@ -133,13 +135,17 @@ fn get_common_arg(matches: &ArgMatches) -> Result<(KeySize, Vec<u8>, Mode, Vec<u
 	};
 
 	let get_iv = || -> Result<Vec<u8>, String> {
-		let iv = matches.value_of("IV").ok_or_else(||"Invalid IV".to_string())?;
+		let iv = matches
+			.value_of("IV")
+			.ok_or_else(|| "Invalid IV".to_string())?;
 		let iv: Vec<u8> = iv.parse::<Hex>().map_err(|_| "Invalid IV")?.into();
 		Ok(iv)
 	};
 
 	// mode
-	let mode = matches.value_of("MODE").ok_or_else(||"Invalid mode".to_string())?;
+	let mode = matches
+		.value_of("MODE")
+		.ok_or_else(|| "Invalid mode".to_string())?;
 	let mode = match mode {
 		"ctr" => CTR { iv: get_iv()? },
 		_ => unreachable!(),

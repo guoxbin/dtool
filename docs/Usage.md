@@ -40,6 +40,7 @@
 |   d2ts    |            Convert date to timestamp<br>v0.1.0            |        $ dtool d2ts -z 8 &#x27;1970-01-01 08:00:00&#x27;<br>0        |
 |   d2ts    |Convert date to timestamp<br>Input rfc2822 format<br>v0.1.0|$ dtool d2ts &#x27;Mon, 23 Dec 2019 17:41:26 +0800&#x27;<br>1577094086|
 |   d2ts    |Convert date to timestamp<br>Input rfc3339 format<br>v0.1.0|   $ dtool d2ts &#x27;2019-12-23T17:48:54+08:00&#x27;<br>1577094534   |
+|    ts     |               Current timestamp<br>v0.12.0                |                      $ dtool ts <br>1647064300                       |
 
 
 ## Number 10/2/8/16 base conversion
