@@ -66,13 +66,18 @@ fn ts2d(matches: &ArgMatches) -> Result<Vec<String>, String> {
 			if timezone > 12 || timezone < -12 {
 				return Err("Invalid timezone".to_string());
 			}
-			FixedOffset::east_opt(timezone * 3600).expect("")
-				.timestamp_opt(timestamp, 0).single().expect("")
+			FixedOffset::east_opt(timezone * 3600)
+				.expect("")
+				.timestamp_opt(timestamp, 0)
+				.single()
+				.expect("")
 				.format("%Y-%m-%d %H:%M:%S")
 				.to_string()
 		}
 		None => Local
-			.timestamp_opt(timestamp, 0).single().expect("")
+			.timestamp_opt(timestamp, 0)
+			.single()
+			.expect("")
 			.format("%Y-%m-%d %H:%M:%S")
 			.to_string(),
 	};
@@ -119,7 +124,8 @@ fn parse_standard(input: &str, timezone: Option<&str>) -> Result<Time, String> {
 				return Err("Invalid timezone".to_string());
 			}
 			Time::FixedOffset(
-				FixedOffset::east_opt(timezone * 3600).expect("")
+				FixedOffset::east_opt(timezone * 3600)
+					.expect("")
 					.from_local_datetime(&time)
 					.unwrap(),
 			)

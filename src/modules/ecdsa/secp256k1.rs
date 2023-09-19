@@ -1,7 +1,7 @@
 use linked_hash_map::LinkedHashMap;
 use secp256k1::hashes::sha256;
 use secp256k1::rand::thread_rng;
-use secp256k1::{Message, PublicKey, SecretKey, ecdsa, Secp256k1};
+use secp256k1::{ecdsa, Message, PublicKey, Secp256k1, SecretKey};
 
 use crate::modules::ecdsa::SignatureFormEnum;
 use crate::modules::Case;
@@ -9,9 +9,7 @@ use crate::modules::Case;
 pub fn ec_gk_secp256k1(compress: bool) -> Result<(Vec<u8>, Vec<u8>), String> {
 	let (secret_key, public_key) = secp256k1::Secp256k1::new().generate_keypair(&mut thread_rng());
 
-	let secret_key: Vec<u8> = secret_key
-		.as_ref()
-        .to_vec();
+	let secret_key: Vec<u8> = secret_key.as_ref().to_vec();
 
 	let public_key = match compress {
 		true => public_key.serialize().to_vec(),
@@ -25,7 +23,7 @@ pub fn ec_sign_secp256k1(
 	message: Vec<u8>,
 	sig_form: SignatureFormEnum,
 ) -> Result<Vec<u8>, String> {
-    let secp = Secp256k1::new();
+	let secp = Secp256k1::new();
 	let message = Message::from_hashed_data::<sha256::Hash>(&message);
 	let secret_key =
 		SecretKey::from_slice(&secret_key).map_err(|e| format!("Invalid secret key: {}", e))?;
@@ -45,7 +43,7 @@ pub fn ec_verify_secp256k1(
 	message: Vec<u8>,
 	sig_form: SignatureFormEnum,
 ) -> Result<(), String> {
-    let secp = Secp256k1::new();
+	let secp = Secp256k1::new();
 	let message = Message::from_hashed_data::<sha256::Hash>(&message);
 	let sig = match sig_form {
 		SignatureFormEnum::Fixed => ecdsa::Signature::from_compact(&sig),
@@ -55,7 +53,9 @@ pub fn ec_verify_secp256k1(
 
 	let public_key =
 		PublicKey::from_slice(&public_key).map_err(|e| format!("Invalid secret key: {}", e))?;
-    let result = secp.verify_ecdsa(&message, &sig, &public_key).map_err(|e| format!("{}", e));
+	let result = secp
+		.verify_ecdsa(&message, &sig, &public_key)
+		.map_err(|e| format!("{}", e));
 	result
 }
 

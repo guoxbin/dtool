@@ -87,7 +87,9 @@
 |-----------|----------------------------------|---------------------------------------------------------|
 |    ne     |  Number encode<br>u8<br>v0.1.0   |                $ dtool ne -tu8 1<br>0x01                |
 |    ne     |  Number encode<br>u16<br>v0.1.0  |              $ dtool ne -tu16 1<br>0x0100               |
+|    ne     |  Number encode<br>u16<br>v0.1.0  |           $ dtool ne -tu16 -ebig 1<br>0x0001            |
 |    ne     |  Number encode<br>u32<br>v0.1.0  |            $ dtool ne -tu32 1<br>0x01000000             |
+|    ne     |  Number encode<br>u32<br>v0.1.0  |         $ dtool ne -tu32 -ebig 1<br>0x00000001          |
 |    ne     |  Number encode<br>u64<br>v0.1.0  |        $ dtool ne -tu64 1<br>0x0100000000000000         |
 |    ne     | Number encode<br>u128<br>v0.1.0  |$ dtool ne -tu128 1<br>0x01000000000000000000000000000000|
 |    ne     |Number encode<br>Compact<br>v0.1.0|                $ dtool ne -tc 6<br>0x18                 |
