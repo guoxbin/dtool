@@ -24,6 +24,15 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.takes_value(true)
 						.required(true),
 				)
+				.arg(
+					Arg::with_name("ENDIAN")
+						.long("endian")
+						.short("e")
+						.help("Endian\nlittle\nbig")
+						.default_value("little")
+						.takes_value(true)
+						.required(false),
+				)
 				.arg(Arg::with_name("INPUT").required(false).index(1)),
 			f: ne,
 		},
@@ -38,6 +47,15 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 						.takes_value(true)
 						.required(true),
 				)
+				.arg(
+					Arg::with_name("ENDIAN")
+						.long("endian")
+						.short("e")
+						.help("Endian\nlittle\nbig")
+						.default_value("little")
+						.takes_value(true)
+						.required(false),
+				)
 				.arg(Arg::with_name("INPUT").required(false).index(1)),
 			f: nd,
 		},
@@ -48,26 +66,37 @@ fn ne(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	let input = base::input_string(matches)?;
 
 	let t = matches.value_of("TYPE").ok_or("Invalid number type")?;
+	let e = matches.value_of("ENDIAN").ok_or("Invalid endian")?;
+	let big = match e {
+		"big" =>  true,
+		"little" =>  false,
+		_ => return Err("Invalid endian".to_string()), 
+	};
 
 	let result = match t {
 		"u8" => {
 			let input = input.parse::<u8>().map_err(|_| "Invalid input")?;
+			let input = if big {input.to_be()} else {input};
 			vec![input]
 		}
 		"u16" => {
 			let input = input.parse::<u16>().map_err(|_| "Invalid input")?;
+			let input = if big {input.to_be()} else {input};
 			input.encode()
 		}
 		"u32" => {
 			let input = input.parse::<u32>().map_err(|_| "Invalid input")?;
+			let input = if big {input.to_be()} else {input};
 			input.encode()
 		}
 		"u64" => {
 			let input = input.parse::<u64>().map_err(|_| "Invalid input")?;
+			let input = if big {input.to_be()} else {input};
 			input.encode()
 		}
 		"u128" => {
 			let input = input.parse::<u128>().map_err(|_| "Invalid input")?;
+			let input = if big {input.to_be()} else {input};
 			input.encode()
 		}
 		"c" => {
@@ -87,6 +116,13 @@ fn nd(matches: &ArgMatches) -> Result<Vec<String>, String> {
 
 	let t = matches.value_of("TYPE").ok_or("Invalid number type")?;
 
+	let e = matches.value_of("ENDIAN").ok_or("Invalid endian")?;
+	let big = match e {
+		"big" =>  true,
+		"little" =>  false,
+		_ => return Err("Invalid endian".to_string()), 
+	};
+
 	let input: Vec<u8> = input.parse::<Hex>().map_err(|_| "Invalid input")?.into();
 
 	let mut input = &input[..];
@@ -98,22 +134,27 @@ fn nd(matches: &ArgMatches) -> Result<Vec<String>, String> {
 			} else {
 				return Err("Invalid input".to_string());
 			};
+			let input = if big {input.to_be()} else {input};
 			format!("{}", input)
 		}
 		"u16" => {
 			let input: u16 = Decode::decode(&mut input).ok_or("Invalid input")?;
+			let input = if big {input.to_be()} else {input};
 			format!("{}", input)
 		}
 		"u32" => {
 			let input: u32 = Decode::decode(&mut input).ok_or("Invalid input")?;
+			let input = if big {input.to_be()} else {input};
 			format!("{}", input)
 		}
 		"u64" => {
 			let input: u64 = Decode::decode(&mut input).ok_or("Invalid input")?;
+			let input = if big {input.to_be()} else {input};
 			format!("{}", input)
 		}
 		"u128" => {
 			let input: u128 = Decode::decode(&mut input).ok_or("Invalid input")?;
+			let input = if big {input.to_be()} else {input};
 			format!("{}", input)
 		}
 		"c" => {
