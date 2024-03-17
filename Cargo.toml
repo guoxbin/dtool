@@ -35,6 +35,7 @@ madato = "0.5.3"
 crc = "1.8.1"
 heck = "0.3.1"
 rust-crypto = "0.2.36"
+blake3 = "*"
 yogcrypt = "0.0.0"
 secp256k1 = { version = "0.20", features = ["rand-std", "bitcoin_hashes"] }
 untrusted = "0.7.1"
