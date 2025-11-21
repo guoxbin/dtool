@@ -1,7 +1,11 @@
 # dtool
 
-[![Build Status](https://travis-ci.org/guoxbin/dtool.svg?branch=master)](https://travis-ci.org/guoxbin/dtool)
-[![Crates.io](https://img.shields.io/crates/v/dtool)](https://crates.io/crates/dtool)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/guoxbin/dtool/rust.yml?branch=master&style=flat-square)](https://github.com/guoxbin/dtool/actions/workflows/rust.yml)
+[![Crates.io](https://img.shields.io/crates/v/dtool?style=flat-square)](https://crates.io/crates/dtool)
+[![Crates.io](https://img.shields.io/crates/d/dtool?style=flat-square)](https://crates.io/crates/dtool)
+[![License](https://img.shields.io/badge/license-GNU%203.0-blue?style=flat-square)](LICENSE-GNU)
+[![Contributors](https://img.shields.io/github/contributors/guoxbin/dtool?style=flat-square)](https://github.com/guoxbin/dtool/graphs/contributors)
+
 
 `dtool` is a command-line tool collection to assist development
 
