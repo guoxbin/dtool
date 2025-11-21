@@ -27,12 +27,14 @@ pub fn commands<'a, 'b>() -> Vec<Command<'a, 'b>> {
 	]
 }
 
+use base64::{engine::general_purpose, Engine as _};
+
 fn h2b64(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	let input = base::input_string(matches)?;
 
 	let input: Vec<u8> = input.parse::<Hex>().map_err(|_| "Convert failed")?.into();
 
-	let result = base64::encode(&input);
+	let result = general_purpose::STANDARD.encode(&input);
 
 	Ok(vec![result])
 }
@@ -40,7 +42,9 @@ fn h2b64(matches: &ArgMatches) -> Result<Vec<String>, String> {
 fn b642h(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	let input = base::input_string(matches)?;
 
-	let result = base64::decode(&input).map_err(|_| "Convert failed")?;
+	let result = general_purpose::STANDARD
+		.decode(&input)
+		.map_err(|_| "Convert failed")?;
 	let result = Hex::from(result).into();
 
 	Ok(vec![result])

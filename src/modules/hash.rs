@@ -2,7 +2,7 @@ use crate::modules::base::Hex;
 use crate::modules::{base, Command, Module};
 use clap::{Arg, ArgMatches, SubCommand};
 use crc::crc32;
-use crypto::blake2b::Blake2b;
+
 use lazy_static::lazy_static;
 use ring::digest::{Context, SHA1_FOR_LEGACY_USE_ONLY};
 use sha2::{Digest, Sha224, Sha256, Sha384, Sha512, Sha512Trunc224, Sha512Trunc256};
@@ -368,11 +368,13 @@ fn blake2b_512(data: Vec<u8>, key: Vec<u8>) -> Result<Vec<u8>, String> {
 }
 
 fn blake2b(data: Vec<u8>, size: usize, key: Vec<u8>) -> Result<Vec<u8>, String> {
-	let mut result = vec![0u8; size];
-
-	Blake2b::blake2b(&mut result, &data, &key);
-
-	Ok(result)
+	let mut params = blake2b_simd::Params::new();
+	params.hash_length(size);
+	if !key.is_empty() {
+		params.key(&key);
+	}
+	let hash = params.to_state().update(&data).finalize();
+	Ok(hash.as_bytes().to_vec())
 }
 
 fn sm3(data: Vec<u8>) -> Result<Vec<u8>, String> {

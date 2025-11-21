@@ -2,10 +2,13 @@ use self::Mode::{CBC, CTR, ECB};
 use crate::modules::base::Hex;
 use crate::modules::{base, Command, Module};
 use clap::{Arg, ArgMatches, SubCommand};
-use crypto::aes::{cbc_decryptor, cbc_encryptor, ctr, ecb_decryptor, ecb_encryptor, KeySize};
-use crypto::blockmodes::PkcsPadding;
-use crypto::buffer::{RefReadBuffer, RefWriteBuffer, WriteBuffer};
-use crypto::symmetriccipher::{Decryptor, Encryptor};
+use aes::{Aes128, Aes192, Aes256};
+use aes::cipher::{BlockSizeUser, consts::U16};
+use cbc::cipher::{BlockCipher, BlockDecryptMut, BlockEncryptMut, KeyInit, KeyIvInit, StreamCipher};
+use cbc::{Decryptor as CbcDecryptor, Encryptor as CbcEncryptor};
+use ctr::Ctr128BE;
+use ecb::{Decryptor as EcbDecryptor, Encryptor as EcbEncryptor};
+use cipher::block_padding::Pkcs7;
 
 pub fn module<'a, 'b>() -> Module<'a, 'b> {
 	Module {
@@ -98,6 +101,12 @@ enum Mode {
 	CTR { iv: Vec<u8> },
 }
 
+enum KeySize {
+	KeySize128,
+	KeySize192,
+	KeySize256,
+}
+
 fn aes_enc(matches: &ArgMatches) -> Result<Vec<String>, String> {
 	let (key_size, key, mode, input) = get_common_arg(matches)?;
 
@@ -167,80 +176,118 @@ fn get_common_arg(matches: &ArgMatches) -> Result<(KeySize, Vec<u8>, Mode, Vec<u
 }
 
 fn aes_enc_ecb(key_size: KeySize, key: &[u8], input: &[u8]) -> Result<Vec<u8>, String> {
-	let mut a = ecb_encryptor(key_size, key, PkcsPadding);
-	let cipher_len = cipher_length(input.len());
-	let mut result = vec![0u8; cipher_len];
-	a.encrypt(
-		&mut RefReadBuffer::new(&input),
-		&mut RefWriteBuffer::new(&mut result),
-		true,
-	)
-	.map_err(|_| "Enc failed")?;
-	Ok(result)
+	match key_size {
+		KeySize::KeySize128 => encrypt_ecb::<Aes128>(key, input),
+		KeySize::KeySize192 => encrypt_ecb::<Aes192>(key, input),
+		KeySize::KeySize256 => encrypt_ecb::<Aes256>(key, input),
+	}
+}
+
+fn encrypt_ecb<C>(key: &[u8], input: &[u8]) -> Result<Vec<u8>, String>
+where
+	C: KeyInit + BlockEncryptMut + BlockCipher,
+{
+	let cipher = EcbEncryptor::<C>::new_from_slice(key).map_err(|_| "Invalid key")?;
+	let mut buffer = vec![0u8; input.len() + 16];
+	let pos = input.len();
+	buffer[..pos].copy_from_slice(input);
+	let len = cipher
+		.encrypt_padded_mut::<Pkcs7>(&mut buffer, pos)
+		.map_err(|_| "Enc failed")?
+		.len();
+	buffer.truncate(len);
+	Ok(buffer)
 }
 
 fn aes_enc_cbc(key_size: KeySize, key: &[u8], input: &[u8], iv: &[u8]) -> Result<Vec<u8>, String> {
-	let mut a = cbc_encryptor(key_size, key, iv, PkcsPadding);
-	let cipher_len = cipher_length(input.len());
-	let mut result = vec![0u8; cipher_len];
-	a.encrypt(
-		&mut RefReadBuffer::new(&input),
-		&mut RefWriteBuffer::new(&mut result),
-		true,
-	)
-	.map_err(|_| "Enc failed")?;
-	Ok(result)
+	match key_size {
+		KeySize::KeySize128 => encrypt_cbc::<Aes128>(key, iv, input),
+		KeySize::KeySize192 => encrypt_cbc::<Aes192>(key, iv, input),
+		KeySize::KeySize256 => encrypt_cbc::<Aes256>(key, iv, input),
+	}
+}
+
+fn encrypt_cbc<C>(key: &[u8], iv: &[u8], input: &[u8]) -> Result<Vec<u8>, String>
+where
+	C: KeyInit + BlockEncryptMut + BlockCipher,
+{
+	let cipher = CbcEncryptor::<C>::new_from_slices(key, iv).map_err(|_| "Invalid key or iv")?;
+	let mut buffer = vec![0u8; input.len() + 16];
+	let pos = input.len();
+	buffer[..pos].copy_from_slice(input);
+	let len = cipher
+		.encrypt_padded_mut::<Pkcs7>(&mut buffer, pos)
+		.map_err(|_| "Enc failed")?
+		.len();
+	buffer.truncate(len);
+	Ok(buffer)
 }
 
 fn aes_enc_ctr(key_size: KeySize, key: &[u8], input: &[u8], iv: &[u8]) -> Result<Vec<u8>, String> {
-	let mut a = ctr(key_size, key, iv);
-	let mut result = vec![0u8; input.len()];
-	a.encrypt(
-		&mut RefReadBuffer::new(&input),
-		&mut RefWriteBuffer::new(&mut result),
-		true,
-	)
-	.map_err(|_| "Enc failed")?;
-	Ok(result)
+	match key_size {
+		KeySize::KeySize128 => encrypt_ctr::<Aes128>(key, iv, input),
+		KeySize::KeySize192 => encrypt_ctr::<Aes192>(key, iv, input),
+		KeySize::KeySize256 => encrypt_ctr::<Aes256>(key, iv, input),
+	}
+}
+
+fn encrypt_ctr<C>(key: &[u8], iv: &[u8], input: &[u8]) -> Result<Vec<u8>, String>
+where
+	C: KeyInit + BlockEncryptMut + BlockCipher + BlockSizeUser<BlockSize = U16>,
+{
+	let mut cipher = Ctr128BE::<C>::new_from_slices(key, iv).map_err(|_| "Invalid key or iv")?;
+	let mut buffer = input.to_vec();
+	cipher.apply_keystream(&mut buffer);
+	Ok(buffer)
 }
 
 fn aes_dec_ecb(key_size: KeySize, key: &[u8], input: &[u8]) -> Result<Vec<u8>, String> {
-	let mut a = ecb_decryptor(key_size, key, PkcsPadding);
-	let mut result = vec![0u8; input.len()];
-	let mut buffer = RefWriteBuffer::new(&mut result);
-	a.decrypt(&mut RefReadBuffer::new(&input), &mut buffer, true)
-		.map_err(|_| "Dec failed")?;
-	let len = buffer.capacity() - buffer.remaining();
-	let mut result = result.clone();
-	result.truncate(len);
-	Ok(result)
+	match key_size {
+		KeySize::KeySize128 => decrypt_ecb::<Aes128>(key, input),
+		KeySize::KeySize192 => decrypt_ecb::<Aes192>(key, input),
+		KeySize::KeySize256 => decrypt_ecb::<Aes256>(key, input),
+	}
+}
+
+fn decrypt_ecb<C>(key: &[u8], input: &[u8]) -> Result<Vec<u8>, String>
+where
+	C: KeyInit + BlockDecryptMut + BlockCipher,
+{
+	let cipher = EcbDecryptor::<C>::new_from_slice(key).map_err(|_| "Invalid key")?;
+	let mut buffer = input.to_vec();
+	let len = cipher
+		.decrypt_padded_mut::<Pkcs7>(&mut buffer)
+		.map_err(|_| "Dec failed")?
+		.len();
+	buffer.truncate(len);
+	Ok(buffer)
 }
 
 fn aes_dec_cbc(key_size: KeySize, key: &[u8], input: &[u8], iv: &[u8]) -> Result<Vec<u8>, String> {
-	let mut a = cbc_decryptor(key_size, key, iv, PkcsPadding);
-	let mut result = vec![0u8; input.len()];
-	let mut buffer = RefWriteBuffer::new(&mut result);
-	a.decrypt(&mut RefReadBuffer::new(&input), &mut buffer, true)
-		.map_err(|_| "Dec failed")?;
-	let len = buffer.capacity() - buffer.remaining();
-	let mut result = result.clone();
-	result.truncate(len);
-	Ok(result)
+	match key_size {
+		KeySize::KeySize128 => decrypt_cbc::<Aes128>(key, iv, input),
+		KeySize::KeySize192 => decrypt_cbc::<Aes192>(key, iv, input),
+		KeySize::KeySize256 => decrypt_cbc::<Aes256>(key, iv, input),
+	}
+}
+
+fn decrypt_cbc<C>(key: &[u8], iv: &[u8], input: &[u8]) -> Result<Vec<u8>, String>
+where
+	C: KeyInit + BlockDecryptMut + BlockCipher,
+{
+	let cipher = CbcDecryptor::<C>::new_from_slices(key, iv).map_err(|_| "Invalid key or iv")?;
+	let mut buffer = input.to_vec();
+	let len = cipher
+		.decrypt_padded_mut::<Pkcs7>(&mut buffer)
+		.map_err(|_| "Dec failed")?
+		.len();
+	buffer.truncate(len);
+	Ok(buffer)
 }
 
 fn aes_dec_ctr(key_size: KeySize, key: &[u8], input: &[u8], iv: &[u8]) -> Result<Vec<u8>, String> {
-	let mut a = ctr(key_size, key, iv);
-	let mut result = vec![0u8; input.len()];
-	let mut buffer = RefWriteBuffer::new(&mut result);
-	a.decrypt(&mut RefReadBuffer::new(&input), &mut buffer, true)
-		.map_err(|_| "Dec failed")?;
-	Ok(result)
-}
-
-const BLOCK_SIZE: usize = 16;
-
-fn cipher_length(input_len: usize) -> usize {
-	((input_len / BLOCK_SIZE) + 1) * BLOCK_SIZE
+	// CTR decryption is same as encryption
+	aes_enc_ctr(key_size, key, input, iv)
 }
 
 mod cases {
