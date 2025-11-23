@@ -34,6 +34,7 @@ mod url;
 mod usage;
 mod qr;
 mod jwt;
+mod uuid;
 
 #[derive(Clone)]
 pub struct Module<'a, 'b> {
@@ -89,6 +90,7 @@ impl<'a, 'b> ModuleManager<'a, 'b> {
 		mm.register(srdsa::module());
 		mm.register(qr::module());
 		mm.register(jwt::module());
+		mm.register(uuid::module());
 		mm
 	}
 

@@ -21,6 +21,7 @@
 - [sr25519 signature](#sr25519-signature)
 - [QR Code](#qr-code)
 - [JWT encode / decode / verify](#jwt-encode--decode--verify)
+- [UUID generation and parsing](#uuid-generation-and-parsing)
 
 ## Hex / UTF-8 string / binary / byte array conversion
 
@@ -283,3 +284,15 @@
 |jwt_encode |Encode JWT token<br>With expiration (3600 seconds)<br>v0.16.0|$ dtool jwt_encode -a HS256 -s mysecret -e 3600 '{"sub":"123"}'<br>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...|
 |jwt_verify |Verify JWT token<br>Valid signature<br>v0.16.0|$ dtool jwt_verify -a HS256 -s mysecret eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...<br>Valid: true<br>Payload: {"sub": "123", "name": "Test"}|
 |jwt_verify |Verify JWT token<br>Invalid signature<br>v0.16.0|$ dtool jwt_verify -a HS256 -s wrongsecret eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...<br>Valid: false<br>Error: InvalidSignature|
+
+
+## UUID generation and parsing
+
+|Sub command|                Desc                 |                        Example                        |
+|-----------|-------------------------------------|-------------------------------------------------------|
+|uuid_gen   |Generate UUID v4 (random)<br>Default version<br>v0.16.0|$ dtool uuid_gen<br>550e8400-e29b-41d4-a716-446655440000|
+|uuid_gen   |Generate UUID v1<br>Timestamp-based<br>v0.16.0|$ dtool uuid_gen -v 1<br>a3bb189e-8bf9-11e3-baa8-0800200c9a66|
+|uuid_gen   |Generate UUID v5<br>Namespace + name (DNS)<br>v0.16.0|$ dtool uuid_gen -v 5 -n dns -s example.com<br>cfbff0d1-9375-5685-968c-48ce8b15ae17|
+|uuid_gen   |Generate UUID v5<br>Namespace + name (URL)<br>v0.16.0|$ dtool uuid_gen -v 5 -n url -s https://example.com<br>3d813cbb-47fb-32ba-91df-831e1593ac29|
+|uuid_gen   |Generate UUID v7<br>Sortable timestamp-based<br>v0.16.0|$ dtool uuid_gen -v 7<br>018c2b88-5a00-7000-8000-000000000000|
+|uuid_parse |Parse UUID<br>Show version and variant<br>v0.16.0|$ dtool uuid_parse 550e8400-e29b-41d4-a716-446655440000<br>Version: 4 (Random)<br>Variant: RFC 4122<br>Valid: true|
