@@ -33,6 +33,7 @@ mod unicode;
 mod url;
 mod usage;
 mod qr;
+mod jwt;
 
 #[derive(Clone)]
 pub struct Module<'a, 'b> {
@@ -87,6 +88,7 @@ impl<'a, 'b> ModuleManager<'a, 'b> {
 		mm.register(eddsa::module());
 		mm.register(srdsa::module());
 		mm.register(qr::module());
+		mm.register(jwt::module());
 		mm
 	}
 

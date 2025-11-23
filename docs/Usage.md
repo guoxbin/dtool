@@ -20,6 +20,7 @@
 - [EdDSA (Ed25519)](#eddsa-ed25519)
 - [sr25519 signature](#sr25519-signature)
 - [QR Code](#qr-code)
+- [JWT encode / decode / verify](#jwt-encode--decode--verify)
 
 ## Hex / UTF-8 string / binary / byte array conversion
 
@@ -271,3 +272,14 @@
 |   qr2s    |Convert QR code image to string<br>v0.15.0|$ dtool qr2s|
 
 
+
+
+## JWT encode / decode / verify
+
+|Sub command|                Desc                 |                        Example                        |
+|-----------|-------------------------------------|-------------------------------------------------------|
+|jwt_decode |Decode JWT token (without verification)<br>v0.16.0|$ dtool jwt_decode eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c<br>Header: {"typ": "JWT", "alg": "HS256"}<br>Payload: {"iat": 1516239022, "name": "John Doe", "sub": "1234567890"}|
+|jwt_encode |Encode JWT token<br>HS256 algorithm<br>v0.16.0|$ dtool jwt_encode -a HS256 -s mysecret '{"sub":"123","name":"Test"}'<br>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...|
+|jwt_encode |Encode JWT token<br>With expiration (3600 seconds)<br>v0.16.0|$ dtool jwt_encode -a HS256 -s mysecret -e 3600 '{"sub":"123"}'<br>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...|
+|jwt_verify |Verify JWT token<br>Valid signature<br>v0.16.0|$ dtool jwt_verify -a HS256 -s mysecret eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...<br>Valid: true<br>Payload: {"sub": "123", "name": "Test"}|
+|jwt_verify |Verify JWT token<br>Invalid signature<br>v0.16.0|$ dtool jwt_verify -a HS256 -s wrongsecret eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...<br>Valid: false<br>Error: InvalidSignature|
